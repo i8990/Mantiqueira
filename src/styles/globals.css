@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+
+:root {
+  --bg-void: #060D07;
+  --bg-deep: #091209;
+  --bg-surface: #0F1E10;
+  --bg-card: #152116;
+  --bg-card2: #1B2B1C;
+
+  --accent: #3CE87A;
+  --accent-dim: rgba(60, 232, 122, 0.15);
+  --accent-glow: rgba(60, 232, 122, 0.3);
+
+  --amber: #F5A733;
+  --amber-dim: rgba(245, 167, 51, 0.15);
+  --coral: #E85B3C;
+  --coral-dim: rgba(232, 91, 60, 0.12);
+
+  --text-1: #DCF0E2;
+  --text-2: #7FB88A;
+  --text-3: #3D6647;
+
+  --border: rgba(60, 232, 122, 0.1);
+  --border-strong: rgba(60, 232, 122, 0.22);
+
+  --font-d: 'Fraunces', serif;
+  --font-b: 'Plus Jakarta Sans', sans-serif;
+
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-b);
+  background: var(--bg-void);
+  color: var(--text-1);
+}
+
+#root {
+  height: 100%;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input, textarea {
+  font-family: inherit;
+  color: var(--text-1);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(7px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes legendPulse {
+  0%, 100% { box-shadow: 0 4px 14px rgba(232, 91, 60, 0.3); }
+  50% { box-shadow: 0 4px 22px rgba(232, 91, 60, 0.65); }
+}

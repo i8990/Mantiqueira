@@ -1,0 +1,74 @@
+import { useState, useEffect, useCallback } from 'react'
+import { supabase } from '../lib/supabase'
+import { ANIMALS } from '../lib/constants'
+
+export default function useSightings(userId) {
+  const [sightings, setSightings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  const refresh = useCallback(async () => {
+    if (!userId) return
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('sightings')
+      .select('*, animals(name, emoji, tier, pts)')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+    if (error) {
+      setError(error.message)
+    } else {
+      setSightings(data || [])
+      setError(null)
+    }
+    setLoading(false)
+  }, [userId])
+
+  useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  const createSighting = async ({ animalId, photoFile, description, lat, lng }) => {
+    const animal = ANIMALS.find(a => a.id === animalId)
+    if (!animal) return { error: 'Animal não encontrado' }
+
+    let photoUrl = null
+
+    if (photoFile) {
+      const ext = photoFile.name.split('.').pop()
+      const filePath = `${userId}/${crypto.randomUUID()}.${ext}`
+      const { error: uploadError } = await supabase.storage
+        .from('sightings-photos')
+        .upload(filePath, photoFile)
+      if (uploadError) return { error: uploadError.message }
+      const { data: { publicUrl } } = supabase.storage
+        .from('sightings-photos')
+        .getPublicUrl(filePath)
+      photoUrl = publicUrl
+    }
+
+    const ptsEarned = photoUrl ? animal.pts : Math.round(animal.pts * 0.3)
+
+    const { data, error } = await supabase
+      .from('sightings')
+      .insert({
+        user_id: userId,
+        animal_id: animalId,
+        photo_url: photoUrl,
+        description: description || null,
+        lat: lat || null,
+        lng: lng || null,
+        pts_earned: ptsEarned,
+      })
+      .select()
+      .single()
+
+    if (!error) {
+      await refresh()
+    }
+
+    return { data, error: error?.message }
+  }
+
+  return { sightings, loading, error, refresh, createSighting }
+}
