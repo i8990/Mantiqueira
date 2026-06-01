@@ -15,12 +15,12 @@ export default function AnimalCard({ animal, isSeen, onClick }) {
         background: 'var(--glass)',
         backdropFilter: 'var(--glass-blur)',
         WebkitBackdropFilter: 'var(--glass-blur)',
-        border: animal.tier === 'legendary'
-          ? '0.5px solid rgba(232,91,60,.35)'
-          : animal.tier === 'rare'
-            ? '0.5px solid rgba(245,167,51,.3)'
-            : '0.5px solid var(--glass-border)',
-        boxShadow: 'var(--shadow-md)',
+        border: ['L', 'S', 'A'].includes(animal.tier)
+          ? `0.5px solid ${TIER_COLORS[animal.tier]}55`
+          : '0.5px solid var(--glass-border)',
+        boxShadow: ['L', 'S'].includes(animal.tier)
+          ? `0 0 0 0.5px ${TIER_COLORS[animal.tier]}33, 0 4px 20px ${TIER_COLORS[animal.tier]}11`
+          : 'var(--shadow-md)',
         cursor: 'pointer',
         opacity: isSeen ? 1 : 0.55,
         filter: isSeen ? 'none' : 'grayscale(1)',

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ANIMALS, calcLevel } from '../../lib/constants'
+import { ANIMALS, calcLevel, TIER_LABELS, TIER_COLORS } from '../../lib/constants'
 import BadgeGrid from '../profile/BadgeGrid'
 import RankCard from '../profile/RankCard'
 import AnimalCard from '../collection/AnimalCard'
@@ -12,11 +12,7 @@ import useAuth from '../../hooks/useAuth'
 
 const RARITY_FILTERS = [
   { key: 'all', label: 'Todos' },
-  { key: 'legendary', label: 'Lendário' },
-  { key: 'veryrare', label: 'Muito raro' },
-  { key: 'rare', label: 'Raro' },
-  { key: 'uncommon', label: 'Pouco comum' },
-  { key: 'common', label: 'Comum' },
+  ...Object.entries(TIER_LABELS).map(([key, label]) => ({ key, label })),
 ]
 
 export default function ProfileScreen({ profile, sightings, seenIds }) {
@@ -35,6 +31,8 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
     { icon: '🔥', label: 'Streak', value: `${profile?.streak_days || 0}d` },
     { icon: '🗺️', label: 'Área', value: `${sightings?.filter(s => s.lat).length || 0} pts` },
   ]
+
+  const uniqueTiersSeen = [...new Set(ANIMALS.filter(a => seenIds.has(a.id)).map(a => a.tier))]
 
   return (
     <div style={{
@@ -99,39 +97,38 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
         </div>
       </div>
 
+      <BadgeGrid seenIds={seenIds} profile={profile} sightings={sightings} />
+
       <div style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)',
-        gap: 8,
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 6,
       }}>
         {stats.map(s => (
           <div key={s.label} style={{
-            padding: '16px 12px',
+            padding: '10px 6px',
             background: 'var(--glass)',
             backdropFilter: 'var(--glass-blur)',
             WebkitBackdropFilter: 'var(--glass-blur)',
             borderRadius: 'var(--r-md)',
             textAlign: 'center',
             border: '0.5px solid var(--glass-border)',
-            boxShadow: 'var(--shadow-sm)',
           }}>
-            <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
+            <div style={{ fontSize: 16, marginBottom: 2 }}>{s.icon}</div>
             <div style={{
               fontFamily: 'var(--font-d)',
               fontWeight: 700,
-              fontSize: 22,
+              fontSize: 16,
               color: 'var(--text-1)',
             }}>
               {s.value}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 500 }}>
+            <div style={{ fontSize: 9, color: 'var(--text-3)', fontWeight: 500, marginTop: 1 }}>
               {s.label}
             </div>
           </div>
         ))}
       </div>
-
-      <BadgeGrid seenIds={seenIds} profile={profile} sightings={sightings} />
 
       <RankCard totalPts={profile?.total_pts || 0} rankData={[]} />
 

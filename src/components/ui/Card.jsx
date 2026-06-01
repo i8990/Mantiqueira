@@ -1,6 +1,9 @@
+import { TIER_COLORS } from '../../lib/constants'
+
 const tierBorders = {
-  legendary: { borderColor: 'rgba(232,91,60,.35)', boxShadow: '0 0 0 0.5px rgba(232,91,60,.25), 0 4px 20px rgba(232,91,60,.08)' },
-  rare: { borderColor: 'rgba(245,167,51,.3)', boxShadow: '0 0 0 0.5px rgba(245,167,51,.2), 0 4px 20px rgba(245,167,51,.06)' },
+  L: { borderColor: `${TIER_COLORS.L}55`, boxShadow: `0 0 0 0.5px ${TIER_COLORS.L}33, 0 4px 20px ${TIER_COLORS.L}15` },
+  S: { borderColor: `${TIER_COLORS.S}55`, boxShadow: `0 0 0 0.5px ${TIER_COLORS.S}33, 0 4px 20px ${TIER_COLORS.S}15` },
+  A: { borderColor: `${TIER_COLORS.A}44`, boxShadow: `0 0 0 0.5px ${TIER_COLORS.A}22, 0 4px 20px ${TIER_COLORS.A}10` },
 }
 
 export default function Card({ children, variant, onClick, tier, style, ...props }) {
