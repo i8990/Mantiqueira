@@ -44,9 +44,8 @@ export default function GuideScreen() {
 
       <div style={{
         display: 'flex',
+        flexWrap: 'wrap',
         gap: 6,
-        overflowX: 'auto',
-        paddingBottom: 4,
       }}>
         {FILTERS.map(f => (
           <button

@@ -11,7 +11,7 @@ export default function FlipCard({ animal }) {
       style={{
         perspective: 1200,
         cursor: 'pointer',
-        minHeight: 260,
+        minHeight: 220,
         aspectRatio: '3 / 4',
       }}
     >
@@ -42,15 +42,15 @@ export default function FlipCard({ animal }) {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 16,
-            gap: 6,
+            padding: 14,
+            gap: 5,
           }}
         >
-          <span style={{ fontSize: 40 }}>{animal.emoji}</span>
-          <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-1)', textAlign: 'center', lineHeight: 1.2 }}>
+          <span style={{ fontSize: 34 }}>{animal.emoji}</span>
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-1)', textAlign: 'center', lineHeight: 1.2 }}>
             {animal.name}
           </span>
-          <span style={{ fontSize: 10, fontStyle: 'italic', color: 'var(--text-3)', textAlign: 'center' }}>
+          <span style={{ fontSize: 9, fontStyle: 'italic', color: 'var(--text-3)', textAlign: 'center' }}>
             {animal.sci}
           </span>
           <div style={{
@@ -58,18 +58,18 @@ export default function FlipCard({ animal }) {
             alignItems: 'center',
             gap: 4,
             marginTop: 4,
-            padding: '3px 10px',
+            padding: '3px 8px',
             borderRadius: 999,
             background: `${danger.color}20`,
             border: `0.5px solid ${danger.color}40`,
           }}>
-            <span style={{ fontSize: 10 }}>{danger.emoji}</span>
-            <span style={{ fontSize: 10, fontWeight: 600, color: danger.color }}>
+            <span style={{ fontSize: 9 }}>{danger.emoji}</span>
+            <span style={{ fontSize: 9, fontWeight: 600, color: danger.color }}>
               {danger.label}
             </span>
           </div>
           <span style={{
-            fontSize: 9,
+            fontSize: 8,
             color: 'var(--text-3)',
             marginTop: 4,
             opacity: 0.6,

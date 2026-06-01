@@ -8,15 +8,15 @@
   "theme_color": "#060D07",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' fill='%23060D07'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='120'>🌿</text></svg>",
+      "src": "/iconeapp.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23060D07'/><text x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-size='320'>🌿</text></svg>",
+      "src": "/iconeapp.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
