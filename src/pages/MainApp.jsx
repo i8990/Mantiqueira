@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useCallback } from 'react'
+import { lazy, Suspense, useRef, useCallback } from 'react'
 import useProfile from '../hooks/useProfile'
 import useSightings, { useAllSightings } from '../hooks/useSightings'
 import useCollection from '../hooks/useCollection'
@@ -35,52 +35,65 @@ export default function MainApp({ session }) {
     refreshAllSightings()
   }, [refreshMySightings, refreshAllSightings])
 
-  const screens = useMemo(() => [
-    () => (
-      <Suspense fallback={<ScreenFallback />}>
-        <MapScreen sightings={allSightings} seenIds={seenIds} />
-      </Suspense>
-    ),
-    () => (
-      <Suspense fallback={<ScreenFallback />}>
-        <RegisterScreen createSighting={createSighting} refreshSightings={refreshSightings} />
-      </Suspense>
-    ),
+  const latestRef = useRef({ allSightings, seenIds, createSighting, refreshSightings, profile, mySightings })
+  latestRef.current = { allSightings, seenIds, createSighting, refreshSightings, profile, mySightings }
+
+  const screens = useRef([
+    () => {
+      const p = latestRef.current
+      return (
+        <Suspense fallback={<ScreenFallback />}>
+          <MapScreen sightings={p.allSightings} seenIds={p.seenIds} />
+        </Suspense>
+      )
+    },
+    () => {
+      const p = latestRef.current
+      return (
+        <Suspense fallback={<ScreenFallback />}>
+          <RegisterScreen createSighting={p.createSighting} refreshSightings={p.refreshSightings} />
+        </Suspense>
+      )
+    },
     () => (
       <Suspense fallback={<ScreenFallback />}>
         <GuideScreen />
       </Suspense>
     ),
-    () => (
-      <Suspense fallback={<ScreenFallback />}>
-        <ProfileScreen profile={profile} sightings={mySightings} seenIds={seenIds} />
-      </Suspense>
-    ),
-  ], [allSightings, seenIds, createSighting, refreshSightings, profile, mySightings])
+    () => {
+      const p = latestRef.current
+      return (
+        <Suspense fallback={<ScreenFallback />}>
+          <ProfileScreen profile={p.profile} sightings={p.mySightings} seenIds={p.seenIds} />
+        </Suspense>
+      )
+    },
+  ]).current
 
   const loading = profileLoading || sightingsLoading || allLoading || collectionLoading
 
-  return (
-    <div style={{ height: '100%', position: 'relative' }}>
-      {loading && (
-        <div style={{
-          position: 'absolute', inset: 0, zIndex: 9999,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          background: 'var(--bg-deep)',
-        }}>
-          <span style={{ fontSize: 36 }}>🌿</span>
-        </div>
-      )}
-      <div style={{ height: '100%', visibility: loading ? 'hidden' : 'visible' }}>
-        <AppShell
-          screens={screens}
-          profile={profile}
-          sightings={mySightings}
-          seenIds={seenIds}
-          createSighting={createSighting}
-          refreshSightings={refreshSightings}
-        />
+  if (loading) {
+    return (
+      <div style={{
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--bg-deep)',
+      }}>
+        <span style={{ fontSize: 36 }}>🌿</span>
       </div>
-    </div>
+    )
+  }
+
+  return (
+    <AppShell
+      screens={screens}
+      profile={profile}
+      sightings={mySightings}
+      seenIds={seenIds}
+      createSighting={createSighting}
+      refreshSightings={refreshSightings}
+    />
   )
 }
