@@ -63,9 +63,9 @@ export const LEVELS = [
   { min: 150, name: 'Explorador de Trilhas', label: 'Nível 2' },
   { min: 400, name: 'Rastreador', label: 'Nível 3' },
   { min: 800, name: 'Naturalista', label: 'Nível 4' },
-  { min: 1300, name: 'Guardião', label: 'Nível 5' },
+  { min: 1300, name: 'MataGo', label: 'Nível 5' },
   { min: 1840, name: 'Explorador Experiente', label: 'Nível 6' },
-  { min: 2700, name: 'Guardião Sênior', label: 'Nível 7' },
+  { min: 2700, name: 'MataGo Sênior', label: 'Nível 7' },
   { min: 4000, name: 'Mestre da Mantiqueira', label: 'Nível 8' },
 ]
 

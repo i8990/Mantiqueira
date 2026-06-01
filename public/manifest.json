@@ -1,6 +1,6 @@
 {
-  "name": "Guardião da Mantiqueira",
-  "short_name": "Guardião",
+  "name": "MataGo",
+  "short_name": "MataGo",
   "description": "Registre, descubra e proteja a fauna da Serra da Mantiqueira",
   "start_url": "/",
   "display": "standalone",

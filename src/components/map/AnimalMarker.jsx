@@ -45,7 +45,7 @@ export default function AnimalMarker({ sighting, isSeen }) {
               background: 'rgba(0,0,0,.05)',
               display: 'inline-block',
             }}>
-              {creator.avatar_emoji || '🧭'} @{creator.username || 'guardião'}
+              {creator.avatar_emoji || '🧭'} @{creator.username || 'matago'}
             </div>
           )}
           <div style={{ fontSize: 13, marginTop: 4, color: TIER_COLORS[animal?.tier] || '#888' }}>

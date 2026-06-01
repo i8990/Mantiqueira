@@ -100,7 +100,7 @@ export default function AuthPage() {
           color: 'var(--text-1)',
           letterSpacing: '-0.02em',
         }}>
-          Guardião
+          MataGo
         </h1>
         <p style={{
           fontFamily: 'var(--font-d)',

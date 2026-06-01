@@ -80,7 +80,7 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
           color: 'var(--text-1)',
           letterSpacing: '-0.02em',
         }}>
-          @{profile?.username || 'guardião'}
+          @{profile?.username || 'matago'}
         </h2>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <span style={{

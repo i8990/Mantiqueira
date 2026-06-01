@@ -29,7 +29,7 @@ BEGIN
   INSERT INTO profiles (id, username)
   VALUES (
     NEW.id,
-    COALESCE(NEW.raw_user_meta_data->>'username', 'guardiao_' || substr(NEW.id::text, 1, 6))
+    COALESCE(NEW.raw_user_meta_data->>'username', 'matago_' || substr(NEW.id::text, 1, 6))
   );
   RETURN NEW;
 END;

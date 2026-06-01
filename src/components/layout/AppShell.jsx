@@ -43,7 +43,7 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
           letterSpacing: '0.03em',
         }}
       >
-        🌿 Guardião da Mantiqueira
+        🐾 MataGo
       </div>
 
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', overscrollBehavior: 'none', paddingBottom: 80 }}>
