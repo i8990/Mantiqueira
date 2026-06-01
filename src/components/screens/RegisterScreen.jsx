@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react'
 import useAppStore from '../../stores/useAppStore'
+import StepType from '../register/StepType'
 import StepPhoto from '../register/StepPhoto'
 import StepAnimal from '../register/StepAnimal'
 import StepDetails from '../register/StepDetails'
 
-const STEPS = ['Foto', 'Animal', 'Detalhes']
+const STEPS = ['Tipo', 'Foto', 'Animal', 'Detalhes']
 
 export default function RegisterScreen({ createSighting, refreshSightings }) {
   const [step, setStep] = useState(0)
+  const [sightingType, setSightingType] = useState(null)
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
   const [animalId, setAnimalId] = useState(null)
@@ -21,7 +23,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
   useEffect(() => {
     if (prefilledId) {
       setAnimalId(prefilledId)
-      setStep(1)
+      setStep(2)
       setRegisterAnimal(null)
     }
   }, [prefilledId])
@@ -40,12 +42,13 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
   }
 
   const handleSave = async ({ description, lat, lng }) => {
-    if (!animalId) return
+    if (!animalId || !sightingType) return
     setSaving(true)
     setErrorMsg('')
     try {
       const { error } = await createSighting({
         animalId,
+        sightingType,
         photoFile: photoFile || undefined,
         description,
         lat,
@@ -55,6 +58,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
         setErrorMsg(error)
       } else {
         setStep(0)
+        setSightingType(null)
         setPhotoFile(null)
         setPhotoPreview(null)
         setAnimalId(null)
@@ -66,6 +70,16 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
     } finally {
       setSaving(false)
     }
+  }
+
+  const canProceed = () => {
+    if (step === 0) return !!sightingType
+    if (step === 1) {
+      if (sightingType === 'foto' || sightingType === 'pegada') return !!photoFile
+      return true
+    }
+    if (step === 2) return !!animalId
+    return true
   }
 
   return (
@@ -134,22 +148,29 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
 
       <div style={{ flex: 1 }}>
         {step === 0 && (
-          <StepPhoto
-            photoPreview={photoPreview}
-            onFileChange={handleFileChange}
-            onSkip={() => setStep(1)}
+          <StepType
+            selectedType={sightingType}
+            onSelect={setSightingType}
           />
         )}
         {step === 1 && (
-          <StepAnimal
-            selectedAnimalId={animalId}
-            onSelect={(id) => { setAnimalId(id); setStep(2) }}
+          <StepPhoto
+            photoPreview={photoPreview}
+            onFileChange={handleFileChange}
+            onSkip={() => setStep(2)}
+            sightingType={sightingType}
           />
         )}
         {step === 2 && (
+          <StepAnimal
+            selectedAnimalId={animalId}
+            onSelect={(id) => { setAnimalId(id); setStep(3) }}
+          />
+        )}
+        {step === 3 && (
           <StepDetails
             animalId={animalId}
-            hasPhoto={!!photoFile}
+            sightingType={sightingType}
             onSave={handleSave}
             saving={saving}
             errorMsg={errorMsg}
@@ -157,7 +178,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
         )}
       </div>
 
-      {step < 2 && (
+      {step < 3 && (
         <div style={{ display: 'flex', gap: 12 }}>
           {step > 0 && (
             <button
@@ -180,7 +201,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
           )}
           <button
             onClick={() => setStep(s => s + 1)}
-            disabled={step === 0 ? false : !animalId}
+            disabled={!canProceed()}
             style={{
               flex: 1,
               padding: '14px',
@@ -190,13 +211,13 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
               color: '#060D07',
               fontWeight: 600,
               fontSize: 14,
-              cursor: (step === 1 && !animalId) ? 'not-allowed' : 'pointer',
-              opacity: (step === 1 && !animalId) ? 0.5 : 1,
+              cursor: canProceed() ? 'pointer' : 'not-allowed',
+              opacity: canProceed() ? 1 : 0.5,
               boxShadow: '0 4px 20px var(--accent-glow)',
               transition: 'all .2s var(--ease-apple)',
             }}
           >
-            {step === 0 ? 'Pular' : 'Próximo'}
+            Próximo
           </button>
         </div>
       )}

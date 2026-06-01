@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { supabase } from '../lib/supabase'
 import useAuth from '../hooks/useAuth'
 import Button from '../components/ui/Button'
 
@@ -7,11 +8,28 @@ export default function AuthPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
+  const [usernameAvailable, setUsernameAvailable] = useState(null)
+  const [checkingUsername, setCheckingUsername] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
 
   const { signIn, signUp, signInWithGoogle } = useAuth()
+
+  const checkUsername = async (val) => {
+    if (!val || val.length < 3) {
+      setUsernameAvailable(null)
+      return
+    }
+    setCheckingUsername(true)
+    const { data } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('username', val)
+      .maybeSingle()
+    setUsernameAvailable(!data)
+    setCheckingUsername(false)
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -25,6 +43,11 @@ export default function AuthPage() {
     } else {
       if (password.length < 8) {
         setError('Senha deve ter no mínimo 8 caracteres')
+        setLoading(false)
+        return
+      }
+      if (usernameAvailable === false) {
+        setError('Este nome de usuário já está em uso')
         setLoading(false)
         return
       }
@@ -167,27 +190,55 @@ export default function AuthPage() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {mode === 'register' && (
-            <input
-              type="text"
-              placeholder="@guardiao_nome"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '14px 16px',
-                borderRadius: 'var(--r-md)',
-                background: 'var(--glass)',
-                backdropFilter: 'var(--glass-blur)',
-                WebkitBackdropFilter: 'var(--glass-blur)',
-                border: '0.5px solid var(--glass-border)',
-                color: 'var(--text-1)',
-                fontSize: 16,
-                outline: 'none',
-                transition: 'border-color .2s var(--ease-apple)',
-              }}
-              onFocus={e => e.target.style.borderColor = 'var(--accent)'}
-              onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
-            />
+            <div>
+              <input
+                type="text"
+                placeholder="@guardiao_nome"
+                value={username}
+                onChange={e => {
+                  setUsername(e.target.value)
+                  checkUsername(e.target.value)
+                }}
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  borderRadius: 'var(--r-md)',
+                  background: 'var(--glass)',
+                  backdropFilter: 'var(--glass-blur)',
+                  WebkitBackdropFilter: 'var(--glass-blur)',
+                  border: usernameAvailable === false
+                    ? '0.5px solid var(--coral)'
+                    : usernameAvailable === true
+                      ? '0.5px solid var(--accent)'
+                      : '0.5px solid var(--glass-border)',
+                  color: 'var(--text-1)',
+                  fontSize: 16,
+                  outline: 'none',
+                  transition: 'border-color .2s var(--ease-apple)',
+                }}
+                onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+                onBlur={e => {
+                  if (usernameAvailable === false) e.target.style.borderColor = 'var(--coral)'
+                  else if (usernameAvailable === true) e.target.style.borderColor = 'var(--accent)'
+                  else e.target.style.borderColor = 'var(--glass-border)'
+                }}
+              />
+              {checkingUsername && (
+                <span style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4, display: 'block' }}>
+                  Verificando...
+                </span>
+              )}
+              {usernameAvailable === false && (
+                <span style={{ fontSize: 11, color: 'var(--coral)', marginTop: 4, display: 'block' }}>
+                  Nome de usuário já em uso
+                </span>
+              )}
+              {usernameAvailable === true && (
+                <span style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, display: 'block' }}>
+                  Nome disponível ✓
+                </span>
+              )}
+            </div>
           )}
           <input
             type="email"

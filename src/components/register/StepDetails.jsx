@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { ANIMALS } from '../../lib/constants'
+import { ANIMALS, SIGHTING_TYPE_MULTIPLIERS } from '../../lib/constants'
 import Badge from '../ui/Badge'
 
-export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, onSave, saving, errorMsg }) {
+export default function StepDetails({ animalId, sightingType, onSave, saving, errorMsg }) {
   const [description, setDescription] = useState('')
   const [coords, setCoords] = useState(null)
   const animal = ANIMALS.find(a => a.id === animalId)
@@ -15,7 +15,10 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
     )
   }, [])
 
-  const pts = animal ? (hasPhoto ? animal.pts : Math.round(animal.pts * 0.3)) : 0
+  const multiplier = SIGHTING_TYPE_MULTIPLIERS[sightingType] || 1
+  const pts = animal ? Math.round(animal.pts * multiplier) : 0
+  const penalty = multiplier < 1
+  const penaltyText = penalty ? `-${Math.round((1 - multiplier) * 100)}%` : null
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -59,10 +62,7 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
         <textarea
           placeholder="Como foi o avistamento?"
           value={description}
-          onChange={e => {
-            setDescription(e.target.value)
-            onDescriptionChange?.(e.target.value)
-          }}
+          onChange={e => setDescription(e.target.value)}
           rows={3}
           style={{
             width: '100%',
@@ -111,9 +111,21 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
         borderRadius: 'var(--r-md)',
         border: '0.5px solid var(--glass-border)',
       }}>
-        <span style={{ fontSize: 13, color: 'var(--text-2)' }}>
-          Pontos estimados
-        </span>
+        <div>
+          <span style={{ fontSize: 13, color: 'var(--text-2)' }}>
+            Pontos estimados
+          </span>
+          {penalty && (
+            <span style={{
+              fontSize: 11,
+              color: 'var(--coral)',
+              marginLeft: 8,
+              fontWeight: 600,
+            }}>
+              ({penaltyText} penalidade)
+            </span>
+          )}
+        </div>
         <Badge label={`+${pts} pts`} type="accent" />
       </div>
 

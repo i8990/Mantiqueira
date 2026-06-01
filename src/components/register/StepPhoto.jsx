@@ -1,4 +1,6 @@
-export default function StepPhoto({ photoPreview, onFileChange, onSkip }) {
+export default function StepPhoto({ photoPreview, onFileChange, onSkip, sightingType }) {
+  const photoRequired = sightingType === 'foto' || sightingType === 'pegada'
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
       <div
@@ -9,7 +11,7 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip }) {
           background: 'var(--glass)',
           backdropFilter: 'var(--glass-blur)',
           WebkitBackdropFilter: 'var(--glass-blur)',
-          border: '0.5px solid var(--glass-border)',
+          border: photoRequired && !photoPreview ? '0.5px solid var(--coral)' : '0.5px solid var(--glass-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -24,8 +26,13 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip }) {
           <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <div style={{ textAlign: 'center', color: 'var(--text-3)', padding: 24 }}>
-            <div style={{ fontSize: 36, marginBottom: 8 }}>📸</div>
+            <div style={{ fontSize: 36, marginBottom: 8 }}>{sightingType === 'pegada' ? '👣' : '📸'}</div>
             <div style={{ fontSize: 14 }}>Toque para fotografar</div>
+            {photoRequired && (
+              <div style={{ fontSize: 11, color: 'var(--coral)', marginTop: 4 }}>
+                Obrigatório para este tipo
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -37,7 +44,7 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip }) {
         style={{ display: 'none' }}
         onChange={onFileChange}
       />
-      {!photoPreview && (
+      {!photoPreview && !photoRequired && (
         <button
           onClick={onSkip}
           style={{
@@ -52,7 +59,7 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip }) {
           onMouseOver={e => e.target.style.color = 'var(--text-2)'}
           onMouseOut={e => e.target.style.color = 'var(--text-3)'}
         >
-          Sem foto (-70% pts)
+          Sem foto (penalidade máx)
         </button>
       )}
       {photoPreview && (

@@ -2,22 +2,8 @@ import { useState } from 'react'
 import { ANIMALS, TIER_LABELS, TIER_COLORS, DANGER_CONFIG, LEVELS } from '../../lib/constants'
 import FlipCard from '../guide/FlipCard'
 
-const FILTERS = [
-  { key: 'all', label: 'Todos' },
-  { key: 'critico', label: '🔴 Crítico' },
-  { key: 'alto', label: '🟠 Alto' },
-  { key: 'medio', label: '🟡 Médio' },
-  { key: 'baixo', label: '🟢 Baixo' },
-  { key: 'inofensivo', label: '⚪ Inofensivo' },
-]
-
 export default function GuideScreen() {
-  const [filter, setFilter] = useState('all')
   const [showManual, setShowManual] = useState(false)
-
-  const filtered = filter === 'all'
-    ? ANIMALS
-    : ANIMALS.filter(a => a.danger === filter)
 
   return (
     <>
@@ -45,55 +31,28 @@ export default function GuideScreen() {
         </div>
 
         <button onClick={() => setShowManual(true)} style={{
-          alignSelf: 'flex-start',
-          padding: '10px 18px',
-          borderRadius: 'var(--r-md)',
-          fontSize: 13,
-          fontWeight: 600,
-          background: 'var(--glass)',
-          backdropFilter: 'var(--glass-blur)',
-          WebkitBackdropFilter: 'var(--glass-blur)',
-          border: '0.5px solid var(--glass-border)',
+          width: '100%',
+          padding: '16px 20px',
+          borderRadius: 'var(--r-lg)',
+          background: 'var(--accent-dim)',
+          border: '0.5px solid var(--accent)',
           color: 'var(--accent)',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: 8,
+          gap: 12,
           transition: 'all .2s var(--ease-apple)',
+          fontSize: 15,
+          fontWeight: 700,
         }}>
-          📖 Manual do Explorador
+          <span style={{ fontSize: 28 }}>📖</span>
+          <div style={{ textAlign: 'left' }}>
+            <div>Manual do Explorador</div>
+            <div style={{ fontSize: 11, fontWeight: 400, opacity: 0.7, marginTop: 2 }}>
+              Regras, dicas, tipos de avistamento e contribuição científica
+            </div>
+          </div>
         </button>
-
-        <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: 6,
-        }}>
-          {FILTERS.map(f => (
-            <button
-              key={f.key}
-              onClick={() => setFilter(f.key)}
-              style={{
-                padding: '7px 14px',
-                borderRadius: 999,
-                fontSize: 12,
-                fontWeight: 500,
-                background: filter === f.key ? 'var(--accent-dim)' : 'var(--glass)',
-                color: filter === f.key ? 'var(--accent)' : 'var(--text-3)',
-                border: filter === f.key
-                  ? '1px solid var(--accent)'
-                  : '0.5px solid var(--glass-border)',
-                cursor: 'pointer',
-                transition: 'all .2s var(--ease-apple)',
-                whiteSpace: 'nowrap',
-                backdropFilter: filter === f.key ? undefined : 'var(--glass-blur)',
-                WebkitBackdropFilter: filter === f.key ? undefined : 'var(--glass-blur)',
-              }}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
 
         <div style={{
           display: 'grid',
@@ -101,7 +60,7 @@ export default function GuideScreen() {
           gap: 10,
           paddingBottom: 100,
         }}>
-          {filtered.map(animal => (
+          {ANIMALS.map(animal => (
             <FlipCard key={animal.id} animal={animal} />
           ))}
         </div>
@@ -172,12 +131,47 @@ export default function GuideScreen() {
                 ))}
               </Section>
 
+              <Section title="📋 Tipos de avistamento">
+                <P>Cada avistamento tem um <strong>tipo</strong> que define os pontos ganhos:</P>
+                {[
+                  { type: '📸 Foto', desc: 'Foto do animal registrada', pts: '100% dos pts da espécie' },
+                  { type: '👣 Pegada', desc: 'Foto da pegada (obrigatório)', pts: '60% dos pts da espécie' },
+                  { type: '🚗 Atropelamento', desc: 'Comunicação de animal atropelado', pts: '50% dos pts da espécie' },
+                  { type: '💬 Comunicação', desc: 'Relato apenas (sem foto)', pts: '30% dos pts da espécie (penalidade máxima)' },
+                ].map(item => (
+                  <div key={item.type} style={{
+                    padding: '8px 12px',
+                    borderRadius: 8,
+                    background: 'var(--glass)',
+                    marginBottom: 4,
+                  }}>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)' }}>{item.type}</div>
+                    <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 1 }}>{item.desc}</div>
+                    <div style={{ fontSize: 11, color: 'var(--accent)', marginTop: 1, fontWeight: 600 }}>{item.pts}</div>
+                  </div>
+                ))}
+              </Section>
+
               <Section title="📸 Como registrar">
-                <P>1. Toque na aba <strong>Registrar</strong></P>
-                <P>2. Tire uma foto do animal (pode ser da galeria)</P>
+                <P>1. Escolha o <strong>tipo de avistamento</strong></P>
+                <P>2. Tire uma foto (obrigatória para Foto e Pegada)</P>
                 <P>3. Selecione o animal correspondente na lista</P>
                 <P>4. Adicione detalhes e confirme a localização</P>
                 <P>5. Pronto! Os pontos já são creditados</P>
+              </Section>
+
+              <Section title="👣 Pegadas também valem!">
+                <P>Não achou o animal, mas viu uma <strong>pegada</strong>? Registre! Os pesquisadores usam pegadas para mapear a presença de espécies.</P>
+                <P>Só lembre de tirar uma <strong>foto nítida</strong> da pegada com algo pra escala (uma moeda, régua, etc).</P>
+              </Section>
+
+              <Section title="📊 Contribuição científica">
+                <P>Os dados que você registra no MataGo são <strong>compartilhados com órgãos de preservação ambiental e pesquisadores</strong> da região da Mantiqueira.</P>
+                <P>Seus avistamentos ajudam a:</P>
+                <P>🌱 Mapear a distribuição das espécies</P>
+                <P>⚠️ Identificar áreas de atropelamento</P>
+                <P>📈 Monitorar populações ameaçadas</P>
+                <P>🌍 Planejar ações de conservação</P>
               </Section>
 
               <Section title="⭐ Níveis">

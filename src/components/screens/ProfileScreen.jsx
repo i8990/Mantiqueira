@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { ANIMALS, calcLevel, TIER_LABELS, TIER_COLORS } from '../../lib/constants'
+import { useState, useEffect } from 'react'
+import { ANIMALS, calcLevel, TIER_LABELS, TIER_COLORS, LEVELS } from '../../lib/constants'
+import { supabase } from '../../lib/supabase'
 import BadgeGrid from '../profile/BadgeGrid'
 import RankCard from '../profile/RankCard'
 import AnimalCard from '../collection/AnimalCard'
@@ -20,6 +21,18 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
   const levelData = calcLevel(profile?.total_pts || 0)
   const [rarityFilter, setRarityFilter] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
+  const [rankData, setRankData] = useState([])
+  const [showRanking, setShowRanking] = useState(false)
+
+  useEffect(() => {
+    supabase
+      .from('profiles')
+      .select('id, username, avatar_emoji, total_pts')
+      .order('total_pts', { ascending: false })
+      .then(({ data }) => setRankData(data || []))
+  }, [])
+
+  const userRank = rankData.findIndex(r => r.id === profile?.id) + 1
 
   const filtered = rarityFilter === 'all'
     ? ANIMALS
@@ -29,7 +42,7 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
     { icon: '📍', label: 'Registros', value: sightings?.length || 0 },
     { icon: '🦎', label: 'Espécies', value: seenIds?.size || 0 },
     { icon: '🔥', label: 'Streak', value: `${profile?.streak_days || 0}d` },
-    { icon: '🗺️', label: 'Área', value: `${sightings?.filter(s => s.lat).length || 0} pts` },
+    { icon: '🏆', label: 'Ranking', value: userRank ? `#${userRank}` : '-' },
   ]
 
   const uniqueTiersSeen = [...new Set(ANIMALS.filter(a => seenIds.has(a.id)).map(a => a.tier))]
@@ -130,7 +143,7 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
         ))}
       </div>
 
-      <RankCard totalPts={profile?.total_pts || 0} rankData={[]} />
+      <RankCard totalPts={profile?.total_pts || 0} rankData={rankData} userId={profile?.id} />
 
       <div>
         <div style={{
@@ -217,13 +230,108 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
         gap: 12,
         paddingBottom: 20,
       }}>
-        <Button variant="glass" leftIcon="📤">
-          Compartilhar meu perfil
+        <Button variant="glass" leftIcon="🏆" onClick={() => setShowRanking(true)}>
+          Ranking
         </Button>
         <Button variant="ghost" onClick={signOut}>
           Sair
         </Button>
       </div>
+
+      {showRanking && (
+        <div onClick={() => setShowRanking(false)} style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 10000,
+          background: 'rgba(0,0,0,.7)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 20,
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: 'var(--bg-card)',
+            borderRadius: 'var(--r-xl)',
+            maxHeight: '85%',
+            width: '100%',
+            maxWidth: 400,
+            overflowY: 'auto',
+            padding: 24,
+          }}>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 20,
+            }}>
+              <h3 style={{
+                fontFamily: 'var(--font-d)',
+                fontWeight: 700,
+                fontSize: 20,
+                color: 'var(--text-1)',
+              }}>
+                🏆 Ranking
+              </h3>
+              <button onClick={() => setShowRanking(false)} style={{
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-3)',
+                fontSize: 20,
+                cursor: 'pointer',
+                padding: 4,
+              }}>
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+              {rankData.map((p, i) => {
+                const isMe = p.id === profile?.id
+                const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`
+                return (
+                  <div key={p.id} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 10,
+                    padding: '10px 12px',
+                    borderRadius: 'var(--r-sm)',
+                    background: isMe ? 'var(--accent-dim)' : 'var(--glass)',
+                    border: isMe ? '0.5px solid var(--accent)' : '0.5px solid var(--glass-border)',
+                  }}>
+                    <span style={{
+                      width: 28,
+                      fontSize: 13,
+                      fontWeight: 700,
+                      color: i < 3 ? undefined : 'var(--text-3)',
+                      textAlign: 'center',
+                      flexShrink: 0,
+                    }}>
+                      {medal}
+                    </span>
+                    <span style={{ fontSize: 18, flexShrink: 0 }}>{p.avatar_emoji || '🧭'}</span>
+                    <span style={{
+                      flex: 1,
+                      fontSize: 14,
+                      fontWeight: isMe ? 700 : 500,
+                      color: isMe ? 'var(--accent)' : 'var(--text-1)',
+                    }}>
+                      @{p.username}
+                      {isMe && <span style={{ fontSize: 11, color: 'var(--accent)', marginLeft: 6 }}>(você)</span>}
+                    </span>
+                    <span style={{
+                      fontWeight: 700,
+                      fontSize: 13,
+                      color: 'var(--amber)',
+                    }}>
+                      {p.total_pts} pts
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       {selectedId && (
         <AnimalDetailSheet

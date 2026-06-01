@@ -1,6 +1,6 @@
-export default function RankCard({ totalPts, rankData }) {
-  const position = rankData?.findIndex(r => r.rank === 1) + 1 || 1
-  const total = rankData?.length || 1
+export default function RankCard({ totalPts, rankData, userId }) {
+  const position = rankData.findIndex(r => r.id === userId) + 1
+  const total = rankData.length || 1
   const percentile = Math.round(((total - position) / total) * 100)
 
   return (
@@ -12,6 +12,7 @@ export default function RankCard({ totalPts, rankData }) {
       borderRadius: 'var(--r-lg)',
       border: '0.5px solid var(--glass-border)',
       boxShadow: 'var(--shadow-md)',
+      cursor: 'pointer',
     }}>
       <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-1)', marginBottom: 12 }}>
         Ranking regional
@@ -35,14 +36,16 @@ export default function RankCard({ totalPts, rankData }) {
           border: '2px solid var(--amber)',
           boxShadow: '0 0 20px rgba(245,167,51,.2)',
         }}>
-          #{position}
+          {position > 0 ? `#${position}` : '-'}
         </div>
         <div>
           <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--amber)' }}>
             {totalPts} pts
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
-            Você está entre os {percentile}% melhores
+            {position > 0
+              ? `Você está entre os ${percentile}% melhores`
+              : 'Nenhum dado disponível'}
           </div>
         </div>
       </div>

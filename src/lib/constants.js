@@ -81,6 +81,13 @@ export const ANIMALS = [
   { id: 'taturana', name: 'Taturana', sci: 'Lonomia obliqua', emoji: '🐛', img: 'https://upload.wikimedia.org/wikipedia/commons/e/e3/Lonomia-obliqua-citsc-1.jpg', tier: 'D', tierLabel: 'Muito Comum', pts: 15, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Troncos de árvores', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Taturana', danger: 'critico', habits: ['🌿 Herbívora', '🌳 Troncos', '⚠️ Venenosa'], howToFind: 'Troncos de árvores; NÃO TOQUE — veneno perigoso' },
 ]
 
+export const SIGHTING_TYPE_MULTIPLIERS = {
+  foto: 1.0,
+  pegada: 0.6,
+  atropelamento: 0.5,
+  comunicacao: 0.3,
+}
+
 export const DANGER_COLORS = {
   critico: 'var(--coral)',
   alto: 'var(--amber)',
