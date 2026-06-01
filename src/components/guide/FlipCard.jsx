@@ -46,7 +46,28 @@ export default function FlipCard({ animal }) {
             gap: 5,
           }}
         >
-          <span style={{ fontSize: 34 }}>{animal.emoji}</span>
+          {animal.img ? (
+            <div style={{
+              width: 64,
+              height: 64,
+              borderRadius: '50%',
+              overflow: 'hidden',
+              background: 'rgba(0,0,0,.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 34,
+            }}>
+              <img
+                src={animal.img}
+                alt={animal.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                onError={e => { e.target.style.display = 'none'; e.target.parentNode.textContent = animal.emoji }}
+              />
+            </div>
+          ) : (
+            <span style={{ fontSize: 34 }}>{animal.emoji}</span>
+          )}
           <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-1)', textAlign: 'center', lineHeight: 1.2 }}>
             {animal.name}
           </span>
@@ -100,7 +121,28 @@ export default function FlipCard({ animal }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: 24 }}>{animal.emoji}</span>
+            {animal.img ? (
+              <div style={{
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                overflow: 'hidden',
+                background: 'rgba(0,0,0,.15)',
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                <img
+                  src={animal.img}
+                  alt={animal.name}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={e => { e.target.style.display = 'none'; e.target.parentNode.textContent = animal.emoji }}
+                />
+              </div>
+            ) : (
+              <span style={{ fontSize: 24, flexShrink: 0 }}>{animal.emoji}</span>
+            )}
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)', lineHeight: 1.1 }}>
                 {animal.name}
