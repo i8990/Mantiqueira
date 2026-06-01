@@ -6,8 +6,7 @@ import AppShell from '../components/layout/AppShell'
 
 const MapScreen = lazy(() => import('../components/screens/MapScreen'))
 const RegisterScreen = lazy(() => import('../components/screens/RegisterScreen'))
-const CollectionScreen = lazy(() => import('../components/screens/CollectionScreen'))
-const CurioScreen = lazy(() => import('../components/screens/CurioScreen'))
+const GuideScreen = lazy(() => import('../components/screens/GuideScreen'))
 const ProfileScreen = lazy(() => import('../components/screens/ProfileScreen'))
 
 function ScreenFallback() {
@@ -57,12 +56,7 @@ export default function MainApp({ session }) {
     ),
     () => (
       <Suspense fallback={<ScreenFallback />}>
-        <CollectionScreen seenIds={seenIds} profile={profile} />
-      </Suspense>
-    ),
-    () => (
-      <Suspense fallback={<ScreenFallback />}>
-        <CurioScreen />
+        <GuideScreen />
       </Suspense>
     ),
     () => (
