@@ -1,4 +1,4 @@
-import { useRef, useEffect, lazy, Suspense } from 'react'
+import { lazy, Suspense } from 'react'
 import useAppStore from '../../stores/useAppStore'
 import Button from '../ui/Button'
 
@@ -6,17 +6,8 @@ const LeafletMap = lazy(() => import('../map/LeafletMap'))
 const AnimalMarker = lazy(() => import('../map/AnimalMarker'))
 
 export default function MapScreen({ sightings, seenIds }) {
-  const mapRef = useRef(null)
   const mapCenter = useAppStore(s => s.mapCenter)
   const setActiveTab = useAppStore(s => s.setActiveTab)
-
-  useEffect(() => {
-    if (mapRef.current) {
-      setTimeout(() => {
-        mapRef.current.invalidateSize()
-      }, 50)
-    }
-  }, [])
 
   return (
     <div style={{ height: '100%', position: 'relative' }}>
@@ -50,10 +41,7 @@ export default function MapScreen({ sightings, seenIds }) {
       </div>
 
       <Suspense fallback={<div style={{ height: '100%', background: 'var(--bg-deep)' }} />}>
-        <LeafletMap
-          center={mapCenter}
-          whenReady={({ target }) => { mapRef.current = target }}
-        >
+        <LeafletMap center={mapCenter}>
           {sightings?.map(s => (
             <AnimalMarker
               key={s.id}

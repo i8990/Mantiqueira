@@ -70,22 +70,6 @@ export default function MainApp({ session }) {
     },
   ]).current
 
-  const loading = profileLoading || sightingsLoading || allLoading || collectionLoading
-
-  if (loading) {
-    return (
-      <div style={{
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--bg-deep)',
-      }}>
-        <span style={{ fontSize: 36 }}>🌿</span>
-      </div>
-    )
-  }
-
   return (
     <AppShell
       screens={screens}
