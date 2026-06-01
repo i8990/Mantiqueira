@@ -4,7 +4,7 @@ export const TABS = [
   { key: 'mapa', icon: '🗺️', label: 'Mapa' },
   { key: 'registrar', icon: '📷', label: 'Registrar' },
   { key: 'colecao', icon: '🃏', label: 'Coleção' },
-  { key: 'curiosidades', icon: '🌿', label: 'Curiosidades' },
+  { key: 'guia', icon: '🔭', label: 'Guia' },
   { key: 'perfil', icon: '🧭', label: 'Perfil' },
 ]
 

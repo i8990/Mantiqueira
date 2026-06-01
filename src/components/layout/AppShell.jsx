@@ -48,7 +48,7 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
 
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
         {screens.map((Screen, i) => {
-          const tabKey = ['mapa', 'registrar', 'colecao', 'curiosidades', 'perfil'][i]
+          const tabKey = ['mapa', 'registrar', 'colecao', 'guia', 'perfil'][i]
           return (
             <div key={tabKey} style={screenStyles(activeTab === tabKey)}>
               <Screen
