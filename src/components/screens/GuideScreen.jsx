@@ -78,7 +78,7 @@ export default function GuideScreen() {
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)',
         gap: 10,
-        paddingBottom: 80,
+        paddingBottom: 100,
       }}>
         {filtered.map(animal => (
           <FlipCard key={animal.id} animal={animal} />

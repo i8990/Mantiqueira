@@ -60,7 +60,7 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
             WebkitBackdropFilter: 'var(--glass-blur)',
             border: '0.5px solid var(--glass-border)',
             color: 'var(--text-1)',
-            fontSize: 14,
+            fontSize: 16,
             resize: 'none',
             outline: 'none',
             transition: 'border-color .2s var(--ease-apple)',

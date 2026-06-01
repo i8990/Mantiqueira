@@ -11,7 +11,7 @@ const useAppStore = create((set) => ({
   activeTab: 'mapa',
   selectedAnimalId: null,
   registerPrefilledAnimalId: null,
-  mapCenter: [-22.155, -44.845],
+  mapCenter: [-22.02, -44.73],
 
   setActiveTab: (tab) => set({ activeTab: tab }),
   setSelectedAnimal: (id) => set({ selectedAnimalId: id }),

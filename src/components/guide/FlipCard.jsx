@@ -11,7 +11,8 @@ export default function FlipCard({ animal }) {
       style={{
         perspective: 1200,
         cursor: 'pointer',
-        height: 280,
+        minHeight: 260,
+        aspectRatio: '3 / 4',
       }}
     >
       <div

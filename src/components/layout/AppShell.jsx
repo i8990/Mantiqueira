@@ -27,7 +27,7 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
     >
       <div
         style={{
-          height: 44,
+          height: 'calc(44px + env(safe-area-inset-top, 0px))',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -35,7 +35,6 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
           fontWeight: 500,
           color: 'var(--text-3)',
           flexShrink: 0,
-          paddingTop: 'env(safe-area-inset-top, 0)',
           background: 'var(--glass)',
           backdropFilter: 'var(--glass-blur)',
           WebkitBackdropFilter: 'var(--glass-blur)',
@@ -46,11 +45,11 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
         🌿 Guardião da Mantiqueira
       </div>
 
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', overscrollBehavior: 'none' }}>
         {screens.map((Screen, i) => {
           const tabKey = ['mapa', 'registrar', 'guia', 'perfil'][i]
           return (
-            <div key={tabKey} style={screenStyles(activeTab === tabKey)}>
+            <div key={tabKey} style={{...screenStyles(activeTab === tabKey), WebkitOverflowScrolling: 'touch'}}>
               <Screen
                 profile={profile}
                 sightings={sightings}

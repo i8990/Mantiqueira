@@ -66,7 +66,7 @@ export default function MapScreen({ sightings, seenIds }) {
 
       <div style={{
         position: 'absolute',
-        bottom: 20,
+        bottom: 80,
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 1000,

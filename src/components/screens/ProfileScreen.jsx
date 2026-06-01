@@ -201,7 +201,7 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
           gap: 10,
-          paddingBottom: 20,
+          paddingBottom: 100,
         }}>
           {filtered.map(animal => (
             <AnimalCard

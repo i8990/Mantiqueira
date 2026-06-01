@@ -39,17 +39,21 @@ export default function AuthPage() {
   }
 
   return (
-    <div style={{
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'var(--bg-deep)',
-      padding: '0 24px',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
+      <div style={{
+        height: '100dvh',
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+      }}>
+      <div style={{
+        minHeight: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--bg-deep)',
+        padding: 'calc(env(safe-area-inset-top, 0px) + 40px) 24px calc(env(safe-area-inset-bottom, 0px) + 24px)',
+        position: 'relative',
+      }}>
       <div style={{
         position: 'absolute',
         top: -80,
@@ -148,14 +152,15 @@ export default function AuthPage() {
                   background: isActive ? 'var(--accent)' : 'transparent',
                   color: isActive ? '#060D07' : 'var(--text-3)',
                   fontWeight: 600,
-                  fontSize: 14,
-                  cursor: 'pointer',
-                  transition: 'all .2s var(--ease-apple)',
-                  boxShadow: isActive ? '0 2px 12px var(--accent-glow)' : 'none',
-                }}
-              >
-                {m === 'login' ? 'Entrar' : 'Criar conta'}
-              </button>
+                fontSize: 14,
+                cursor: 'pointer',
+                transition: 'all .2s var(--ease-apple)',
+                boxShadow: isActive ? '0 2px 12px var(--accent-glow)' : 'none',
+                WebkitTapHighlightColor: 'transparent',
+              }}
+            >
+              {m === 'login' ? 'Entrar' : 'Criar conta'}
+            </button>
             )
           })}
         </div>
@@ -176,7 +181,7 @@ export default function AuthPage() {
                 WebkitBackdropFilter: 'var(--glass-blur)',
                 border: '0.5px solid var(--glass-border)',
                 color: 'var(--text-1)',
-                fontSize: 14,
+                fontSize: 16,
                 outline: 'none',
                 transition: 'border-color .2s var(--ease-apple)',
               }}
@@ -199,7 +204,7 @@ export default function AuthPage() {
               WebkitBackdropFilter: 'var(--glass-blur)',
               border: '0.5px solid var(--glass-border)',
               color: 'var(--text-1)',
-              fontSize: 14,
+              fontSize: 16,
               outline: 'none',
               transition: 'border-color .2s var(--ease-apple)',
             }}
@@ -222,7 +227,7 @@ export default function AuthPage() {
               WebkitBackdropFilter: 'var(--glass-blur)',
               border: '0.5px solid var(--glass-border)',
               color: 'var(--text-1)',
-              fontSize: 14,
+              fontSize: 16,
               outline: 'none',
               transition: 'border-color .2s var(--ease-apple)',
             }}
@@ -272,6 +277,7 @@ export default function AuthPage() {
           Entrar com Google
         </Button>
       </div>
+    </div>
     </div>
   )
 }
