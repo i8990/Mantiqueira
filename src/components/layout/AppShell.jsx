@@ -12,7 +12,7 @@ const screenStyles = (isActive) => ({
   transition: `opacity .35s var(--ease-apple), transform .35s var(--ease-apple)`,
 })
 
-export default function AppShell({ screens, profile, sightings, seenIds, rankData, createSighting, refreshSightings }) {
+export default function AppShell({ screens, profile, sightings, seenIds, createSighting, refreshSightings }) {
   const activeTab = useAppStore(s => s.activeTab)
 
   return (
@@ -55,7 +55,6 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
                 profile={profile}
                 sightings={sightings}
                 seenIds={seenIds}
-                rankData={rankData}
                 createSighting={createSighting}
                 refreshSightings={refreshSightings}
               />

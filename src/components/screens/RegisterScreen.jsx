@@ -23,6 +23,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
   useEffect(() => {
     if (prefilledId) {
       setAnimalId(prefilledId)
+      setSightingType('foto')
       setStep(2)
       setRegisterAnimal(null)
     }
@@ -42,7 +43,10 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
   }
 
   const handleSave = async ({ description, lat, lng }) => {
-    if (!animalId || !sightingType) return
+    if (!animalId || !sightingType) {
+      setErrorMsg('Selecione o tipo de avistamento primeiro')
+      return
+    }
     setSaving(true)
     setErrorMsg('')
     try {

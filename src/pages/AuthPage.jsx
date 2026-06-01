@@ -10,6 +10,7 @@ export default function AuthPage() {
   const [username, setUsername] = useState('')
   const [usernameAvailable, setUsernameAvailable] = useState(null)
   const [checkingUsername, setCheckingUsername] = useState(false)
+  const [focusedField, setFocusedField] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
@@ -22,12 +23,12 @@ export default function AuthPage() {
       return
     }
     setCheckingUsername(true)
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('id')
       .eq('username', val)
       .maybeSingle()
-    setUsernameAvailable(!data)
+    if (!error) setUsernameAvailable(!data)
     setCheckingUsername(false)
   }
 
@@ -43,6 +44,11 @@ export default function AuthPage() {
     } else {
       if (password.length < 8) {
         setError('Senha deve ter no mínimo 8 caracteres')
+        setLoading(false)
+        return
+      }
+      if (!username || username.trim().length < 3) {
+        setError('Nome de usuário deve ter no mínimo 3 caracteres')
         setLoading(false)
         return
       }
@@ -206,22 +212,22 @@ export default function AuthPage() {
                   background: 'var(--glass)',
                   backdropFilter: 'var(--glass-blur)',
                   WebkitBackdropFilter: 'var(--glass-blur)',
-                  border: usernameAvailable === false
-                    ? '0.5px solid var(--coral)'
-                    : usernameAvailable === true
-                      ? '0.5px solid var(--accent)'
-                      : '0.5px solid var(--glass-border)',
+                  borderColor: focusedField === 'username'
+                    ? 'var(--accent)'
+                    : usernameAvailable === false
+                      ? 'var(--coral)'
+                      : usernameAvailable === true
+                        ? 'var(--accent)'
+                        : 'var(--glass-border)',
+                  borderStyle: 'solid',
+                  borderWidth: '0.5px',
                   color: 'var(--text-1)',
                   fontSize: 16,
                   outline: 'none',
                   transition: 'border-color .2s var(--ease-apple)',
                 }}
-                onFocus={e => e.target.style.borderColor = 'var(--accent)'}
-                onBlur={e => {
-                  if (usernameAvailable === false) e.target.style.borderColor = 'var(--coral)'
-                  else if (usernameAvailable === true) e.target.style.borderColor = 'var(--accent)'
-                  else e.target.style.borderColor = 'var(--glass-border)'
-                }}
+                onFocus={() => setFocusedField('username')}
+                onBlur={() => setFocusedField(null)}
               />
               {checkingUsername && (
                 <span style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4, display: 'block' }}>
@@ -253,14 +259,16 @@ export default function AuthPage() {
               background: 'var(--glass)',
               backdropFilter: 'var(--glass-blur)',
               WebkitBackdropFilter: 'var(--glass-blur)',
-              border: '0.5px solid var(--glass-border)',
+              borderColor: focusedField === 'email' ? 'var(--accent)' : 'var(--glass-border)',
+              borderStyle: 'solid',
+              borderWidth: '0.5px',
               color: 'var(--text-1)',
               fontSize: 16,
               outline: 'none',
               transition: 'border-color .2s var(--ease-apple)',
             }}
-            onFocus={e => e.target.style.borderColor = 'var(--accent)'}
-            onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
+            onFocus={() => setFocusedField('email')}
+            onBlur={() => setFocusedField(null)}
           />
           <input
             type="password"
@@ -276,14 +284,16 @@ export default function AuthPage() {
               background: 'var(--glass)',
               backdropFilter: 'var(--glass-blur)',
               WebkitBackdropFilter: 'var(--glass-blur)',
-              border: '0.5px solid var(--glass-border)',
+              borderColor: focusedField === 'password' ? 'var(--accent)' : 'var(--glass-border)',
+              borderStyle: 'solid',
+              borderWidth: '0.5px',
               color: 'var(--text-1)',
               fontSize: 16,
               outline: 'none',
               transition: 'border-color .2s var(--ease-apple)',
             }}
-            onFocus={e => e.target.style.borderColor = 'var(--accent)'}
-            onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
+            onFocus={() => setFocusedField('password')}
+            onBlur={() => setFocusedField(null)}
           />
 
           {error && (

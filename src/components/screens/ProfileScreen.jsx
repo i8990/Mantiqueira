@@ -30,6 +30,7 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
       .select('id, username, avatar_emoji, total_pts')
       .order('total_pts', { ascending: false })
       .then(({ data }) => setRankData(data || []))
+      .catch(() => setRankData([]))
   }, [])
 
   const userRank = rankData.findIndex(r => r.id === profile?.id) + 1
@@ -44,8 +45,6 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
     { icon: '🔥', label: 'Streak', value: `${profile?.streak_days || 0}d` },
     { icon: '🏆', label: 'Ranking', value: userRank ? `#${userRank}` : '-' },
   ]
-
-  const uniqueTiersSeen = [...new Set(ANIMALS.filter(a => seenIds.has(a.id)).map(a => a.tier))]
 
   return (
     <div style={{

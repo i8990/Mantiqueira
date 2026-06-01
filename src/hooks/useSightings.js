@@ -2,6 +2,14 @@ import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
 import { ANIMALS, SIGHTING_TYPE_MULTIPLIERS } from '../lib/constants'
 
+function uuidv4() {
+  if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = (crypto.getRandomValues(new Uint8Array(1))[0] & 15) | (c === 'x' ? 0 : 8)
+    return r.toString(16)
+  })
+}
+
 export default function useSightings(userId) {
   const [sightings, setSightings] = useState([])
   const [loading, setLoading] = useState(true)
@@ -13,7 +21,7 @@ export default function useSightings(userId) {
     try {
       const { data, error } = await supabase
         .from('sightings')
-        .select('*, animals(name, emoji, tier, pts)')
+        .select('*, animals(name, emoji, tier, pts), has_photo')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
       if (error) {
@@ -41,7 +49,7 @@ export default function useSightings(userId) {
 
     if (photoFile) {
       const ext = photoFile.name.split('.').pop()
-      const filePath = `${userId}/${crypto.randomUUID()}.${ext}`
+      const filePath = `${userId}/${uuidv4()}.${ext}`
       const { error: uploadError } = await supabase.storage
         .from('sightings-photos')
         .upload(filePath, photoFile)
@@ -86,7 +94,7 @@ export function useAllSightings() {
     try {
       const { data, error } = await supabase
         .from('sightings')
-        .select('*, animals(name, emoji, tier, pts), profiles(username, avatar_emoji)')
+        .select('*, animals(name, emoji, tier, pts), profiles(username, avatar_emoji), has_photo')
         .not('lat', 'is', null)
         .order('created_at', { ascending: false })
       if (error) {

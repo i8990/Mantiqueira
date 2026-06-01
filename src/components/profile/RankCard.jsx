@@ -1,7 +1,7 @@
 export default function RankCard({ totalPts, rankData, userId }) {
   const position = rankData.findIndex(r => r.id === userId) + 1
   const total = rankData.length || 1
-  const percentile = Math.round(((total - position) / total) * 100)
+  const percentile = position > 0 ? Math.round(((total - position) / total) * 100) : 0
 
   return (
     <div style={{

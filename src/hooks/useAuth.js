@@ -28,6 +28,14 @@ export default function useAuth() {
       password,
       options: { data: { username } },
     })
+    if (!error && data?.user) {
+      await supabase.from('profiles').upsert({
+        id: data.user.id,
+        username,
+        avatar_emoji: '🧭',
+        total_pts: 0,
+      }).maybeSingle()
+    }
     return { data, error }
   }
 

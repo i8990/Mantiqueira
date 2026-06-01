@@ -1,4 +1,7 @@
+import { useRef } from 'react'
+
 export default function StepPhoto({ photoPreview, onFileChange, onSkip, sightingType }) {
+  const inputRef = useRef(null)
   const photoRequired = sightingType === 'foto' || sightingType === 'pegada'
 
   return (
@@ -20,7 +23,7 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip, sighting
           position: 'relative',
           boxShadow: 'var(--shadow-md)',
         }}
-        onClick={() => document.getElementById('photo-input').click()}
+        onClick={() => inputRef.current?.click()}
       >
         {photoPreview ? (
           <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -37,7 +40,7 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip, sighting
         )}
       </div>
       <input
-        id="photo-input"
+        ref={inputRef}
         type="file"
         accept="image/*"
         capture="environment"
@@ -65,7 +68,7 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip, sighting
       {photoPreview && (
         <button
           onClick={() => {
-            document.getElementById('photo-input').value = ''
+            if (inputRef.current) inputRef.current.value = ''
             onFileChange({ target: { files: [] } })
           }}
           style={{

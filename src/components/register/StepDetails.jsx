@@ -5,19 +5,21 @@ import Badge from '../ui/Badge'
 export default function StepDetails({ animalId, sightingType, onSave, saving, errorMsg }) {
   const [description, setDescription] = useState('')
   const [coords, setCoords] = useState(null)
+  const [geoError, setGeoError] = useState(false)
   const animal = ANIMALS.find(a => a.id === animalId)
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
+    const watchId = navigator.geolocation.getCurrentPosition(
       (pos) => setCoords({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      () => {},
+      () => setGeoError(true),
       { enableHighAccuracy: true, timeout: 10000 }
     )
+    return () => navigator.geolocation.clearWatch(watchId)
   }, [])
 
-  const multiplier = SIGHTING_TYPE_MULTIPLIERS[sightingType] || 1
-  const pts = animal ? Math.round(animal.pts * multiplier) : 0
-  const penalty = multiplier < 1
+  const multiplier = sightingType ? SIGHTING_TYPE_MULTIPLIERS[sightingType] : null
+  const pts = animal && multiplier ? Math.round(animal.pts * multiplier) : 0
+  const penalty = multiplier && multiplier < 1
   const penaltyText = penalty ? `-${Math.round((1 - multiplier) * 100)}%` : null
 
   return (
@@ -32,6 +34,19 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
           borderRadius: 'var(--r-sm)',
         }}>
           {errorMsg}
+        </p>
+      )}
+
+      {!sightingType && (
+        <p style={{
+          color: 'var(--amber)',
+          fontSize: 13,
+          textAlign: 'center',
+          background: 'var(--amber-dim)',
+          padding: '10px 14px',
+          borderRadius: 'var(--r-sm)',
+        }}>
+          ⚠️ Nenhum tipo de avistamento selecionado. Volte e escolha um tipo.
         </p>
       )}
 
@@ -93,7 +108,9 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
         fontSize: 13,
         color: 'var(--text-2)',
       }}>
-        {coords ? (
+        {geoError ? (
+          <span style={{ color: 'var(--coral)' }}>⚠️ Localização indisponível — o registro não aparecerá no mapa</span>
+        ) : coords ? (
           <span>📍 GPS capturado ✓</span>
         ) : (
           <span style={{ color: 'var(--text-3)' }}>📍 Obtendo localização...</span>
@@ -131,7 +148,7 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
 
       <button
         onClick={() => onSave({ description, lat: coords?.lat, lng: coords?.lng })}
-        disabled={saving || !animalId}
+        disabled={saving || !animalId || !sightingType}
         style={{
           width: '100%',
           padding: '14px 24px',
@@ -141,8 +158,8 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
           fontWeight: 600,
           fontSize: 15,
           border: 'none',
-          cursor: (saving || !animalId) ? 'not-allowed' : 'pointer',
-          opacity: (saving || !animalId) ? 0.5 : 1,
+          cursor: (saving || !animalId || !sightingType) ? 'not-allowed' : 'pointer',
+          opacity: (saving || !animalId || !sightingType) ? 0.5 : 1,
           boxShadow: '0 4px 20px var(--accent-glow)',
           transition: 'all .2s var(--ease-apple)',
         }}

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DANGER_CONFIG, DANGER_COLORS } from '../../lib/constants'
+import { DANGER_CONFIG } from '../../lib/constants'
 
 export default function FlipCard({ animal }) {
   const [flipped, setFlipped] = useState(false)
