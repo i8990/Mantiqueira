@@ -1,9 +1,7 @@
-import { lazy, Suspense } from 'react'
 import useAppStore from '../../stores/useAppStore'
 import Button from '../ui/Button'
-
-const LeafletMap = lazy(() => import('../map/LeafletMap'))
-const AnimalMarker = lazy(() => import('../map/AnimalMarker'))
+import LeafletMap from '../map/LeafletMap'
+import AnimalMarker from '../map/AnimalMarker'
 
 export default function MapScreen({ sightings, seenIds }) {
   const mapCenter = useAppStore(s => s.mapCenter)
@@ -40,17 +38,15 @@ export default function MapScreen({ sightings, seenIds }) {
         PESP · Serra do Papagaio · Aiuruoca
       </div>
 
-      <Suspense fallback={<div style={{ height: '100%', background: 'var(--bg-deep)' }} />}>
-        <LeafletMap center={mapCenter}>
-          {sightings?.map(s => (
-            <AnimalMarker
-              key={s.id}
-              sighting={s}
-              isSeen={seenIds?.has(s.animal_id)}
-            />
-          ))}
-        </LeafletMap>
-      </Suspense>
+      <LeafletMap center={mapCenter}>
+        {sightings?.map(s => (
+          <AnimalMarker
+            key={s.id}
+            sighting={s}
+            isSeen={seenIds?.has(s.animal_id)}
+          />
+        ))}
+      </LeafletMap>
 
       <div style={{
         position: 'absolute',
