@@ -54,11 +54,11 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
       if (error) {
         setErrorMsg(error)
       } else {
-        refreshSightings?.()
         setStep(0)
         setPhotoFile(null)
         setPhotoPreview(null)
         setAnimalId(null)
+        refreshSightings?.()
         setActiveTab('mapa')
       }
     } catch (err) {

@@ -8,20 +8,25 @@ export default function useSightings(userId) {
   const [error, setError] = useState(null)
 
   const refresh = useCallback(async () => {
-    if (!userId) return
+    if (!userId) { setLoading(false); return }
     setLoading(true)
-    const { data, error } = await supabase
-      .from('sightings')
-      .select('*, animals(name, emoji, tier, pts)')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-    if (error) {
-      setError(error.message)
-    } else {
-      setSightings(data || [])
-      setError(null)
+    try {
+      const { data, error } = await supabase
+        .from('sightings')
+        .select('*, animals(name, emoji, tier, pts)')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+      if (error) {
+        setError(error.message)
+      } else {
+        setSightings(data || [])
+        setError(null)
+      }
+    } catch (err) {
+      setError(err?.message || 'Erro ao carregar avistamentos')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [userId])
 
   useEffect(() => {
@@ -63,10 +68,6 @@ export default function useSightings(userId) {
       .select()
       .single()
 
-    if (!error) {
-      await refresh()
-    }
-
     return { data, error: error?.message }
   }
 
@@ -80,18 +81,23 @@ export function useAllSightings() {
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('sightings')
-      .select('*, animals(name, emoji, tier, pts), profiles(username, avatar_emoji)')
-      .not('lat', 'is', null)
-      .order('created_at', { ascending: false })
-    if (error) {
-      setError(error.message)
-    } else {
-      setSightings(data || [])
-      setError(null)
+    try {
+      const { data, error } = await supabase
+        .from('sightings')
+        .select('*, animals(name, emoji, tier, pts), profiles(username, avatar_emoji)')
+        .not('lat', 'is', null)
+        .order('created_at', { ascending: false })
+      if (error) {
+        setError(error.message)
+      } else {
+        setSightings(data || [])
+        setError(null)
+      }
+    } catch (err) {
+      setError(err?.message || 'Erro ao carregar avistamentos')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }, [])
 
   useEffect(() => {

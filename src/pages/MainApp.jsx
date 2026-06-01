@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useMemo, useCallback } from 'react'
 import useProfile from '../hooks/useProfile'
 import useSightings, { useAllSightings } from '../hooks/useSightings'
 import useCollection from '../hooks/useCollection'
@@ -30,26 +30,12 @@ export default function MainApp({ session }) {
   const { sightings: allSightings, loading: allLoading, refresh: refreshAllSightings } = useAllSightings()
   const { seenIds, loading: collectionLoading } = useCollection(userId)
 
-  if (profileLoading || sightingsLoading || allLoading || collectionLoading) {
-    return (
-      <div style={{
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'var(--bg-deep)',
-      }}>
-        <span style={{ fontSize: 36 }}>🌿</span>
-      </div>
-    )
-  }
-
-  const refreshSightings = () => {
+  const refreshSightings = useCallback(() => {
     refreshMySightings()
     refreshAllSightings()
-  }
+  }, [refreshMySightings, refreshAllSightings])
 
-  const screens = [
+  const screens = useMemo(() => [
     () => (
       <Suspense fallback={<ScreenFallback />}>
         <MapScreen sightings={allSightings} seenIds={seenIds} />
@@ -70,16 +56,31 @@ export default function MainApp({ session }) {
         <ProfileScreen profile={profile} sightings={mySightings} seenIds={seenIds} />
       </Suspense>
     ),
-  ]
+  ], [allSightings, seenIds, createSighting, refreshSightings, profile, mySightings])
+
+  const loading = profileLoading || sightingsLoading || allLoading || collectionLoading
 
   return (
-    <AppShell
-      screens={screens}
-      profile={profile}
-      sightings={mySightings}
-      seenIds={seenIds}
-      createSighting={createSighting}
-      refreshSightings={refreshSightings}
-    />
+    <div style={{ height: '100%', position: 'relative' }}>
+      {loading && (
+        <div style={{
+          position: 'absolute', inset: 0, zIndex: 9999,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          background: 'var(--bg-deep)',
+        }}>
+          <span style={{ fontSize: 36 }}>🌿</span>
+        </div>
+      )}
+      <div style={{ height: '100%', visibility: loading ? 'hidden' : 'visible' }}>
+        <AppShell
+          screens={screens}
+          profile={profile}
+          sightings={mySightings}
+          seenIds={seenIds}
+          createSighting={createSighting}
+          refreshSightings={refreshSightings}
+        />
+      </div>
+    </div>
   )
 }
