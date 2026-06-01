@@ -25,8 +25,11 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
           alignItems: 'center',
           gap: 12,
           padding: 12,
-          background: 'var(--bg-card)',
+          background: 'var(--glass)',
+          backdropFilter: 'var(--glass-blur)',
+          WebkitBackdropFilter: 'var(--glass-blur)',
           borderRadius: 'var(--r-md)',
+          border: '0.5px solid var(--glass-border)',
         }}>
           <span style={{ fontSize: 32 }}>{animal.emoji}</span>
           <div>
@@ -50,19 +53,33 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
           rows={3}
           style={{
             width: '100%',
-            padding: 12,
+            padding: '12px 14px',
             borderRadius: 'var(--r-md)',
-            background: 'var(--bg-card)',
-            border: '1px solid var(--border)',
+            background: 'var(--glass)',
+            backdropFilter: 'var(--glass-blur)',
+            WebkitBackdropFilter: 'var(--glass-blur)',
+            border: '0.5px solid var(--glass-border)',
             color: 'var(--text-1)',
             fontSize: 14,
             resize: 'none',
             outline: 'none',
+            transition: 'border-color .2s var(--ease-apple)',
           }}
+          onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+          onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
         />
       </div>
 
-      <div style={{ fontSize: 13, color: 'var(--text-2)' }}>
+      <div style={{
+        padding: '12px 14px',
+        background: 'var(--glass)',
+        backdropFilter: 'var(--glass-blur)',
+        WebkitBackdropFilter: 'var(--glass-blur)',
+        borderRadius: 'var(--r-md)',
+        border: '0.5px solid var(--glass-border)',
+        fontSize: 13,
+        color: 'var(--text-2)',
+      }}>
         {coords ? (
           <span>📍 GPS capturado ✓</span>
         ) : (
@@ -75,8 +92,11 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '12px 16px',
-        background: 'var(--bg-card)',
+        background: 'var(--glass)',
+        backdropFilter: 'var(--glass-blur)',
+        WebkitBackdropFilter: 'var(--glass-blur)',
         borderRadius: 'var(--r-md)',
+        border: '0.5px solid var(--glass-border)',
       }}>
         <span style={{ fontSize: 13, color: 'var(--text-2)' }}>
           Pontos estimados
@@ -98,7 +118,8 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
           border: 'none',
           cursor: (saving || !animalId) ? 'not-allowed' : 'pointer',
           opacity: (saving || !animalId) ? 0.5 : 1,
-          boxShadow: '0 0 16px var(--accent-glow)',
+          boxShadow: '0 4px 20px var(--accent-glow)',
+          transition: 'all .2s var(--ease-apple)',
         }}
       >
         {saving ? 'Salvando...' : 'Salvar avistamento'}

@@ -5,10 +5,11 @@ const screenStyles = (isActive) => ({
   position: 'absolute',
   inset: 0,
   overflowY: 'auto',
+  overflowX: 'hidden',
   opacity: isActive ? 1 : 0,
   pointerEvents: isActive ? 'auto' : 'none',
   transform: isActive ? 'translateX(0)' : 'translateX(24px)',
-  transition: 'opacity .25s, transform .25s',
+  transition: `opacity .35s var(--ease-apple), transform .35s var(--ease-apple)`,
 })
 
 export default function AppShell({ screens, profile, sightings, seenIds, rankData, createSighting }) {
@@ -35,9 +36,14 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
           color: 'var(--text-3)',
           flexShrink: 0,
           paddingTop: 'env(safe-area-inset-top, 0)',
+          background: 'var(--glass)',
+          backdropFilter: 'var(--glass-blur)',
+          WebkitBackdropFilter: 'var(--glass-blur)',
+          borderBottom: '0.5px solid var(--glass-border)',
+          letterSpacing: '0.03em',
         }}
       >
-        📡 Guardião da Mantiqueira
+        🌿 Guardião da Mantiqueira
       </div>
 
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>

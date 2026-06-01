@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import { ANIMALS, calcLevel } from '../../lib/constants'
-import useProfile from '../../hooks/useProfile'
 import AnimalCard from '../collection/AnimalCard'
 import AnimalDetailSheet from '../collection/AnimalDetailSheet'
 import ProgressBar from '../ui/ProgressBar'
 import RarityChip from '../ui/RarityChip'
+import Card from '../ui/Card'
 
 const FILTERS = [
   { key: 'all', label: 'Todos' },
@@ -40,6 +40,7 @@ export default function CollectionScreen({ seenIds = new Set(), profile }) {
           fontWeight: 700,
           fontSize: 24,
           color: 'var(--text-1)',
+          letterSpacing: '-0.02em',
         }}>
           Coleção
         </h2>
@@ -48,19 +49,19 @@ export default function CollectionScreen({ seenIds = new Set(), profile }) {
         </p>
       </div>
 
-      <div style={{
-        padding: 16,
-        background: 'var(--bg-card)',
-        borderRadius: 'var(--r-lg)',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Card variant="glass">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
           <span style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-1)' }}>
             {levelData.name}
           </span>
-          <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
+          <span style={{
+            fontSize: 11,
+            fontWeight: 600,
+            color: 'var(--amber)',
+            background: 'var(--amber-dim)',
+            padding: '2px 10px',
+            borderRadius: 999,
+          }}>
             Nível {levelData.level}
           </span>
         </div>
@@ -70,11 +71,12 @@ export default function CollectionScreen({ seenIds = new Set(), profile }) {
           justifyContent: 'space-between',
           fontSize: 11,
           color: 'var(--text-3)',
+          marginTop: 6,
         }}>
           <span>{levelData.current} pts</span>
           <span>{levelData.next} pts</span>
         </div>
-      </div>
+      </Card>
 
       <div style={{
         display: 'flex',

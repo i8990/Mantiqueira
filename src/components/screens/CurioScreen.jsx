@@ -68,6 +68,12 @@ const curios = [
 ]
 
 export default function CurioScreen() {
+  const statusType = (status) =>
+    status === 'CR' ? 'coral' :
+    status === 'EN' ? 'coral' :
+    status === 'VU' ? 'amber' :
+    status === 'NT' ? 'accent' : 'muted'
+
   return (
     <div style={{
       padding: '20px 16px',
@@ -83,6 +89,7 @@ export default function CurioScreen() {
           fontWeight: 700,
           fontSize: 24,
           color: 'var(--text-1)',
+          letterSpacing: '-0.02em',
         }}>
           Curiosidades
         </h2>
@@ -95,7 +102,9 @@ export default function CurioScreen() {
         padding: 16,
         background: 'var(--accent-dim)',
         borderRadius: 'var(--r-lg)',
-        border: '1px solid var(--accent)',
+        border: '0.5px solid var(--accent)',
+        backdropFilter: 'var(--glass-blur)',
+        WebkitBackdropFilter: 'var(--glass-blur)',
       }}>
         <div style={{
           display: 'flex',
@@ -108,7 +117,7 @@ export default function CurioScreen() {
             Dica do guardião
           </span>
         </div>
-        <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.5 }}>
+        <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>
           Mantenha distância segura dos animais, mova-se devagar e evite barulhos.
           O melhor horário para observação é no amanhecer ou entardecer.
           Nunca alimente a fauna silvestre!
@@ -120,9 +129,12 @@ export default function CurioScreen() {
           key={curio.name}
           style={{
             padding: 16,
-            background: 'var(--bg-card)',
+            background: 'var(--glass)',
+            backdropFilter: 'var(--glass-blur)',
+            WebkitBackdropFilter: 'var(--glass-blur)',
             borderRadius: 'var(--r-lg)',
-            border: '0.5px solid var(--border)',
+            border: '0.5px solid var(--glass-border)',
+            boxShadow: 'var(--shadow-md)',
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10 }}>
@@ -136,12 +148,7 @@ export default function CurioScreen() {
               </div>
             </div>
             <div style={{ marginLeft: 'auto' }}>
-              <Badge label={curio.status} type={
-                curio.status === 'CR' ? 'coral' :
-                curio.status === 'EN' ? 'coral' :
-                curio.status === 'VU' ? 'amber' :
-                curio.status === 'NT' ? 'accent' : 'muted'
-              } />
+              <Badge label={curio.status} type={statusType(curio.status)} />
             </div>
           </div>
           <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6, marginBottom: 10 }}>
@@ -155,8 +162,9 @@ export default function CurioScreen() {
                   fontSize: 11,
                   padding: '3px 10px',
                   borderRadius: 999,
-                  background: 'var(--bg-card2)',
+                  background: 'rgba(255,255,255,.04)',
                   color: 'var(--text-3)',
+                  border: '0.5px solid var(--glass-border)',
                 }}
               >
                 {tag}

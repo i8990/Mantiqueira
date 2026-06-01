@@ -30,6 +30,18 @@
   --r-md: 14px;
   --r-lg: 20px;
   --r-xl: 28px;
+
+  --glass: rgba(6, 13, 7, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-blur: blur(18px) saturate(1.4);
+  --glass-blur-heavy: blur(30px) saturate(1.6);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+
+  --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 *,
@@ -72,6 +84,19 @@ input, textarea {
 a {
   color: var(--accent);
   text-decoration: none;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-3);
+  border-radius: 2px;
 }
 
 @keyframes fadeUp {

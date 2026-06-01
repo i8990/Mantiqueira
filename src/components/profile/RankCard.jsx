@@ -6,9 +6,12 @@ export default function RankCard({ totalPts, rankData }) {
   return (
     <div style={{
       padding: 16,
-      background: 'var(--bg-card)',
+      background: 'var(--glass)',
+      backdropFilter: 'var(--glass-blur)',
+      WebkitBackdropFilter: 'var(--glass-blur)',
       borderRadius: 'var(--r-lg)',
-      border: '0.5px solid var(--border)',
+      border: '0.5px solid var(--glass-border)',
+      boxShadow: 'var(--shadow-md)',
     }}>
       <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-1)', marginBottom: 12 }}>
         Ranking regional
@@ -30,6 +33,7 @@ export default function RankCard({ totalPts, rankData }) {
           fontWeight: 700,
           color: 'var(--amber)',
           border: '2px solid var(--amber)',
+          boxShadow: '0 0 20px rgba(245,167,51,.2)',
         }}>
           #{position}
         </div>

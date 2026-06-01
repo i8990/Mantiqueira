@@ -11,8 +11,10 @@ export default function TabBar() {
         justifyContent: 'space-around',
         alignItems: 'center',
         height: 64,
-        background: 'rgba(6, 13, 7, .97)',
-        borderTop: '0.5px solid var(--border)',
+        background: 'var(--glass)',
+        backdropFilter: 'var(--glass-blur-heavy)',
+        WebkitBackdropFilter: 'var(--glass-blur-heavy)',
+        borderTop: '0.5px solid var(--glass-border)',
         paddingBottom: 'env(safe-area-inset-bottom, 0)',
         flexShrink: 0,
       }}
@@ -34,26 +36,36 @@ export default function TabBar() {
               border: 'none',
               cursor: 'pointer',
               position: 'relative',
+              transition: 'all .2s var(--ease-apple)',
             }}
           >
-            {isActive && (
-              <div
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  width: 26,
-                  height: 2,
-                  background: 'var(--accent)',
-                  borderRadius: '0 0 2px 2px',
-                }}
-              />
-            )}
-            <span style={{ fontSize: 20, lineHeight: 1 }}>{tab.icon}</span>
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                width: 26,
+                height: 3,
+                background: isActive ? 'var(--accent)' : 'transparent',
+                borderRadius: '0 0 3px 3px',
+                transition: 'all .25s var(--ease-apple)',
+                boxShadow: isActive ? '0 0 12px var(--accent-glow)' : 'none',
+              }}
+            />
+            <span style={{
+              fontSize: 20,
+              lineHeight: 1,
+              opacity: isActive ? 1 : 0.5,
+              transform: isActive ? 'scale(1.1)' : 'scale(1)',
+              transition: 'all .2s var(--ease-apple)',
+            }}>
+              {tab.icon}
+            </span>
             <span
               style={{
                 fontSize: 10,
-                fontWeight: 500,
+                fontWeight: isActive ? 600 : 500,
                 color: isActive ? 'var(--accent)' : 'var(--text-3)',
+                transition: 'color .2s var(--ease-apple)',
               }}
             >
               {tab.label}

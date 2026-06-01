@@ -30,8 +30,9 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,.6)',
-        backdropFilter: 'blur(4px)',
+        background: 'rgba(0,0,0,.65)',
+        backdropFilter: 'blur(16px) saturate(1.4)',
+        WebkitBackdropFilter: 'blur(16px) saturate(1.4)',
         zIndex: 9999,
         display: 'flex',
         alignItems: 'flex-end',
@@ -42,12 +43,16 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
         style={{
           width: '100%',
           maxHeight: '80%',
-          background: 'var(--bg-surface)',
+          background: 'var(--glass)',
+          backdropFilter: 'var(--glass-blur-heavy)',
+          WebkitBackdropFilter: 'var(--glass-blur-heavy)',
+          borderTop: '0.5px solid var(--glass-border)',
           borderRadius: 'var(--r-xl) var(--r-xl) 0 0',
           padding: '24px 20px',
           transform: 'translateY(0)',
-          transition: 'transform .25s cubic-bezier(.25,1,.5,1)',
+          transition: 'transform .35s var(--ease-apple)',
           overflowY: 'auto',
+          boxShadow: '0 -8px 30px rgba(0,0,0,.5)',
         }}
       >
         <div style={{
@@ -56,6 +61,7 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
           borderRadius: 2,
           background: 'var(--text-3)',
           margin: '0 auto 20px',
+          opacity: 0.5,
         }} />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
@@ -66,6 +72,7 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
               fontWeight: 700,
               fontSize: 24,
               color: 'var(--text-1)',
+              letterSpacing: '-0.02em',
             }}>
               {animal.name}
             </h3>
@@ -85,8 +92,9 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
             flexDirection: 'column',
             gap: 8,
             padding: 16,
-            background: 'var(--bg-card)',
+            background: 'rgba(255,255,255,.03)',
             borderRadius: 'var(--r-md)',
+            border: '0.5px solid var(--glass-border)',
           }}>
             <div style={{ fontSize: 14, color: 'var(--text-2)' }}>
               <strong style={{ color: 'var(--text-1)' }}>Onde encontrar:</strong> {animal.where}
@@ -107,7 +115,11 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
               color: 'var(--accent)',
               fontSize: 13,
               textDecoration: 'underline',
+              opacity: 0.8,
+              transition: 'opacity .2s',
             }}
+            onMouseOver={e => e.target.style.opacity = 1}
+            onMouseOut={e => e.target.style.opacity = 0.8}
           >
             Ver na Wikipédia ↗
           </a>

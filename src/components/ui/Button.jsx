@@ -3,7 +3,7 @@ const variants = {
     background: 'var(--accent)',
     color: '#060D07',
     fontWeight: 600,
-    boxShadow: '0 0 16px var(--accent-glow)',
+    boxShadow: '0 4px 20px var(--accent-glow)',
   },
   secondary: {
     background: 'var(--bg-card)',
@@ -15,6 +15,15 @@ const variants = {
     background: 'transparent',
     color: 'var(--text-2)',
     fontWeight: 500,
+  },
+  glass: {
+    background: 'var(--glass)',
+    color: 'var(--text-1)',
+    border: '0.5px solid var(--glass-border)',
+    fontWeight: 500,
+    backdropFilter: 'var(--glass-blur)',
+    WebkitBackdropFilter: 'var(--glass-blur)',
+    boxShadow: 'var(--shadow-md)',
   },
 }
 
@@ -35,7 +44,7 @@ export default function Button({ children, onClick, disabled, fullWidth, variant
         gap: 8,
         opacity: disabled ? 0.5 : 1,
         cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'opacity .15s',
+        transition: 'all .2s var(--ease-apple)',
         ...style,
       }}
       {...props}

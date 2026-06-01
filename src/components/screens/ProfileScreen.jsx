@@ -28,17 +28,36 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: 8,
-        padding: '24px 16px',
-        background: 'var(--bg-card)',
+        gap: 12,
+        padding: '28px 16px',
+        background: 'var(--glass)',
+        backdropFilter: 'var(--glass-blur)',
+        WebkitBackdropFilter: 'var(--glass-blur)',
         borderRadius: 'var(--r-xl)',
+        border: '0.5px solid var(--glass-border)',
+        boxShadow: 'var(--shadow-lg)',
       }}>
-        <span style={{ fontSize: 48 }}>{profile?.avatar_emoji || '🧭'}</span>
+        <div style={{
+          width: 72,
+          height: 72,
+          borderRadius: '50%',
+          background: 'var(--glass)',
+          backdropFilter: 'var(--glass-blur-heavy)',
+          WebkitBackdropFilter: 'var(--glass-blur-heavy)',
+          border: '0.5px solid var(--glass-border)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 36,
+        }}>
+          {profile?.avatar_emoji || '🧭'}
+        </div>
         <h2 style={{
           fontFamily: 'var(--font-d)',
           fontWeight: 700,
           fontSize: 22,
           color: 'var(--text-1)',
+          letterSpacing: '-0.02em',
         }}>
           @{profile?.username || 'guardião'}
         </h2>
@@ -72,22 +91,26 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
           <div
             key={s.label}
             style={{
-              padding: '14px 12px',
-              background: 'var(--bg-card)',
+              padding: '16px 12px',
+              background: 'var(--glass)',
+              backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
               borderRadius: 'var(--r-md)',
               textAlign: 'center',
+              border: '0.5px solid var(--glass-border)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div style={{ fontSize: 20, marginBottom: 4 }}>{s.icon}</div>
             <div style={{
               fontFamily: 'var(--font-d)',
               fontWeight: 700,
-              fontSize: 20,
+              fontSize: 22,
               color: 'var(--text-1)',
             }}>
               {s.value}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-3)' }}>
+            <div style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 500 }}>
               {s.label}
             </div>
           </div>
@@ -104,8 +127,8 @@ export default function ProfileScreen({ profile, sightings, seenIds }) {
         gap: 12,
         paddingBottom: 20,
       }}>
-        <Button variant="secondary">
-          📤 Compartilhar meu perfil
+        <Button variant="glass" leftIcon="📤">
+          Compartilhar meu perfil
         </Button>
         <Button variant="ghost" onClick={signOut}>
           Sair

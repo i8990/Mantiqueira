@@ -58,8 +58,6 @@ export default function RegisterScreen({ createSighting }) {
     }
   }
 
-  const stepColors = ['var(--accent)', 'var(--accent)', 'var(--accent)']
-
   return (
     <div style={{
       padding: '20px 16px',
@@ -74,6 +72,7 @@ export default function RegisterScreen({ createSighting }) {
         fontWeight: 700,
         fontSize: 24,
         color: 'var(--text-1)',
+        letterSpacing: '-0.02em',
       }}>
         Novo avistamento
       </h2>
@@ -90,20 +89,17 @@ export default function RegisterScreen({ createSighting }) {
               justifyContent: 'center',
               fontSize: 12,
               fontWeight: 700,
-              background: i < step
-                ? 'var(--accent)'
-                : i === step
-                  ? 'var(--bg-card)'
-                  : 'var(--bg-card)',
+              background: i <= step ? 'var(--accent-dim)' : 'var(--glass)',
               border: `2px solid ${
                 i < step
                   ? 'var(--accent)'
                   : i === step
                     ? 'var(--accent)'
-                    : 'var(--border)'
+                    : 'var(--glass-border)'
               }`,
               color: i <= step ? 'var(--accent)' : 'var(--text-3)',
-              boxShadow: i === step ? '0 0 8px var(--accent-glow)' : 'none',
+              boxShadow: i === step ? '0 0 12px var(--accent-glow)' : 'none',
+              transition: 'all .2s var(--ease-apple)',
             }}>
               {i < step ? '✓' : i + 1}
             </div>
@@ -118,7 +114,8 @@ export default function RegisterScreen({ createSighting }) {
               <div style={{
                 flex: 1,
                 height: 1,
-                background: i < step ? 'var(--accent)' : 'var(--border)',
+                background: i < step ? 'var(--accent)' : 'var(--glass-border)',
+                transition: 'background .2s var(--ease-apple)',
               }} />
             )}
           </div>
@@ -159,11 +156,12 @@ export default function RegisterScreen({ createSighting }) {
                 padding: '14px',
                 borderRadius: 'var(--r-md)',
                 background: 'var(--bg-card)',
-                border: '1px solid var(--border-strong)',
+                border: '0.5px solid var(--border-strong)',
                 color: 'var(--text-2)',
                 fontWeight: 500,
                 fontSize: 14,
                 cursor: 'pointer',
+                transition: 'all .2s var(--ease-apple)',
               }}
             >
               Voltar
@@ -183,6 +181,8 @@ export default function RegisterScreen({ createSighting }) {
               fontSize: 14,
               cursor: (step === 1 && !animalId) ? 'not-allowed' : 'pointer',
               opacity: (step === 1 && !animalId) ? 0.5 : 1,
+              boxShadow: '0 4px 20px var(--accent-glow)',
+              transition: 'all .2s var(--ease-apple)',
             }}
           >
             {step === 0 ? 'Pular' : 'Próximo'}

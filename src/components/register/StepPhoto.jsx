@@ -6,14 +6,17 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip }) {
           width: '100%',
           aspectRatio: '4/3',
           borderRadius: 'var(--r-lg)',
-          background: 'var(--bg-card)',
-          border: '1px dashed var(--border-strong)',
+          background: 'var(--glass)',
+          backdropFilter: 'var(--glass-blur)',
+          WebkitBackdropFilter: 'var(--glass-blur)',
+          border: '0.5px solid var(--glass-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           overflow: 'hidden',
           cursor: 'pointer',
           position: 'relative',
+          boxShadow: 'var(--shadow-md)',
         }}
         onClick={() => document.getElementById('photo-input').click()}
       >
@@ -21,7 +24,7 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip }) {
           <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <div style={{ textAlign: 'center', color: 'var(--text-3)', padding: 24 }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>📸</div>
+            <div style={{ fontSize: 36, marginBottom: 8 }}>📸</div>
             <div style={{ fontSize: 14 }}>Toque para fotografar</div>
           </div>
         )}
@@ -44,7 +47,10 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip }) {
             background: 'none',
             border: 'none',
             cursor: 'pointer',
+            transition: 'color .2s',
           }}
+          onMouseOver={e => e.target.style.color = 'var(--text-2)'}
+          onMouseOut={e => e.target.style.color = 'var(--text-3)'}
         >
           Sem foto (-70% pts)
         </button>

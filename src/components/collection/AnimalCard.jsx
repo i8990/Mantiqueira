@@ -10,18 +10,21 @@ export default function AnimalCard({ animal, isSeen, onClick }) {
         flexDirection: 'column',
         alignItems: 'center',
         gap: 6,
-        padding: '14px 8px',
+        padding: '16px 8px',
         borderRadius: 'var(--r-lg)',
-        background: 'var(--bg-card)',
+        background: 'var(--glass)',
+        backdropFilter: 'var(--glass-blur)',
+        WebkitBackdropFilter: 'var(--glass-blur)',
         border: animal.tier === 'legendary'
-          ? '0.5px solid rgba(232,91,60,.25)'
+          ? '0.5px solid rgba(232,91,60,.35)'
           : animal.tier === 'rare'
-            ? '0.5px solid rgba(245,167,51,.2)'
-            : '0.5px solid var(--border)',
+            ? '0.5px solid rgba(245,167,51,.3)'
+            : '0.5px solid var(--glass-border)',
+        boxShadow: 'var(--shadow-md)',
         cursor: 'pointer',
         opacity: isSeen ? 1 : 0.55,
         filter: isSeen ? 'none' : 'grayscale(1)',
-        transition: 'all .2s',
+        transition: 'all .25s var(--ease-apple)',
         position: 'relative',
       }}
     >

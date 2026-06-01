@@ -44,9 +44,15 @@ export default function BadgeGrid({ seenIds, profile, sightings }) {
                 gap: 4,
                 padding: 10,
                 borderRadius: 'var(--r-md)',
-                background: earned ? 'var(--accent-dim)' : 'var(--bg-card)',
+                background: earned ? 'var(--accent-dim)' : 'var(--glass)',
+                backdropFilter: earned ? undefined : 'var(--glass-blur)',
+                WebkitBackdropFilter: earned ? undefined : 'var(--glass-blur)',
+                border: earned
+                  ? '0.5px solid var(--accent)'
+                  : '0.5px solid var(--glass-border)',
                 opacity: earned ? 1 : 0.38,
                 filter: earned ? 'none' : 'grayscale(1)',
+                transition: 'all .25s var(--ease-apple)',
               }}
               title={badge.condition}
             >
