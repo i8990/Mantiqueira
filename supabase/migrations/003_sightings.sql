@@ -1,6 +1,6 @@
 CREATE TABLE sightings (
   id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id     UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  user_id     UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   animal_id   TEXT NOT NULL REFERENCES animals(id),
   photo_url   TEXT,
   description TEXT,
