@@ -12,7 +12,7 @@ const screenStyles = (isActive) => ({
   transition: `opacity .35s var(--ease-apple), transform .35s var(--ease-apple)`,
 })
 
-export default function AppShell({ screens, profile, sightings, seenIds, rankData, createSighting }) {
+export default function AppShell({ screens, profile, sightings, seenIds, rankData, createSighting, refreshSightings }) {
   const activeTab = useAppStore(s => s.activeTab)
 
   return (
@@ -23,6 +23,7 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
         display: 'flex',
         flexDirection: 'column',
         background: 'var(--bg-deep)',
+        position: 'relative',
       }}
     >
       <div
@@ -45,7 +46,7 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
         🌿 Guardião da Mantiqueira
       </div>
 
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', overscrollBehavior: 'none' }}>
+      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', overscrollBehavior: 'none', paddingBottom: 80 }}>
         {screens.map((Screen, i) => {
           const tabKey = ['mapa', 'registrar', 'guia', 'perfil'][i]
           return (
@@ -56,6 +57,7 @@ export default function AppShell({ screens, profile, sightings, seenIds, rankDat
                 seenIds={seenIds}
                 rankData={rankData}
                 createSighting={createSighting}
+                refreshSightings={refreshSightings}
               />
             </div>
           )

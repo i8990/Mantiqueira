@@ -6,12 +6,13 @@ import StepDetails from '../register/StepDetails'
 
 const STEPS = ['Foto', 'Animal', 'Detalhes']
 
-export default function RegisterScreen({ createSighting }) {
+export default function RegisterScreen({ createSighting, refreshSightings }) {
   const [step, setStep] = useState(0)
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
   const [animalId, setAnimalId] = useState(null)
   const [saving, setSaving] = useState(false)
+  const [errorMsg, setErrorMsg] = useState('')
 
   const prefilledId = useAppStore(s => s.registerPrefilledAnimalId)
   const setActiveTab = useAppStore(s => s.setActiveTab)
@@ -41,20 +42,29 @@ export default function RegisterScreen({ createSighting }) {
   const handleSave = async ({ description, lat, lng }) => {
     if (!animalId) return
     setSaving(true)
-    const { error } = await createSighting({
-      animalId,
-      photoFile: photoFile || undefined,
-      description,
-      lat,
-      lng,
-    })
-    setSaving(false)
-    if (!error) {
-      setStep(0)
-      setPhotoFile(null)
-      setPhotoPreview(null)
-      setAnimalId(null)
-      setActiveTab('mapa')
+    setErrorMsg('')
+    try {
+      const { error } = await createSighting({
+        animalId,
+        photoFile: photoFile || undefined,
+        description,
+        lat,
+        lng,
+      })
+      if (error) {
+        setErrorMsg(error)
+      } else {
+        refreshSightings?.()
+        setStep(0)
+        setPhotoFile(null)
+        setPhotoPreview(null)
+        setAnimalId(null)
+        setActiveTab('mapa')
+      }
+    } catch (err) {
+      setErrorMsg(err?.message || 'Erro ao salvar')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -142,6 +152,7 @@ export default function RegisterScreen({ createSighting }) {
             hasPhoto={!!photoFile}
             onSave={handleSave}
             saving={saving}
+            errorMsg={errorMsg}
           />
         )}
       </div>

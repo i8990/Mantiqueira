@@ -72,3 +72,31 @@ export default function useSightings(userId) {
 
   return { sightings, loading, error, refresh, createSighting }
 }
+
+export function useAllSightings() {
+  const [sightings, setSightings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  const refresh = useCallback(async () => {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('sightings')
+      .select('*, animals(name, emoji, tier, pts), profiles(username, avatar_emoji)')
+      .not('lat', 'is', null)
+      .order('created_at', { ascending: false })
+    if (error) {
+      setError(error.message)
+    } else {
+      setSightings(data || [])
+      setError(null)
+    }
+    setLoading(false)
+  }, [])
+
+  useEffect(() => {
+    refresh()
+  }, [refresh])
+
+  return { sightings, loading, error, refresh }
+}

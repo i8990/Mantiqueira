@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { ANIMALS } from '../../lib/constants'
 import Badge from '../ui/Badge'
 
-export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, onSave, saving }) {
+export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, onSave, saving, errorMsg }) {
   const [description, setDescription] = useState('')
   const [coords, setCoords] = useState(null)
   const animal = ANIMALS.find(a => a.id === animalId)
@@ -19,6 +19,19 @@ export default function StepDetails({ animalId, hasPhoto, onDescriptionChange, o
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      {errorMsg && (
+        <p style={{
+          color: 'var(--coral)',
+          fontSize: 13,
+          textAlign: 'center',
+          background: 'var(--coral-dim)',
+          padding: '10px 14px',
+          borderRadius: 'var(--r-sm)',
+        }}>
+          {errorMsg}
+        </p>
+      )}
+
       {animal && (
         <div style={{
           display: 'flex',

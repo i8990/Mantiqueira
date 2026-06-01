@@ -22,6 +22,7 @@ function createIcon(animal, isSeen) {
 
 export default function AnimalMarker({ sighting, isSeen }) {
   const animal = ANIMALS.find(a => a.id === sighting.animal_id)
+  const creator = sighting.profiles
   if (!sighting.lat || !sighting.lng) return null
 
   return (
@@ -34,6 +35,19 @@ export default function AnimalMarker({ sighting, isSeen }) {
           <div style={{ fontSize: 28 }}>{animal?.emoji || '❓'}</div>
           <div style={{ fontWeight: 700, fontSize: 15 }}>{animal?.name || 'Desconhecido'}</div>
           <div style={{ fontSize: 12, color: '#666', fontStyle: 'italic' }}>{animal?.sci || ''}</div>
+          {creator && (
+            <div style={{
+              fontSize: 11,
+              color: '#888',
+              marginTop: 6,
+              padding: '4px 8px',
+              borderRadius: 999,
+              background: 'rgba(0,0,0,.05)',
+              display: 'inline-block',
+            }}>
+              {creator.avatar_emoji || '🧭'} @{creator.username || 'guardião'}
+            </div>
+          )}
           <div style={{ fontSize: 13, marginTop: 4, color: TIER_COLORS[animal?.tier] || '#888' }}>
             +{sighting.pts_earned} pts
           </div>

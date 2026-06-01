@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react'
 import useProfile from '../hooks/useProfile'
-import useSightings from '../hooks/useSightings'
+import useSightings, { useAllSightings } from '../hooks/useSightings'
 import useCollection from '../hooks/useCollection'
 import AppShell from '../components/layout/AppShell'
 
@@ -26,10 +26,11 @@ function ScreenFallback() {
 export default function MainApp({ session }) {
   const userId = session.user.id
   const { profile, loading: profileLoading } = useProfile(userId)
-  const { sightings, loading: sightingsLoading, createSighting } = useSightings(userId)
+  const { sightings: mySightings, loading: sightingsLoading, createSighting, refresh: refreshMySightings } = useSightings(userId)
+  const { sightings: allSightings, loading: allLoading, refresh: refreshAllSightings } = useAllSightings()
   const { seenIds, loading: collectionLoading } = useCollection(userId)
 
-  if (profileLoading || sightingsLoading || collectionLoading) {
+  if (profileLoading || sightingsLoading || allLoading || collectionLoading) {
     return (
       <div style={{
         height: '100%',
@@ -43,15 +44,20 @@ export default function MainApp({ session }) {
     )
   }
 
+  const refreshSightings = () => {
+    refreshMySightings()
+    refreshAllSightings()
+  }
+
   const screens = [
     () => (
       <Suspense fallback={<ScreenFallback />}>
-        <MapScreen sightings={sightings} seenIds={seenIds} />
+        <MapScreen sightings={allSightings} seenIds={seenIds} />
       </Suspense>
     ),
     () => (
       <Suspense fallback={<ScreenFallback />}>
-        <RegisterScreen createSighting={createSighting} />
+        <RegisterScreen createSighting={createSighting} refreshSightings={refreshSightings} />
       </Suspense>
     ),
     () => (
@@ -61,7 +67,7 @@ export default function MainApp({ session }) {
     ),
     () => (
       <Suspense fallback={<ScreenFallback />}>
-        <ProfileScreen profile={profile} sightings={sightings} seenIds={seenIds} />
+        <ProfileScreen profile={profile} sightings={mySightings} seenIds={seenIds} />
       </Suspense>
     ),
   ]
@@ -70,9 +76,10 @@ export default function MainApp({ session }) {
     <AppShell
       screens={screens}
       profile={profile}
-      sightings={sightings}
+      sightings={mySightings}
       seenIds={seenIds}
       createSighting={createSighting}
+      refreshSightings={refreshSightings}
     />
   )
 }
