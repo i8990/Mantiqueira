@@ -10,10 +10,10 @@ export default function RarityChip({ label, filter, active, onClick }) {
         background: active ? 'var(--accent-dim)' : 'var(--glass)',
         color: active ? 'var(--accent)' : 'var(--text-3)',
         border: active
-          ? '1px solid var(--accent)'
+          ? '0.5px solid var(--accent)'
           : '0.5px solid var(--glass-border)',
         cursor: 'pointer',
-        transition: 'all .2s var(--ease-apple)',
+        transition: 'all .25s var(--ease-spring)',
         whiteSpace: 'nowrap',
         backdropFilter: active ? undefined : 'var(--glass-blur)',
         WebkitBackdropFilter: active ? undefined : 'var(--glass-blur)',

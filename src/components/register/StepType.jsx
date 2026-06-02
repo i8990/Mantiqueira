@@ -22,15 +22,15 @@ export default function StepType({ selectedType, onSelect }) {
               alignItems: 'center',
               gap: 12,
               padding: '14px 16px',
-              borderRadius: 'var(--r-md)',
+              borderRadius: 'var(--r-lg)',
               background: isSelected ? `${t.color}18` : 'var(--glass)',
               backdropFilter: 'var(--glass-blur)',
               WebkitBackdropFilter: 'var(--glass-blur)',
-              border: isSelected ? `1px solid ${t.color}` : '0.5px solid var(--glass-border)',
+              border: isSelected ? `0.5px solid ${t.color}` : '0.5px solid var(--glass-border)',
               cursor: 'pointer',
               width: '100%',
               textAlign: 'left',
-              transition: 'all .2s var(--ease-apple)',
+              transition: 'all .25s var(--ease-spring)',
             }}
           >
             <span style={{ fontSize: 28, flexShrink: 0 }}>{t.icon}</span>

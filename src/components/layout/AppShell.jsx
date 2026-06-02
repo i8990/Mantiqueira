@@ -8,8 +8,9 @@ const screenStyles = (isActive) => ({
   overflowX: 'hidden',
   opacity: isActive ? 1 : 0,
   pointerEvents: isActive ? 'auto' : 'none',
-  transform: isActive ? 'translateX(0)' : 'translateX(24px)',
-  transition: `opacity .35s var(--ease-apple), transform .35s var(--ease-apple)`,
+  transform: isActive ? 'translateX(0) scale(1)' : 'translateX(30px) scale(0.97)',
+  transition: `opacity .4s var(--ease-spring), transform .4s var(--ease-spring)`,
+  willChange: 'transform, opacity',
 })
 
 export default function AppShell({ screens, profile, sightings, seenIds, createSighting, refreshSightings }) {
@@ -36,17 +37,24 @@ export default function AppShell({ screens, profile, sightings, seenIds, createS
           fontWeight: 500,
           color: 'var(--text-3)',
           flexShrink: 0,
-          background: 'var(--glass)',
-          backdropFilter: 'var(--glass-blur)',
-          WebkitBackdropFilter: 'var(--glass-blur)',
-          borderBottom: '0.5px solid var(--glass-border)',
+          background: 'var(--glass-strong)',
+          backdropFilter: 'var(--glass-blur-ultra)',
+          WebkitBackdropFilter: 'var(--glass-blur-ultra)',
+          borderBottom: '0.5px solid var(--glass-border-light)',
           letterSpacing: '0.03em',
+          zIndex: 100,
         }}
       >
         🐾 MataGo
       </div>
 
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden', overscrollBehavior: 'none', paddingBottom: 80 }}>
+      <div style={{
+        flex: 1,
+        position: 'relative',
+        overflow: 'hidden',
+        overscrollBehavior: 'none',
+        paddingBottom: 'var(--tab-bar-height)',
+      }}>
         {screens.map((Screen, i) => {
           const tabKey = ['mapa', 'registrar', 'guia', 'perfil'][i]
           return (

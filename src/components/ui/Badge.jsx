@@ -16,6 +16,7 @@ export default function Badge({ label, type = 'muted' }) {
         fontSize: 11,
         fontWeight: 600,
         letterSpacing: '0.02em',
+        border: '0.5px solid transparent',
       }}
     >
       {label}

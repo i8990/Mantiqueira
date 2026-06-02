@@ -11,20 +11,20 @@ export default function AnimalCard({ animal, isSeen, onClick }) {
         alignItems: 'center',
         gap: 6,
         padding: '16px 8px',
-        borderRadius: 'var(--r-lg)',
+        borderRadius: 'var(--r-xl)',
         background: 'var(--glass)',
         backdropFilter: 'var(--glass-blur)',
         WebkitBackdropFilter: 'var(--glass-blur)',
         border: ['L', 'S', 'A'].includes(animal.tier)
-          ? `0.5px solid ${TIER_COLORS[animal.tier]}55`
+          ? `0.5px solid ${TIER_COLORS[animal.tier]}77`
           : '0.5px solid var(--glass-border)',
         boxShadow: ['L', 'S'].includes(animal.tier)
-          ? `0 0 0 0.5px ${TIER_COLORS[animal.tier]}33, 0 4px 20px ${TIER_COLORS[animal.tier]}11`
-          : 'var(--shadow-md)',
+          ? `0 0 0 0.5px ${TIER_COLORS[animal.tier]}44, 0 4px 24px ${TIER_COLORS[animal.tier]}15`
+          : 'var(--shadow-glass)',
         cursor: 'pointer',
         opacity: isSeen ? 1 : 0.55,
         filter: isSeen ? 'none' : 'grayscale(1)',
-        transition: 'all .25s var(--ease-apple)',
+        transition: 'all .3s var(--ease-spring)',
         position: 'relative',
       }}
     >
@@ -38,7 +38,7 @@ export default function AnimalCard({ animal, isSeen, onClick }) {
           🔒
         </span>
       )}
-      <span style={{ fontSize: 32 }}>{animal.emoji}</span>
+      <span style={{ fontSize: 34 }}>{animal.emoji}</span>
       <span style={{
         fontSize: 12,
         fontWeight: 600,

@@ -20,12 +20,17 @@ export default function StepAnimal({ selectedAnimalId, onSelect }) {
           width: '100%',
           padding: '12px 16px',
           borderRadius: 'var(--r-md)',
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border)',
+          background: 'var(--glass)',
+          backdropFilter: 'var(--glass-blur)',
+          WebkitBackdropFilter: 'var(--glass-blur)',
+          border: '0.5px solid var(--glass-border)',
           color: 'var(--text-1)',
           fontSize: 14,
           outline: 'none',
+          transition: 'border-color .2s',
         }}
+        onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+        onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
       />
       <div style={{
         display: 'grid',
@@ -46,16 +51,18 @@ export default function StepAnimal({ selectedAnimalId, onSelect }) {
                 alignItems: 'center',
                 gap: 4,
                 padding: '10px 6px',
-                borderRadius: 'var(--r-md)',
-                background: isSelected ? 'var(--accent-dim)' : 'var(--bg-card)',
+                borderRadius: 'var(--r-lg)',
+                background: isSelected ? 'var(--accent-dim)' : 'var(--glass)',
+                backdropFilter: isSelected ? undefined : 'var(--glass-blur)',
+                WebkitBackdropFilter: isSelected ? undefined : 'var(--glass-blur)',
                 border: isSelected
-                  ? `1px solid var(--accent)`
-                  : '1px solid var(--border)',
+                  ? `0.5px solid var(--accent)`
+                  : '0.5px solid var(--glass-border)',
                 cursor: 'pointer',
-                transition: 'all .15s',
+                transition: 'all .2s var(--ease-spring)',
               }}
             >
-              <span style={{ fontSize: 22 }}>{animal.emoji}</span>
+              <span style={{ fontSize: 24 }}>{animal.emoji}</span>
               <span style={{
                 fontSize: 11,
                 fontWeight: 500,

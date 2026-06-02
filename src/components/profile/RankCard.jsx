@@ -6,13 +6,14 @@ export default function RankCard({ totalPts, rankData, userId }) {
   return (
     <div style={{
       padding: 16,
-      background: 'var(--glass)',
-      backdropFilter: 'var(--glass-blur)',
-      WebkitBackdropFilter: 'var(--glass-blur)',
-      borderRadius: 'var(--r-lg)',
-      border: '0.5px solid var(--glass-border)',
-      boxShadow: 'var(--shadow-md)',
+      background: 'var(--glass-strong)',
+      backdropFilter: 'var(--glass-blur-heavy)',
+      WebkitBackdropFilter: 'var(--glass-blur-heavy)',
+      borderRadius: 'var(--r-xl)',
+      border: '0.5px solid var(--glass-border-light)',
+      boxShadow: 'var(--shadow-glass)',
       cursor: 'pointer',
+      transition: 'all .25s var(--ease-spring)',
     }}>
       <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-1)', marginBottom: 12 }}>
         Ranking regional
@@ -23,18 +24,18 @@ export default function RankCard({ totalPts, rankData, userId }) {
         gap: 16,
       }}>
         <div style={{
-          width: 56,
-          height: 56,
+          width: 60,
+          height: 60,
           borderRadius: '50%',
           background: 'var(--amber-dim)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          fontSize: 22,
+          fontSize: 24,
           fontWeight: 700,
           color: 'var(--amber)',
           border: '2px solid var(--amber)',
-          boxShadow: '0 0 20px rgba(245,167,51,.2)',
+          boxShadow: '0 0 24px rgba(245,167,51,.25)',
         }}>
           {position > 0 ? `#${position}` : '-'}
         </div>

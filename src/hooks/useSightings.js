@@ -41,7 +41,7 @@ export default function useSightings(userId) {
     refresh()
   }, [refresh])
 
-  const createSighting = async ({ animalId, sightingType, photoFile, description, lat, lng }) => {
+  const createSighting = async ({ animalId, sightingType, photoFile, description, lat, lng, observedAt }) => {
     const animal = ANIMALS.find(a => a.id === animalId)
     if (!animal) return { error: 'Animal não encontrado' }
 
@@ -74,6 +74,7 @@ export default function useSightings(userId) {
         lng: lng || null,
         sighting_type: sightingType || 'foto',
         pts_earned: ptsEarned,
+        observed_at: observedAt || null,
       })
       .select()
       .single()

@@ -25,17 +25,19 @@ function jitterPosition(lat, lng, seed) {
 
 function createIcon(animal, isSeen) {
   const tierColor = animal ? TIER_COLORS[animal.tier] : 'var(--text-3)'
-  const size = animal?.tier === 'L' ? 42 : 34
+  const size = animal?.tier === 'L' ? 44 : 36
   const html = `
     <div style="
       display:flex;align-items:center;justify-content:center;
       width:${size}px;height:${size}px;
       border-radius:50%;
       background:rgba(6,13,7,.88);
+      backdrop-filter:blur(10px);
       border:2px solid ${tierColor};
       font-size:${size * 0.5}px;
-      box-shadow:${animal?.tier === 'L' ? `0 0 14px ${tierColor}` : '0 2px 6px rgba(0,0,0,.5)'};
+      box-shadow:${animal?.tier === 'L' ? `0 0 14px ${tierColor}, 0 2px 8px rgba(0,0,0,.4)` : '0 2px 8px rgba(0,0,0,.4)'};
       ${animal?.tier === 'L' ? 'animation:legendPulse 2.4s ease-in-out infinite;' : ''}
+      transition:transform .2s;
     ">${isSeen ? animal.emoji : '?'}</div>
   `
   return L.divIcon({ html, className: '', iconSize: [size, size], iconAnchor: [size / 2, size / 2] })
@@ -58,24 +60,28 @@ export default function AnimalMarker({ sighting, isSeen }) {
         eventHandlers={{ click: () => setShowRadius(true), popupclose: () => setShowRadius(false) }}
       >
         <Popup>
-          <div style={{ textAlign: 'center', minWidth: 120 }}>
-            <div style={{ fontSize: 28 }}>{animal?.emoji || '❓'}</div>
-            <div style={{ fontWeight: 700, fontSize: 15 }}>{animal?.name || 'Desconhecido'}</div>
-            <div style={{ fontSize: 12, color: '#666', fontStyle: 'italic' }}>{animal?.sci || ''}</div>
+          <div style={{
+            textAlign: 'center',
+            minWidth: 140,
+            fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+          }}>
+            <div style={{ fontSize: 32, marginBottom: 4 }}>{animal?.emoji || '❓'}</div>
+            <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a1a' }}>{animal?.name || 'Desconhecido'}</div>
+            <div style={{ fontSize: 12, color: '#888', fontStyle: 'italic' }}>{animal?.sci || ''}</div>
             {creator && (
               <div style={{
                 fontSize: 11,
                 color: '#888',
-                marginTop: 6,
-                padding: '4px 8px',
+                marginTop: 8,
+                padding: '4px 12px',
                 borderRadius: 999,
-                background: 'rgba(0,0,0,.05)',
+                background: 'rgba(0,0,0,.04)',
                 display: 'inline-block',
               }}>
                 {creator.avatar_emoji || '🧭'} @{creator.username || 'matago'}
               </div>
             )}
-            <div style={{ fontSize: 13, marginTop: 4, color: TIER_COLORS[animal?.tier] || '#888' }}>
+            <div style={{ fontSize: 14, marginTop: 6, fontWeight: 600, color: TIER_COLORS[animal?.tier] || '#888' }}>
               +{sighting.pts_earned} pts
             </div>
           </div>

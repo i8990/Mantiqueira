@@ -1,9 +1,41 @@
-import { useState } from 'react'
-import { ANIMALS, TIER_LABELS, TIER_COLORS, DANGER_CONFIG, LEVELS } from '../../lib/constants'
+import { useState, useEffect } from 'react'
+import { supabase } from '../../lib/supabase'
+import { TIER_LABELS, TIER_COLORS, DANGER_CONFIG, LEVELS, ANIMALS as FALLBACK_ANIMALS } from '../../lib/constants'
 import FlipCard from '../guide/FlipCard'
 
 export default function GuideScreen() {
   const [showManual, setShowManual] = useState(false)
+  const [animals, setAnimals] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    async function fetchAnimals() {
+      setLoading(true)
+      setError(null)
+      try {
+        const { data, error } = await supabase
+          .from('animals')
+          .select('*')
+          .eq('is_active', true)
+          .order('id', { ascending: true })
+        if (!cancelled) {
+          if (error) throw error
+          setAnimals(data?.length ? data : FALLBACK_ANIMALS)
+        }
+      } catch (err) {
+        if (!cancelled) {
+          console.warn('Failed to fetch animals from Supabase, using fallback:', err.message)
+          setAnimals(FALLBACK_ANIMALS)
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    fetchAnimals()
+    return () => { cancelled = true }
+  }, [])
 
   return (
     <>
@@ -15,7 +47,7 @@ export default function GuideScreen() {
         flexDirection: 'column',
         gap: 12,
       }}>
-        <div style={{ marginBottom: 4 }}>
+        <div style={{ marginBottom: 4, animation: 'fadeUp .4s var(--ease-spring)' }}>
           <h2 style={{
             fontFamily: 'var(--font-d)',
             fontWeight: 700,
@@ -26,24 +58,30 @@ export default function GuideScreen() {
             Guia de Campo
           </h2>
           <p style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 2 }}>
-            {ANIMALS.length} espécies catalogadas · Toque nos cards para virar
+            {loading
+              ? 'Carregando espécies...'
+              : `${animals.length} espécies catalogadas · Toque nos cards para virar`
+            }
           </p>
         </div>
 
         <button onClick={() => setShowManual(true)} style={{
           width: '100%',
           padding: '16px 20px',
-          borderRadius: 'var(--r-lg)',
+          borderRadius: 'var(--r-xl)',
           background: 'var(--accent-dim)',
+          backdropFilter: 'var(--glass-blur)',
+          WebkitBackdropFilter: 'var(--glass-blur)',
           border: '0.5px solid var(--accent)',
           color: 'var(--accent)',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           gap: 12,
-          transition: 'all .2s var(--ease-apple)',
+          transition: 'all .25s var(--ease-spring)',
           fontSize: 15,
           fontWeight: 700,
+          animation: 'fadeUp .45s var(--ease-spring)',
         }}>
           <span style={{ fontSize: 28 }}>📖</span>
           <div style={{ textAlign: 'left' }}>
@@ -54,16 +92,49 @@ export default function GuideScreen() {
           </div>
         </button>
 
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 1fr)',
-          gap: 10,
-          paddingBottom: 100,
-        }}>
-          {ANIMALS.map(animal => (
-            <FlipCard key={animal.id} animal={animal} />
-          ))}
-        </div>
+        {loading ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 10,
+            paddingBottom: 20,
+          }}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} style={{
+                aspectRatio: '3 / 4',
+                borderRadius: 'var(--r-lg)',
+                background: 'var(--glass)',
+                border: '0.5px solid var(--glass-border)',
+                animation: `skeleton 1.5s ease-in-out infinite`,
+                animationDelay: `${i * 0.1}s`,
+              }} />
+            ))}
+          </div>
+        ) : error ? (
+          <div style={{
+            padding: 20,
+            textAlign: 'center',
+            color: 'var(--coral)',
+            background: 'var(--coral-dim)',
+            borderRadius: 'var(--r-lg)',
+            fontSize: 14,
+          }}>
+            {error}
+          </div>
+        ) : (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(2, 1fr)',
+            gap: 10,
+            paddingBottom: 20,
+          }}>
+            {animals.map((animal, index) => (
+              <div key={animal.id} style={{ animation: `fadeUp .4s var(--ease-spring)`, animationDelay: `${index * 0.03}s` }}>
+                <FlipCard animal={animal} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {showManual && (
@@ -71,20 +142,28 @@ export default function GuideScreen() {
           position: 'fixed',
           inset: 0,
           zIndex: 10000,
-          background: 'rgba(0,0,0,.7)',
+          background: 'rgba(0,0,0,.75)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           padding: 20,
+          animation: 'fadeIn .2s ease-out',
         }}>
           <div onClick={e => e.stopPropagation()} style={{
-            background: 'var(--bg-card)',
-            borderRadius: 'var(--r-xl)',
+            background: 'var(--glass-strong)',
+            backdropFilter: 'var(--glass-blur-ultra)',
+            WebkitBackdropFilter: 'var(--glass-blur-ultra)',
+            borderRadius: 'var(--r-2xl)',
             maxHeight: '90%',
             width: '100%',
             maxWidth: 420,
             overflowY: 'auto',
-            padding: 24,
+            padding: 28,
+            border: '0.5px solid var(--glass-border-light)',
+            boxShadow: 'var(--shadow-xl)',
+            animation: 'scaleIn .35s var(--ease-spring)',
           }}>
             <div style={{
               display: 'flex',
@@ -101,12 +180,18 @@ export default function GuideScreen() {
                 📖 Manual do Explorador
               </h3>
               <button onClick={() => setShowManual(false)} style={{
-                background: 'none',
-                border: 'none',
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'var(--glass)',
+                border: '0.5px solid var(--glass-border)',
                 color: 'var(--text-3)',
-                fontSize: 20,
+                fontSize: 16,
                 cursor: 'pointer',
-                padding: 4,
+                transition: 'all .2s',
               }}>
                 ✕
               </button>
@@ -126,7 +211,7 @@ export default function GuideScreen() {
                     marginBottom: 4,
                   }}>
                     <span style={{ fontSize: 13, fontWeight: 600, color: TIER_COLORS[key] }}>{label}</span>
-                    <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{ANIMALS.filter(a => a.tier === key).length} espécies</span>
+                    <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{animals.filter(a => a.tier === key).length} espécies</span>
                   </div>
                 ))}
               </Section>
@@ -154,9 +239,9 @@ export default function GuideScreen() {
 
               <Section title="📸 Como registrar">
                 <P>1. Escolha o <strong>tipo de avistamento</strong></P>
-                <P>2. Tire uma foto (obrigatória para Foto e Pegada)</P>
+                <P>2. Tire ou selecione uma foto (obrigatória para Foto e Pegada)</P>
                 <P>3. Selecione o animal correspondente na lista</P>
-                <P>4. Adicione detalhes e confirme a localização</P>
+                <P>4. Adicione detalhes, data, localização e confirme</P>
                 <P>5. Pronto! Os pontos já são creditados</P>
               </Section>
 

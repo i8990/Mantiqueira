@@ -6,7 +6,7 @@ export default function ProgressBar({ current, max, showDot = true }) {
       style={{
         position: 'relative',
         width: '100%',
-        height: 4,
+        height: 5,
         background: 'var(--bg-void)',
         borderRadius: 3,
         overflow: 'visible',
@@ -18,7 +18,8 @@ export default function ProgressBar({ current, max, showDot = true }) {
           height: '100%',
           borderRadius: 3,
           background: 'linear-gradient(90deg, #27A058, var(--accent))',
-          transition: 'width .4s ease',
+          transition: 'width .5s var(--ease-spring)',
+          boxShadow: '0 0 8px var(--accent-glow)',
         }}
       />
       {showDot && (
@@ -27,12 +28,13 @@ export default function ProgressBar({ current, max, showDot = true }) {
             position: 'absolute',
             top: '50%',
             left: `${pct}%`,
-            width: 7,
-            height: 7,
+            width: 8,
+            height: 8,
             borderRadius: '50%',
             background: 'var(--accent)',
             transform: 'translate(-50%, -50%)',
-            boxShadow: '0 0 6px var(--accent)',
+            boxShadow: '0 0 8px var(--accent)',
+            transition: 'left .5s var(--ease-spring)',
           }}
         />
       )}

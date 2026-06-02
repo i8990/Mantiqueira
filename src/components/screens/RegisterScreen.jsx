@@ -42,7 +42,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
     }
   }
 
-  const handleSave = async ({ description, lat, lng }) => {
+  const handleSave = async ({ description, lat, lng, observedAt }) => {
     if (!animalId || !sightingType) {
       setErrorMsg('Selecione o tipo de avistamento primeiro')
       return
@@ -57,6 +57,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
         description,
         lat,
         lng,
+        observedAt,
       })
       if (error) {
         setErrorMsg(error)
@@ -95,62 +96,65 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
       height: '100%',
       overflowY: 'auto',
     }}>
-      <h2 style={{
-        fontFamily: 'var(--font-d)',
-        fontWeight: 700,
-        fontSize: 24,
-        color: 'var(--text-1)',
-        letterSpacing: '-0.02em',
-      }}>
-        Novo avistamento
-      </h2>
+      <div style={{ animation: 'fadeUp .4s var(--ease-spring)' }}>
+        <h2 style={{
+          fontFamily: 'var(--font-d)',
+          fontWeight: 700,
+          fontSize: 24,
+          color: 'var(--text-1)',
+          letterSpacing: '-0.02em',
+          marginBottom: 16,
+        }}>
+          Novo avistamento
+        </h2>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        {STEPS.map((s, i) => (
-          <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: 8 }}>
-            <div style={{
-              width: 28,
-              height: 28,
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 12,
-              fontWeight: 700,
-              background: i <= step ? 'var(--accent-dim)' : 'var(--glass)',
-              border: `2px solid ${
-                i < step
-                  ? 'var(--accent)'
-                  : i === step
-                    ? 'var(--accent)'
-                    : 'var(--glass-border)'
-              }`,
-              color: i <= step ? 'var(--accent)' : 'var(--text-3)',
-              boxShadow: i === step ? '0 0 12px var(--accent-glow)' : 'none',
-              transition: 'all .2s var(--ease-apple)',
-            }}>
-              {i < step ? '✓' : i + 1}
-            </div>
-            <span style={{
-              fontSize: 11,
-              color: i <= step ? 'var(--text-2)' : 'var(--text-3)',
-              fontWeight: i === step ? 600 : 400,
-            }}>
-              {s}
-            </span>
-            {i < STEPS.length - 1 && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {STEPS.map((s, i) => (
+            <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1, gap: 8 }}>
               <div style={{
-                flex: 1,
-                height: 1,
-                background: i < step ? 'var(--accent)' : 'var(--glass-border)',
-                transition: 'background .2s var(--ease-apple)',
-              }} />
-            )}
-          </div>
-        ))}
+                width: 28,
+                height: 28,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 12,
+                fontWeight: 700,
+                background: i <= step ? 'var(--accent-dim)' : 'var(--glass)',
+                border: `2px solid ${
+                  i < step
+                    ? 'var(--accent)'
+                    : i === step
+                      ? 'var(--accent)'
+                      : 'var(--glass-border)'
+                }`,
+                color: i <= step ? 'var(--accent)' : 'var(--text-3)',
+                boxShadow: i === step ? '0 0 12px var(--accent-glow)' : 'none',
+                transition: 'all .25s var(--ease-spring)',
+              }}>
+                {i < step ? '✓' : i + 1}
+              </div>
+              <span style={{
+                fontSize: 11,
+                color: i <= step ? 'var(--text-2)' : 'var(--text-3)',
+                fontWeight: i === step ? 600 : 400,
+              }}>
+                {s}
+              </span>
+              {i < STEPS.length - 1 && (
+                <div style={{
+                  flex: 1,
+                  height: 1.5,
+                  background: i < step ? 'var(--accent)' : 'var(--glass-border)',
+                  transition: 'background .25s var(--ease-spring)',
+                }} />
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1, animation: `fadeUp .35s var(--ease-spring)`, animationDelay: '0.1s' }}>
         {step === 0 && (
           <StepType
             selectedType={sightingType}
@@ -191,13 +195,15 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
                 flex: 1,
                 padding: '14px',
                 borderRadius: 'var(--r-md)',
-                background: 'var(--bg-card)',
-                border: '0.5px solid var(--border-strong)',
+                background: 'var(--glass)',
+                backdropFilter: 'var(--glass-blur)',
+                WebkitBackdropFilter: 'var(--glass-blur)',
+                border: '0.5px solid var(--glass-border)',
                 color: 'var(--text-2)',
                 fontWeight: 500,
                 fontSize: 14,
                 cursor: 'pointer',
-                transition: 'all .2s var(--ease-apple)',
+                transition: 'all .2s var(--ease-spring)',
               }}
             >
               Voltar

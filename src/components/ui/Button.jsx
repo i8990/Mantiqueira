@@ -17,13 +17,13 @@ const variants = {
     fontWeight: 500,
   },
   glass: {
-    background: 'var(--glass)',
+    background: 'var(--glass-strong)',
     color: 'var(--text-1)',
-    border: '0.5px solid var(--glass-border)',
+    border: '0.5px solid var(--glass-border-light)',
     fontWeight: 500,
-    backdropFilter: 'var(--glass-blur)',
-    WebkitBackdropFilter: 'var(--glass-blur)',
-    boxShadow: 'var(--shadow-md)',
+    backdropFilter: 'var(--glass-blur-heavy)',
+    WebkitBackdropFilter: 'var(--glass-blur-heavy)',
+    boxShadow: 'var(--shadow-glass)',
   },
 }
 
@@ -44,7 +44,7 @@ export default function Button({ children, onClick, disabled, fullWidth, variant
         gap: 8,
         opacity: disabled ? 0.5 : 1,
         cursor: disabled ? 'not-allowed' : 'pointer',
-        transition: 'all .2s var(--ease-apple)',
+        transition: 'all .25s var(--ease-spring)',
         ...style,
       }}
       {...props}

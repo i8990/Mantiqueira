@@ -30,12 +30,13 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,.65)',
-        backdropFilter: 'blur(16px) saturate(1.4)',
-        WebkitBackdropFilter: 'blur(16px) saturate(1.4)',
+        background: 'rgba(0,0,0,.7)',
+        backdropFilter: 'blur(20px) saturate(1.4)',
+        WebkitBackdropFilter: 'blur(20px) saturate(1.4)',
         zIndex: 9999,
         display: 'flex',
         alignItems: 'flex-end',
+        animation: 'fadeIn .2s ease-out',
       }}
     >
       <div
@@ -43,16 +44,15 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
         style={{
           width: '100%',
           maxHeight: '80%',
-          background: 'var(--glass)',
-          backdropFilter: 'var(--glass-blur-heavy)',
-          WebkitBackdropFilter: 'var(--glass-blur-heavy)',
-          borderTop: '0.5px solid var(--glass-border)',
-          borderRadius: 'var(--r-xl) var(--r-xl) 0 0',
+          background: 'var(--glass-strong)',
+          backdropFilter: 'var(--glass-blur-ultra)',
+          WebkitBackdropFilter: 'var(--glass-blur-ultra)',
+          borderTop: '0.5px solid var(--glass-border-light)',
+          borderRadius: 'var(--r-2xl) var(--r-2xl) 0 0',
           padding: '24px 20px',
-          transform: 'translateY(0)',
-          transition: 'transform .35s var(--ease-apple)',
           overflowY: 'auto',
-          boxShadow: '0 -8px 30px rgba(0,0,0,.5)',
+          boxShadow: '0 -8px 40px rgba(0,0,0,.6)',
+          animation: 'slideUp .4s var(--ease-spring)',
         }}
       >
         <div style={{
@@ -65,12 +65,12 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
         }} />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, alignItems: 'center' }}>
-          <span style={{ fontSize: 52 }}>{animal.emoji}</span>
+          <span style={{ fontSize: 56 }}>{animal.emoji}</span>
           <div style={{ textAlign: 'center' }}>
             <h3 style={{
               fontFamily: 'var(--font-d)',
               fontWeight: 700,
-              fontSize: 24,
+              fontSize: 26,
               color: 'var(--text-1)',
               letterSpacing: '-0.02em',
             }}>
@@ -92,8 +92,10 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
             flexDirection: 'column',
             gap: 8,
             padding: 16,
-            background: 'rgba(255,255,255,.03)',
-            borderRadius: 'var(--r-md)',
+            background: 'var(--glass)',
+            backdropFilter: 'var(--glass-blur)',
+            WebkitBackdropFilter: 'var(--glass-blur)',
+            borderRadius: 'var(--r-lg)',
             border: '0.5px solid var(--glass-border)',
           }}>
             <div style={{ fontSize: 14, color: 'var(--text-2)' }}>
@@ -118,20 +120,19 @@ export default function AnimalDetailSheet({ animalId, isSeen, onClose }) {
               opacity: 0.8,
               transition: 'opacity .2s',
             }}
-            onMouseOver={e => e.target.style.opacity = 1}
-            onMouseOut={e => e.target.style.opacity = 0.8}
           >
             Ver na Wikipédia ↗
           </a>
 
           {isSeen ? (
             <div style={{
-              padding: '10px 20px',
+              padding: '12px 24px',
               borderRadius: 'var(--r-md)',
               background: 'var(--accent-dim)',
               color: 'var(--accent)',
               fontSize: 14,
               fontWeight: 500,
+              border: '0.5px solid var(--accent)',
             }}>
               ✓ Já registrado na sua coleção
             </div>

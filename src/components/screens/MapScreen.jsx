@@ -15,18 +15,19 @@ export default function MapScreen({ sightings, seenIds }) {
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 1000,
-        background: 'var(--glass)',
-        backdropFilter: 'var(--glass-blur)',
-        WebkitBackdropFilter: 'var(--glass-blur)',
-        padding: '8px 18px',
+        background: 'var(--glass-strong)',
+        backdropFilter: 'var(--glass-blur-ultra)',
+        WebkitBackdropFilter: 'var(--glass-blur-ultra)',
+        padding: '8px 20px',
         borderRadius: 999,
         fontSize: 12,
         color: 'var(--text-2)',
         display: 'flex',
         alignItems: 'center',
         gap: 8,
-        border: '0.5px solid var(--glass-border)',
-        boxShadow: 'var(--shadow-lg)',
+        border: '0.5px solid var(--glass-border-light)',
+        boxShadow: 'var(--shadow-glass)',
+        animation: 'fadeUp .4s var(--ease-spring)',
       }}>
         <span style={{
           width: 6,
@@ -50,21 +51,24 @@ export default function MapScreen({ sightings, seenIds }) {
 
       <div style={{
         position: 'absolute',
-        bottom: 80,
+        bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
         left: '50%',
         transform: 'translateX(-50%)',
         zIndex: 1000,
+        animation: 'fadeUpSpring .5s var(--ease-spring)',
       }}>
         <Button
           variant="glass"
           leftIcon="📍"
           onClick={() => setActiveTab('registrar')}
           style={{
-            backdropFilter: 'var(--glass-blur-heavy)',
-            WebkitBackdropFilter: 'var(--glass-blur-heavy)',
+            backdropFilter: 'var(--glass-blur-ultra)',
+            WebkitBackdropFilter: 'var(--glass-blur-ultra)',
             boxShadow: 'var(--shadow-xl)',
-            border: '0.5px solid var(--glass-border)',
+            border: '0.5px solid var(--glass-border-light)',
             padding: '14px 28px',
+            borderRadius: 'var(--r-xl)',
+            background: 'var(--glass-strong)',
           }}
         >
           Registrar encontro

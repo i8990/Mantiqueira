@@ -20,12 +20,11 @@ export default function FlipCard({ animal }) {
           position: 'relative',
           width: '100%',
           height: '100%',
-          transition: 'transform .5s cubic-bezier(.25,.1,.25,1)',
+          transition: 'transform .6s var(--ease-spring)',
           transformStyle: 'preserve-3d',
           transform: flipped ? 'rotateY(180deg)' : 'rotateY(0)',
         }}
       >
-        {/* Frente */}
         <div
           style={{
             position: 'absolute',
@@ -35,21 +34,21 @@ export default function FlipCard({ animal }) {
             background: 'var(--glass)',
             backdropFilter: 'var(--glass-blur)',
             WebkitBackdropFilter: 'var(--glass-blur)',
-            borderRadius: 'var(--r-lg)',
+            borderRadius: 'var(--r-xl)',
             border: '0.5px solid var(--glass-border)',
             boxShadow: 'var(--shadow-md)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: 14,
-            gap: 5,
+            padding: 16,
+            gap: 6,
           }}
         >
           {animal.img ? (
             <div style={{
-              width: 64,
-              height: 64,
+              width: 72,
+              height: 72,
               borderRadius: '50%',
               overflow: 'hidden',
               background: 'rgba(0,0,0,.15)',
@@ -57,6 +56,7 @@ export default function FlipCard({ animal }) {
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: 34,
+              border: '0.5px solid var(--glass-border)',
             }}>
               <img
                 src={animal.img}
@@ -66,9 +66,9 @@ export default function FlipCard({ animal }) {
               />
             </div>
           ) : (
-            <span style={{ fontSize: 34 }}>{animal.emoji}</span>
+            <span style={{ fontSize: 38 }}>{animal.emoji}</span>
           )}
-          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-1)', textAlign: 'center', lineHeight: 1.2 }}>
+          <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)', textAlign: 'center', lineHeight: 1.2 }}>
             {animal.name}
           </span>
           <span style={{ fontSize: 9, fontStyle: 'italic', color: 'var(--text-3)', textAlign: 'center' }}>
@@ -79,44 +79,42 @@ export default function FlipCard({ animal }) {
             alignItems: 'center',
             gap: 4,
             marginTop: 4,
-            padding: '3px 8px',
+            padding: '3px 10px',
             borderRadius: 999,
             background: `${danger.color}20`,
             border: `0.5px solid ${danger.color}40`,
           }}>
-            <span style={{ fontSize: 9 }}>{danger.emoji}</span>
-            <span style={{ fontSize: 9, fontWeight: 600, color: danger.color }}>
+            <span style={{ fontSize: 10 }}>{danger.emoji}</span>
+            <span style={{ fontSize: 10, fontWeight: 600, color: danger.color }}>
               {danger.label}
             </span>
           </div>
           <span style={{
             fontSize: 8,
             color: 'var(--text-3)',
-            marginTop: 4,
+            marginTop: 6,
             opacity: 0.6,
-            transition: 'opacity .2s',
           }}>
             👆 toque para virar
           </span>
         </div>
 
-        {/* Verso */}
         <div
           style={{
             position: 'absolute',
             inset: 0,
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
-            background: 'var(--glass)',
+            background: 'var(--glass-strong)',
             backdropFilter: 'var(--glass-blur-heavy)',
             WebkitBackdropFilter: 'var(--glass-blur-heavy)',
-            borderRadius: 'var(--r-lg)',
-            border: '0.5px solid var(--glass-border)',
+            borderRadius: 'var(--r-xl)',
+            border: '0.5px solid var(--glass-border-light)',
             boxShadow: 'var(--shadow-lg)',
             transform: 'rotateY(180deg)',
             display: 'flex',
             flexDirection: 'column',
-            padding: 14,
+            padding: 16,
             overflowY: 'auto',
           }}
         >
@@ -141,7 +139,7 @@ export default function FlipCard({ animal }) {
                 />
               </div>
             ) : (
-              <span style={{ fontSize: 24, flexShrink: 0 }}>{animal.emoji}</span>
+              <span style={{ fontSize: 26, flexShrink: 0 }}>{animal.emoji}</span>
             )}
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)', lineHeight: 1.1 }}>

@@ -6,7 +6,7 @@ const badges = [
     const h = new Date(s.created_at).getHours()
     return h >= 5 && h <= 7
   }) },
-  { id: 'onca', emoji: '🐆', name: 'Avistou onça', condition: 'Registrar onça', check: (seenIds) => seenIds.has('onca') },
+  { id: 'onca', emoji: '🐆', name: 'Avistou onça', condition: 'Registrar onça', check: (seenIds) => seenIds.has('onca-pintada') },
   { id: 'area', emoji: '🗺️', name: '100 km² mapeados', condition: 'Área ≥ 100 km²', check: (_, __, sightings) => {
     if (!sightings?.length) return false
     const lats = sightings.filter(s => s.lat).map(s => s.lat)
@@ -43,16 +43,16 @@ export default function BadgeGrid({ seenIds, profile, sightings }) {
                 alignItems: 'center',
                 gap: 4,
                 padding: 10,
-                borderRadius: 'var(--r-md)',
+                borderRadius: 'var(--r-lg)',
                 background: earned ? 'var(--accent-dim)' : 'var(--glass)',
                 backdropFilter: earned ? undefined : 'var(--glass-blur)',
                 WebkitBackdropFilter: earned ? undefined : 'var(--glass-blur)',
                 border: earned
                   ? '0.5px solid var(--accent)'
                   : '0.5px solid var(--glass-border)',
-                opacity: earned ? 1 : 0.38,
+                opacity: earned ? 1 : 0.4,
                 filter: earned ? 'none' : 'grayscale(1)',
-                transition: 'all .25s var(--ease-apple)',
+                transition: 'all .3s var(--ease-spring)',
               }}
               title={badge.condition}
             >
