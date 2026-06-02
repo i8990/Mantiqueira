@@ -95,7 +95,7 @@ export function useAllSightings() {
     try {
       const { data, error } = await supabase
         .from('sightings')
-        .select('*, animals(name, emoji, tier, pts), has_photo')
+        .select('*, animals(name, emoji, tier, pts), profiles(username, avatar_emoji), has_photo')
         .not('lat', 'is', null)
         .order('created_at', { ascending: false })
       if (error) {
