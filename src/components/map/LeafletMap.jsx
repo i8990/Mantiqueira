@@ -1,7 +1,10 @@
 import { MapContainer, TileLayer, ZoomControl } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
+import { LAYERS } from './LayerSwitcher'
 
-export default function LeafletMap({ center, children, whenReady }) {
+export default function LeafletMap({ center, children, whenReady, layer }) {
+  const active = LAYERS.find(l => l.key === layer) || LAYERS[0]
+
   return (
     <MapContainer
       center={center}
@@ -11,10 +14,12 @@ export default function LeafletMap({ center, children, whenReady }) {
       whenReady={whenReady}
     >
       <ZoomControl position="bottomright" />
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CARTO'
-      />
+      {active.tiles.map((t, i) => (
+        <TileLayer key={`t${i}`} url={t.url} attribution={t.attribution} />
+      ))}
+      {active.overlays?.map((o, i) => (
+        <TileLayer key={`o${i}`} url={o.url} attribution={o.attribution} transparent />
+      ))}
       {children}
     </MapContainer>
   )

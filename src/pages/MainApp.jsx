@@ -26,7 +26,7 @@ function ScreenFallback() {
 export default function MainApp({ session }) {
   const userId = session.user.id
   const { profile, loading: profileLoading } = useProfile(userId)
-  const { sightings: mySightings, loading: sightingsLoading, createSighting, refresh: refreshMySightings } = useSightings(userId)
+  const { sightings: mySightings, loading: sightingsLoading, createSighting, deleteSighting, refresh: refreshMySightings } = useSightings(userId)
   const { sightings: allSightings, loading: allLoading, refresh: refreshAllSightings } = useAllSightings()
   const { seenIds, loading: collectionLoading } = useCollection(userId)
 
@@ -35,15 +35,15 @@ export default function MainApp({ session }) {
     refreshAllSightings()
   }, [refreshMySightings, refreshAllSightings])
 
-  const latestRef = useRef({ allSightings, seenIds, createSighting, refreshSightings, profile, mySightings })
-  latestRef.current = { allSightings, seenIds, createSighting, refreshSightings, profile, mySightings }
+  const latestRef = useRef({ allSightings, seenIds, createSighting, deleteSighting, refreshSightings, profile, mySightings })
+  latestRef.current = { allSightings, seenIds, createSighting, deleteSighting, refreshSightings, profile, mySightings }
 
   const screens = useRef([
     () => {
       const p = latestRef.current
       return (
         <Suspense fallback={<ScreenFallback />}>
-          <MapScreen sightings={p.allSightings} seenIds={p.seenIds} />
+          <MapScreen sightings={p.allSightings} />
         </Suspense>
       )
     },
@@ -64,7 +64,7 @@ export default function MainApp({ session }) {
       const p = latestRef.current
       return (
         <Suspense fallback={<ScreenFallback />}>
-          <ProfileScreen profile={p.profile} sightings={p.mySightings} seenIds={p.seenIds} />
+          <ProfileScreen profile={p.profile} sightings={p.mySightings} seenIds={p.seenIds} deleteSighting={p.deleteSighting} />
         </Suspense>
       )
     },

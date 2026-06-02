@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '../lib/supabase'
-import { ANIMALS, SIGHTING_TYPE_MULTIPLIERS } from '../lib/constants'
+import {
+  ANIMALS, SIGHTING_TYPE_MULTIPLIERS,
+  QLTY_BONUS_DESC, QLTY_BONUS_GPS, QLTY_BONUS_DATE,
+  FIRST_SIGHTING_MULTIPLIER, REPEAT_SIGHTING_MULTIPLIER,
+} from '../lib/constants'
 
 function uuidv4() {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID()
@@ -60,8 +64,23 @@ export default function useSightings(userId) {
       photoUrl = publicUrl
     }
 
-    const multiplier = SIGHTING_TYPE_MULTIPLIERS[sightingType] || 1
-    const ptsEarned = Math.round(animal.pts * multiplier)
+    const typeMult = SIGHTING_TYPE_MULTIPLIERS[sightingType] || 1
+
+    let qualityBonus = 0
+    if (description && description.length > 10) qualityBonus += QLTY_BONUS_DESC
+    if (lat && lng) qualityBonus += QLTY_BONUS_GPS
+    if (observedAt) qualityBonus += QLTY_BONUS_DATE
+
+    const { count } = await supabase
+      .from('sightings')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .eq('animal_id', animalId)
+
+    const isRepeat = (count || 0) > 0
+    const sightingFactor = isRepeat ? REPEAT_SIGHTING_MULTIPLIER : FIRST_SIGHTING_MULTIPLIER
+
+    const ptsEarned = Math.round(animal.pts * typeMult * (1 + qualityBonus) * sightingFactor)
 
     const { data, error } = await supabase
       .from('sightings')
@@ -75,14 +94,82 @@ export default function useSightings(userId) {
         sighting_type: sightingType || 'foto',
         pts_earned: ptsEarned,
         observed_at: observedAt || null,
+        is_public: true,
       })
       .select()
       .single()
 
-    return { data, error: error?.message }
+    if (error) {
+      let msg = error.message
+      if (msg?.includes('schema cache') || msg?.includes('does not exist')) {
+        msg = 'Erro de configuração do banco de dados. Execute as migrations pendentes no Supabase Dashboard.'
+      }
+      return { data, error: msg }
+    }
+
+    return { data, error: null }
   }
 
-  return { sightings, loading, error, refresh, createSighting }
+  const deleteSighting = async (sightingId) => {
+    const { data: sighting, error: fetchError } = await supabase
+      .from('sightings')
+      .select('*')
+      .eq('id', sightingId)
+      .single()
+
+    if (fetchError) return { error: fetchError.message }
+    if (!sighting) return { error: 'Registro não encontrado' }
+
+    if (sighting.photo_url) {
+      try {
+        const url = new URL(sighting.photo_url)
+        const pathParts = url.pathname.split('/')
+        const bucketIndex = pathParts.indexOf('sightings-photos')
+        if (bucketIndex !== -1) {
+          const filePath = pathParts.slice(bucketIndex + 1).join('/')
+          await supabase.storage.from('sightings-photos').remove([filePath])
+        }
+      } catch (e) {
+        // silently ignore storage delete errors
+      }
+    }
+
+    const { error: deleteError } = await supabase
+      .from('sightings')
+      .delete()
+      .eq('id', sightingId)
+
+    if (deleteError) return { error: deleteError.message }
+
+    await refresh()
+    return { error: null }
+  }
+
+  return { sightings, loading, error, refresh, createSighting, deleteSighting }
+}
+
+export function usePublicPhotos(userId) {
+  const [photos, setPhotos] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const refresh = useCallback(async () => {
+    setLoading(true)
+    let query = supabase
+      .from('sightings')
+      .select('*, animals(name, emoji), profiles!inner(name, username, avatar_emoji)')
+      .eq('is_public', true)
+      .not('photo_url', 'is', null)
+
+    if (userId) query = query.eq('user_id', userId)
+
+    const { data } = await query.order('created_at', { ascending: false })
+    setPhotos(data || [])
+    setLoading(false)
+  }, [userId])
+
+  useEffect(() => { refresh() }, [refresh])
+
+  return { photos, loading, refresh }
 }
 
 export function useAllSightings() {
@@ -95,7 +182,7 @@ export function useAllSightings() {
     try {
       const { data, error } = await supabase
         .from('sightings')
-        .select('*, animals(name, emoji, tier, pts), profiles(username, avatar_emoji), has_photo')
+        .select('*, animals(name, emoji, tier, pts), profiles(name, username, avatar_emoji), has_photo')
         .not('lat', 'is', null)
         .order('created_at', { ascending: false })
       if (error) {

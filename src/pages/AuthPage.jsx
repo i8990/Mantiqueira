@@ -7,29 +7,24 @@ export default function AuthPage() {
   const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
-  const [usernameAvailable, setUsernameAvailable] = useState(null)
-  const [checkingUsername, setCheckingUsername] = useState(false)
+  const [name, setName] = useState('')
+  const [autoUsername, setAutoUsername] = useState('')
   const [focusedField, setFocusedField] = useState(null)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
 
   const { signIn, signUp, signInWithGoogle } = useAuth()
+  const [googleLoading, setGoogleLoading] = useState(false)
 
-  const checkUsername = async (val) => {
-    if (!val || val.length < 3) {
-      setUsernameAvailable(null)
-      return
-    }
-    setCheckingUsername(true)
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('username', val)
-      .maybeSingle()
-    if (!error) setUsernameAvailable(!data)
-    setCheckingUsername(false)
+  const generateUsernamePreview = (val) => {
+    if (!val || val.length < 2) { setAutoUsername(''); return }
+    const base = val
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '')
+      .slice(0, 20)
+    setAutoUsername(base || 'explorador')
   }
 
   const handleSubmit = async (e) => {
@@ -47,17 +42,12 @@ export default function AuthPage() {
         setLoading(false)
         return
       }
-      if (!username || username.trim().length < 3) {
-        setError('Nome de usuário deve ter no mínimo 3 caracteres')
+      if (!name || name.trim().length < 3) {
+        setError('Nome deve ter no mínimo 3 caracteres')
         setLoading(false)
         return
       }
-      if (usernameAvailable === false) {
-        setError('Este nome de usuário já está em uso')
-        setLoading(false)
-        return
-      }
-      const { error } = await signUp(email, password, username)
+      const { error } = await signUp(email, password, name)
       if (error) {
         setError(error.message)
       } else {
@@ -200,11 +190,11 @@ export default function AuthPage() {
               <div>
                 <input
                   type="text"
-                  placeholder="@guardiao_nome"
-                  value={username}
+                  placeholder="Seu nome"
+                  value={name}
                   onChange={e => {
-                    setUsername(e.target.value)
-                    checkUsername(e.target.value)
+                    setName(e.target.value)
+                    generateUsernamePreview(e.target.value)
                   }}
                   style={{
                     width: '100%',
@@ -213,13 +203,7 @@ export default function AuthPage() {
                     background: 'var(--glass)',
                     backdropFilter: 'var(--glass-blur)',
                     WebkitBackdropFilter: 'var(--glass-blur)',
-                    borderColor: focusedField === 'username'
-                      ? 'var(--accent)'
-                      : usernameAvailable === false
-                        ? 'var(--coral)'
-                        : usernameAvailable === true
-                          ? 'var(--accent)'
-                          : 'var(--glass-border)',
+                    borderColor: focusedField === 'name' ? 'var(--accent)' : 'var(--glass-border)',
                     borderStyle: 'solid',
                     borderWidth: '0.5px',
                     color: 'var(--text-1)',
@@ -227,22 +211,12 @@ export default function AuthPage() {
                     outline: 'none',
                     transition: 'border-color .2s var(--ease-apple)',
                   }}
-                  onFocus={() => setFocusedField('username')}
+                  onFocus={() => setFocusedField('name')}
                   onBlur={() => setFocusedField(null)}
                 />
-                {checkingUsername && (
-                  <span style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4, display: 'block' }}>
-                    Verificando...
-                  </span>
-                )}
-                {usernameAvailable === false && (
-                  <span style={{ fontSize: 11, color: 'var(--coral)', marginTop: 4, display: 'block' }}>
-                    Nome de usuário já em uso
-                  </span>
-                )}
-                {usernameAvailable === true && (
-                  <span style={{ fontSize: 11, color: 'var(--accent)', marginTop: 4, display: 'block' }}>
-                    Nome disponível ✓
+                {autoUsername && (
+                  <span style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 4, display: 'block' }}>
+                    @{autoUsername}
                   </span>
                 )}
               </div>
@@ -334,9 +308,18 @@ export default function AuthPage() {
             variant="glass"
             fullWidth
             leftIcon="🔵"
-            onClick={signInWithGoogle}
+            onClick={async () => {
+              setError('')
+              setGoogleLoading(true)
+              const { error } = await signInWithGoogle()
+              if (error) {
+                setError(error.message)
+                setGoogleLoading(false)
+              }
+            }}
+            disabled={googleLoading}
           >
-            Entrar com Google
+            {googleLoading ? 'Carregando...' : 'Entrar com Google'}
           </Button>
         </div>
       </div>

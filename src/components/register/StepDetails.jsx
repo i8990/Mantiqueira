@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
-import { ANIMALS, SIGHTING_TYPE_MULTIPLIERS, TIER_COLORS } from '../../lib/constants'
+import { ANIMALS, SIGHTING_TYPE_MULTIPLIERS, TIER_COLORS, QLTY_BONUS_DESC, QLTY_BONUS_GPS, QLTY_BONUS_DATE, FIRST_SIGHTING_MULTIPLIER, REPEAT_SIGHTING_MULTIPLIER } from '../../lib/constants'
 import Badge from '../ui/Badge'
+import LocationPicker from './LocationPicker'
 
 function formatDate(date) {
   const d = new Date(date)
@@ -17,7 +18,9 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
   const [manualLat, setManualLat] = useState('')
   const [manualLng, setManualLng] = useState('')
   const [observedDate, setObservedDate] = useState(formatDate(new Date()))
-  const [showMapPicker, setShowMapPicker] = useState(false)
+  const [showLocationPicker, setShowLocationPicker] = useState(false)
+  const [mapCoords, setMapCoords] = useState(null)
+  const [mapAddress, setMapAddress] = useState('')
   const animal = ANIMALS.find(a => a.id === animalId)
 
   useEffect(() => {
@@ -59,6 +62,7 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
 
   const getCoords = () => {
     if (locationMode === 'auto') return coords
+    if (locationMode === 'map' && mapCoords) return mapCoords
     if (locationMode === 'manual') {
       const lat = parseFloat(manualLat)
       const lng = parseFloat(manualLng)
@@ -67,10 +71,15 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
     return null
   }
 
-  const multiplier = sightingType ? SIGHTING_TYPE_MULTIPLIERS[sightingType] : null
-  const pts = animal && multiplier ? Math.round(animal.pts * multiplier) : 0
-  const penalty = multiplier && multiplier < 1
-  const penaltyText = penalty ? `-${Math.round((1 - multiplier) * 100)}%` : null
+  const typeMult = sightingType ? SIGHTING_TYPE_MULTIPLIERS[sightingType] : null
+  let qBonus = 0
+  if (description && description.length > 10) qBonus += QLTY_BONUS_DESC
+  if (coords?.lat && coords?.lng) qBonus += QLTY_BONUS_GPS
+  if (observedDate) qBonus += QLTY_BONUS_DATE
+  const ptsBase = animal && typeMult ? Math.round(animal.pts * typeMult) : 0
+  const ptsMax = animal && typeMult ? Math.round(animal.pts * typeMult * (1 + qBonus) * FIRST_SIGHTING_MULTIPLIER) : 0
+  const penalty = typeMult && typeMult < 1
+  const penaltyText = penalty ? `-${Math.round((1 - typeMult) * 100)}%` : null
   const finalCoords = getCoords()
 
   return (
@@ -185,46 +194,65 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
 
         <div style={{
           display: 'flex',
-          gap: 8,
+          gap: 6,
           marginBottom: 10,
         }}>
           <button
-            onClick={handleUseAutoLocation}
+            onClick={() => { setLocationMode('auto'); setMapCoords(null); setManualLat(''); setManualLng('') }}
             style={{
               flex: 1,
-              padding: '10px 12px',
+              padding: '10px 8px',
               borderRadius: 'var(--r-md)',
               background: locationMode === 'auto' ? 'var(--accent-dim)' : 'var(--glass)',
               backdropFilter: 'var(--glass-blur)',
               WebkitBackdropFilter: 'var(--glass-blur)',
               border: locationMode === 'auto' ? '0.5px solid var(--accent)' : '0.5px solid var(--glass-border)',
               color: locationMode === 'auto' ? 'var(--accent)' : 'var(--text-2)',
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 500,
               cursor: 'pointer',
               transition: 'all .2s',
             }}
           >
-            📡 GPS automático
+            📡 GPS
           </button>
           <button
-            onClick={() => setLocationMode('manual')}
+            onClick={() => { setLocationMode('map'); setShowLocationPicker(true) }}
             style={{
               flex: 1,
-              padding: '10px 12px',
+              padding: '10px 8px',
+              borderRadius: 'var(--r-md)',
+              background: locationMode === 'map' ? 'var(--accent-dim)' : 'var(--glass)',
+              backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
+              border: locationMode === 'map' ? '0.5px solid var(--accent)' : '0.5px solid var(--glass-border)',
+              color: locationMode === 'map' ? 'var(--accent)' : 'var(--text-2)',
+              fontSize: 11,
+              fontWeight: 500,
+              cursor: 'pointer',
+              transition: 'all .2s',
+            }}
+          >
+            🗺️ Mapa
+          </button>
+          <button
+            onClick={() => { setLocationMode('manual'); setMapCoords(null) }}
+            style={{
+              flex: 1,
+              padding: '10px 8px',
               borderRadius: 'var(--r-md)',
               background: locationMode === 'manual' ? 'var(--amber-dim)' : 'var(--glass)',
               backdropFilter: 'var(--glass-blur)',
               WebkitBackdropFilter: 'var(--glass-blur)',
               border: locationMode === 'manual' ? '0.5px solid var(--amber)' : '0.5px solid var(--glass-border)',
               color: locationMode === 'manual' ? 'var(--amber)' : 'var(--text-2)',
-              fontSize: 12,
+              fontSize: 11,
               fontWeight: 500,
               cursor: 'pointer',
               transition: 'all .2s',
             }}
           >
-            🗺️ Inserir manual
+            ✏️ Coord.
           </button>
         </div>
 
@@ -240,19 +268,62 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
             color: 'var(--text-2)',
           }}>
             {geoError ? (
-              <span style={{ color: 'var(--coral)' }}>⚠️ Localização indisponível — o registro não aparecerá no mapa</span>
+              <span style={{ color: 'var(--coral)' }}>⚠️ Localização indisponível</span>
             ) : coords ? (
-              <span>📍 GPS capturado ✓ ({coords.lat.toFixed(4)}, {coords.lng.toFixed(4)})</span>
+              <span>📍 {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}</span>
             ) : (
               <span style={{ color: 'var(--text-3)' }}>📍 Obtendo localização...</span>
             )}
           </div>
+        ) : locationMode === 'map' && mapCoords ? (
+          <div
+            onClick={() => setShowLocationPicker(true)}
+            style={{
+              padding: '12px 14px',
+              background: 'var(--glass)',
+              backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
+              borderRadius: 'var(--r-md)',
+              border: '0.5px solid var(--accent)',
+              fontSize: 13,
+              color: 'var(--accent)',
+              cursor: 'pointer',
+              transition: 'all .2s',
+            }}
+          >
+            <div>📍 {mapCoords.lat.toFixed(4)}, {mapCoords.lng.toFixed(4)}</div>
+            {mapAddress && (
+              <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>{mapAddress}</div>
+            )}
+            <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4, textDecoration: 'underline' }}>
+              Tocar para alterar
+            </div>
+          </div>
+        ) : locationMode === 'map' ? (
+          <button
+            onClick={() => setShowLocationPicker(true)}
+            style={{
+              width: '100%',
+              padding: '24px 14px',
+              borderRadius: 'var(--r-md)',
+              background: 'var(--glass)',
+              backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
+              border: '0.5px dashed var(--glass-border)',
+              color: 'var(--text-3)',
+              fontSize: 13,
+              cursor: 'pointer',
+              transition: 'all .2s',
+            }}
+          >
+            🗺️ Tocar para abrir o mapa e escolher o local
+          </button>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <div style={{ display: 'flex', gap: 8 }}>
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: 10, color: 'var(--text-3)', marginBottom: 4, display: 'block' }}>
-                  Latitude (-90 a 90)
+                  Latitude
                 </label>
                 <input
                   type="number"
@@ -274,6 +345,7 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
                     color: 'var(--text-1)',
                     fontSize: 14,
                     outline: 'none',
+                    boxSizing: 'border-box',
                   }}
                   onFocus={e => e.target.style.borderColor = 'var(--amber)'}
                   onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
@@ -281,7 +353,7 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
               </div>
               <div style={{ flex: 1 }}>
                 <label style={{ fontSize: 10, color: 'var(--text-3)', marginBottom: 4, display: 'block' }}>
-                  Longitude (-180 a 180)
+                  Longitude
                 </label>
                 <input
                   type="number"
@@ -303,6 +375,7 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
                     color: 'var(--text-1)',
                     fontSize: 14,
                     outline: 'none',
+                    boxSizing: 'border-box',
                   }}
                   onFocus={e => e.target.style.borderColor = 'var(--amber)'}
                   onBlur={e => e.target.style.borderColor = 'var(--glass-border)'}
@@ -319,12 +392,9 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
                 textAlign: 'center',
                 border: '0.5px solid var(--accent)',
               }}>
-                📍 Coordenadas: {finalCoords.lat.toFixed(4)}, {finalCoords.lng.toFixed(4)}
+                📍 {finalCoords.lat.toFixed(4)}, {finalCoords.lng.toFixed(4)}
               </div>
             )}
-            <p style={{ fontSize: 10, color: 'var(--text-3)', textAlign: 'center' }}>
-              💡 Dica: Use Google Maps para encontrar as coordenadas
-            </p>
           </div>
         )}
       </div>
@@ -355,7 +425,11 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
             </span>
           )}
         </div>
-        <Badge label={`+${pts} pts`} type="accent" />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Badge label={`+${ptsBase} pts`} type="accent" />
+          {qBonus > 0 && <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 500 }}>+{Math.round(qBonus * 100)}% qualidade</span>}
+          <span style={{ fontSize: 9, color: 'var(--text-3)' }}>1ª vez: até +{ptsMax} pts</span>
+        </div>
       </div>
 
       <button
@@ -383,6 +457,21 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
       >
         {saving ? 'Salvando...' : 'Salvar avistamento'}
       </button>
+
+      {showLocationPicker && (
+        <LocationPicker
+          initialCoords={mapCoords}
+          onConfirm={(pos) => {
+            setMapCoords({ lat: pos.lat, lng: pos.lng })
+            setMapAddress(pos.address || '')
+            setShowLocationPicker(false)
+          }}
+          onClose={() => {
+            setShowLocationPicker(false)
+            if (!mapCoords) setLocationMode('auto')
+          }}
+        />
+      )}
     </div>
   )
 }

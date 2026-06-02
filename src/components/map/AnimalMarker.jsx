@@ -23,7 +23,7 @@ function jitterPosition(lat, lng, seed) {
   return [lat + dlat * Math.sin(angle), lng + dlng * Math.cos(angle)]
 }
 
-function createIcon(animal, isSeen) {
+function createIcon(animal) {
   const tierColor = (animal && TIER_COLORS[animal.tier]) || 'var(--text-3)'
   const size = animal?.tier === 'L' ? 44 : 36
   const html = `
@@ -38,12 +38,12 @@ function createIcon(animal, isSeen) {
       box-shadow:${animal?.tier === 'L' ? `0 0 14px ${tierColor}, 0 2px 8px rgba(0,0,0,.4)` : '0 2px 8px rgba(0,0,0,.4)'};
       ${animal?.tier === 'L' ? 'animation:legendPulse 2.4s ease-in-out infinite;' : ''}
       transition:transform .2s;
-    ">${isSeen ? animal.emoji : '?'}</div>
+    ">${animal?.emoji || '❓'}</div>
   `
   return L.divIcon({ html, className: '', iconSize: [size, size], iconAnchor: [size / 2, size / 2] })
 }
 
-export default function AnimalMarker({ sighting, isSeen }) {
+export default function AnimalMarker({ sighting }) {
   const [showRadius, setShowRadius] = useState(false)
   const animal = ANIMALS.find(a => a.id === sighting.animal_id)
   const creator = sighting.profiles
@@ -56,7 +56,7 @@ export default function AnimalMarker({ sighting, isSeen }) {
     <>
       <Marker
         position={pos}
-        icon={createIcon(animal, isSeen)}
+        icon={createIcon(animal)}
         eventHandlers={{ click: () => setShowRadius(true), popupclose: () => setShowRadius(false) }}
       >
         <Popup>
@@ -78,7 +78,7 @@ export default function AnimalMarker({ sighting, isSeen }) {
                 background: 'rgba(0,0,0,.04)',
                 display: 'inline-block',
               }}>
-                {creator.avatar_emoji || '🧭'} @{creator.username || 'matago'}
+                {creator.avatar_emoji || '🧭'} {creator.name || creator.username || 'Matago'}
               </div>
             )}
             <div style={{ fontSize: 14, marginTop: 6, fontWeight: 600, color: (animal && TIER_COLORS[animal.tier]) || '#888' }}>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { DANGER_CONFIG } from '../../lib/constants'
+import { DANGER_CONFIG, TIER_COLORS } from '../../lib/constants'
 
 const FALLBACK_DANGER = { label: 'Desconhecido', color: 'var(--text-3)', emoji: '⚪' }
 
@@ -47,6 +47,20 @@ export default function FlipCard({ animal }) {
             gap: 6,
           }}
         >
+          <div style={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            padding: '2px 8px',
+            borderRadius: 999,
+            background: TIER_COLORS[animal.tier],
+            color: '#fff',
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '-0.01em',
+          }}>
+            +{animal.pts}
+          </div>
           {animal.img ? (
             <div style={{
               width: 72,

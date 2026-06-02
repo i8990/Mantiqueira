@@ -25,29 +25,9 @@ export default function AppShell({ screens, profile, sightings, seenIds, createS
         flexDirection: 'column',
         background: 'var(--bg-deep)',
         position: 'relative',
+        paddingTop: 'env(safe-area-inset-top, 0px)',
       }}
     >
-      <div
-        style={{
-          height: 'calc(44px + env(safe-area-inset-top, 0px))',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontSize: 12,
-          fontWeight: 500,
-          color: 'var(--text-3)',
-          flexShrink: 0,
-          background: 'var(--glass-strong)',
-          backdropFilter: 'var(--glass-blur-ultra)',
-          WebkitBackdropFilter: 'var(--glass-blur-ultra)',
-          borderBottom: '0.5px solid var(--glass-border-light)',
-          letterSpacing: '0.03em',
-          zIndex: 100,
-        }}
-      >
-        🐾 MataGo
-      </div>
-
       <div style={{
         flex: 1,
         position: 'relative',

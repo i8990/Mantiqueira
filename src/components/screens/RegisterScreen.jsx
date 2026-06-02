@@ -20,6 +20,17 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
   const setActiveTab = useAppStore(s => s.setActiveTab)
   const setRegisterAnimal = useAppStore(s => s.setRegisterAnimal)
 
+  const resetForm = () => {
+    setStep(0)
+    setSightingType(null)
+    setPhotoFile(null)
+    setPhotoPreview(null)
+    setAnimalId(null)
+    setSaving(false)
+    setErrorMsg('')
+    setActiveTab('mapa')
+  }
+
   useEffect(() => {
     if (prefilledId) {
       setAnimalId(prefilledId)
@@ -89,7 +100,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
 
   return (
     <div style={{
-      padding: '20px 16px',
+      padding: '20px 16px 120px',
       display: 'flex',
       flexDirection: 'column',
       gap: 24,
@@ -97,16 +108,41 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
       overflowY: 'auto',
     }}>
       <div style={{ animation: 'fadeUp .4s var(--ease-spring)' }}>
-        <h2 style={{
-          fontFamily: 'var(--font-d)',
-          fontWeight: 700,
-          fontSize: 24,
-          color: 'var(--text-1)',
-          letterSpacing: '-0.02em',
-          marginBottom: 16,
-        }}>
-          Novo avistamento
-        </h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+          <h2 style={{
+            fontFamily: 'var(--font-d)',
+            fontWeight: 700,
+            fontSize: 24,
+            color: 'var(--text-1)',
+            letterSpacing: '-0.02em',
+            marginBottom: 16,
+          }}>
+            Novo avistamento
+          </h2>
+          <button
+            onClick={resetForm}
+            style={{
+              width: 36,
+              height: 36,
+              borderRadius: '50%',
+              background: 'var(--glass)',
+              backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
+              border: '0.5px solid var(--glass-border)',
+              color: 'var(--text-2)',
+              fontSize: 18,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              transition: 'all .2s',
+              flexShrink: 0,
+            }}
+            aria-label="Fechar"
+          >
+            ✕
+          </button>
+        </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {STEPS.map((s, i) => (
@@ -186,7 +222,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
         )}
       </div>
 
-      {step < 3 && (
+      {step < 3 ? (
         <div style={{ display: 'flex', gap: 12 }}>
           {step > 0 && (
             <button
@@ -230,7 +266,48 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
             Próximo
           </button>
         </div>
-      )}
+      ) : step === 3 ? (
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button
+            onClick={() => setStep(2)}
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: 'var(--r-md)',
+              background: 'var(--glass)',
+              backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
+              border: '0.5px solid var(--glass-border)',
+              color: 'var(--text-2)',
+              fontWeight: 500,
+              fontSize: 14,
+              cursor: 'pointer',
+              transition: 'all .2s var(--ease-spring)',
+            }}
+          >
+            Voltar
+          </button>
+          <button
+            onClick={resetForm}
+            disabled={saving}
+            style={{
+              flex: 1,
+              padding: '14px',
+              borderRadius: 'var(--r-md)',
+              background: 'var(--coral-dim)',
+              border: '0.5px solid var(--coral)',
+              color: 'var(--coral)',
+              fontWeight: 500,
+              fontSize: 14,
+              cursor: saving ? 'not-allowed' : 'pointer',
+              opacity: saving ? 0.5 : 1,
+              transition: 'all .2s',
+            }}
+          >
+            Cancelar
+          </button>
+        </div>
+      ) : null}
     </div>
   )
 }

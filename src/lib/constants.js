@@ -45,9 +45,13 @@ export const ANIMALS = [
   { id: 'jacu', name: 'Jacu', sci: 'Penelope obscura', emoji: '🦃', tier: 'A', tierLabel: 'Épico', pts: 140, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Bordas de mata e capoeiras', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Jacu', danger: 'baixo', habits: ['🍉 Frugívoro', '🌳 Arborícola', '☀️ Diurno'], howToFind: 'Bordas de mata; vive em grupos pequenos' },
   { id: 'urutau', name: 'Urutau', sci: 'Nyctibius griseus', emoji: '🦉', img: 'https://upload.wikimedia.org/wikipedia/commons/f/fb/M%C3%A3e-da-lua-gigante_%28Nyctibius_grandis%29.jpg', tier: 'A', tierLabel: 'Épico', pts: 150, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Galhos secos e troncos', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Urutau', danger: 'inofensivo', habits: ['🌙 Noturno', '🪵 Camuflagem', '🎵 Canto lúgubre'], howToFind: 'Procure galhos secos e troncos; mestre da camuflagem' },
   { id: 'jararaca', name: 'Jararaca', sci: 'Bothrops jararaca', emoji: '🐍', tier: 'A', tierLabel: 'Épico', pts: 250, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Chão da mata', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Jararaca', danger: 'critico', habits: ['🥩 Carnívora', '🌙 Noturna', '🪤 Emboscada'], howToFind: 'Chão da mata, especialmente em dias quentes; olhe onde pisa' },
+  { id: 'cascavel', name: 'Cascavel', sci: 'Crotalus durissus', emoji: '🐍', img: 'https://upload.wikimedia.org/wikipedia/commons/2/2a/Crotalus_durissus.jpg', tier: 'A', tierLabel: 'Épico', pts: 280, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Campos abertos e cerrado', habitat: 'Cerrado/Campo', wiki: 'https://pt.wikipedia.org/wiki/Cascavel', danger: 'critico', habits: ['🥩 Carnívora', '🌙 Noturna', '🔔 Chocalho'], howToFind: 'Campos abertos e pedregosos; ouça o chocalho antes de ver' },
+  { id: 'jaratataca', name: 'Jaratataca', sci: 'Conepatus semistriatus', emoji: '🦨', img: 'https://upload.wikimedia.org/wikipedia/commons/2/27/Conepatus_semistriatus.jpg', tier: 'A', tierLabel: 'Épico', pts: 200, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Campos abertos e bordas de mata', habitat: 'Cerrado/Campo', wiki: 'https://pt.wikipedia.org/wiki/Jaratataca', danger: 'medio', habits: ['🥩 Onívora', '🌙 Noturna', '💨 Exala mau cheiro'], howToFind: 'Campos abertos à noite; sente o cheiro antes de ver' },
   { id: 'caninana', name: 'Caninana', sci: 'Spilotes pullatus', emoji: '🐍', img: 'https://upload.wikimedia.org/wikipedia/commons/1/16/Caninana_%28Spilotes_pullatus%29_-_Foto_Antonio_Bordignon.jpg', tier: 'A', tierLabel: 'Épico', pts: 160, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Matas e áreas abertas', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Caninana', danger: 'alto', habits: ['🥩 Carnívora', '☀️ Diurna', '🌳 Arborícola'], howToFind: 'Árvores e solo; pode se irritar se provocada' },
 
   // ─── TIER B (Raros) ───
+  { id: 'mico', name: 'Mico-estrela', sci: 'Callithrix penicillata', emoji: '🐒', img: 'https://upload.wikimedia.org/wikipedia/commons/9/9d/Callithrix_penicillata_%28black-tufted_marmoset%29.jpg', tier: 'B', tierLabel: 'Raro', pts: 90, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Matas e capoeiras', habitat: 'Floresta/Cerrado', wiki: 'https://pt.wikipedia.org/wiki/Mico-estrela', danger: 'baixo', habits: ['🍉 Frugívoro', '🌳 Arborícola', '👨‍👩‍👧‍👧 Grupos'], howToFind: 'Copas de árvores em grupos; ativo durante o dia' },
+  { id: 'esquilo', name: 'Serelepe', sci: 'Sciurus aestuans', emoji: '🐿️', img: 'https://upload.wikimedia.org/wikipedia/commons/5/5d/Sciurus_aestuans.jpg', tier: 'B', tierLabel: 'Raro', pts: 70, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Matas e capoeiras', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Caxinguel%C3%AA', danger: 'inofensivo', habits: ['🥜 Granívoro', '🌳 Arborícola', '☀️ Diurno'], howToFind: 'Troncos e galhos na mata; rápido e esperto' },
   { id: 'seriema', name: 'Seriema', sci: 'Cariama cristata', emoji: '🦩', img: 'https://upload.wikimedia.org/wikipedia/commons/2/24/Pedreira-19_%2841407614112%29.jpg', tier: 'B', tierLabel: 'Raro', pts: 80, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Campos abertos e cerrado', habitat: 'Cerrado/Campo', wiki: 'https://pt.wikipedia.org/wiki/Seriema', danger: 'baixo', habits: ['🥩 Onívora', '☀️ Diurna', '🏃 Corredora'], howToFind: 'Campos abertos; corre rápido pelo chão' },
   { id: 'coruja', name: 'Coruja-buraqueira', sci: 'Athene cunicularia', emoji: '🦉', img: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Athene_cunicularia_1_edited.JPG', tier: 'B', tierLabel: 'Raro', pts: 70, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Campos abertos e tocas no chão', habitat: 'Campo', wiki: 'https://pt.wikipedia.org/wiki/Coruja-buraqueira', danger: 'baixo', habits: ['🐛 Insetívora', '🌅 Crepuscular', '🕳️ Toca no chão'], howToFind: 'Campos abertos com tocas; vista durante o dia' },
   { id: 'beija-flor', name: 'Beija-flor-tesoura', sci: 'Eupetomena macroura', emoji: '🌸', img: 'https://upload.wikimedia.org/wikipedia/commons/8/8e/Haeckel_Trochilidae.jpg', tier: 'B', tierLabel: 'Raro', pts: 90, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Jardins e bordas de mata', habitat: 'Floresta/Urbano', wiki: 'https://pt.wikipedia.org/wiki/Beija-flor-tesoura', danger: 'inofensivo', habits: ['🌸 Néctar', '✈️ Voo rápido', '🗺️ Territorial'], howToFind: 'Jardins e bordas de mata com flores; voo muito rápido' },
@@ -59,6 +63,8 @@ export const ANIMALS = [
   { id: 'tie-sangue', name: 'Tiê-sangue', sci: 'Ramphocelus bresilius', emoji: '🐦', img: 'https://upload.wikimedia.org/wikipedia/commons/6/66/Ramphocelus_bresilius_-Sao_Paulo_Bagre%2C_Cananeia%2C_Sao_Paulo%2C_Brasil_-male-8.jpg', tier: 'B', tierLabel: 'Raro', pts: 70, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Bordas de mata e restinga', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Ti%C3%AA-sangue', danger: 'inofensivo', habits: ['🍉 Frugívoro', '❤️ Vermelho vivo', '🌳 Arborícola'], howToFind: 'Bordas de mata; o vermelho intenso do macho é inconfundível' },
 
   // ─── TIER C (Comuns) ───
+  { id: 'cobra-cipo', name: 'Cobra-cipó', sci: 'Chironius bicarinatus', emoji: '🐍', img: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Chironius_bicarinatus_0.jpg', tier: 'C', tierLabel: 'Comum', pts: 30, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Matas e bordas de capoeira', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Cobra-cip%C3%B3', danger: 'medio', habits: ['🥩 Carnívora', '☀️ Diurna', '🌳 Arborícola'], howToFind: 'Galhos e cipós na borda da mata; rápida e esguia' },
+  { id: 'lebre', name: 'Lebre-tapiti', sci: 'Sylvilagus brasiliensis', emoji: '🐰', img: 'https://upload.wikimedia.org/wikipedia/commons/7/74/Tapiti_%28Sylvilagus_brasiliensis%29.jpg', tier: 'C', tierLabel: 'Comum', pts: 25, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Campos abertos e bordas de mata', habitat: 'Campo/Floresta', wiki: 'https://pt.wikipedia.org/wiki/Tapiti', danger: 'inofensivo', habits: ['🌿 Herbívora', '🌅 Crepuscular', '🏃 Veloz'], howToFind: 'Campos abertos ao amanhecer e entardecer; foge rapidamente' },
   { id: 'sabia', name: 'Sabiá-laranjeira', sci: 'Turdus rufiventris', emoji: '🐦', img: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Turdus-rufiventris.jpg', tier: 'C', tierLabel: 'Comum', pts: 30, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Jardins e matas', habitat: 'Floresta/Urbano', wiki: 'https://pt.wikipedia.org/wiki/Sabi%C3%A1-laranjeira', danger: 'inofensivo', habits: ['🍉 Frutívoro', '🎵 Canto melodioso', '🏘️ Urbano'], howToFind: 'Jardins e matas; siga o canto ao entardecer' },
   { id: 'capivara', name: 'Capivara', sci: 'Hydrochoerus hydrochaeris', emoji: '🦫', img: 'https://upload.wikimedia.org/wikipedia/commons/3/34/Hydrochoeris_hydrochaeris_in_Brazil_in_Petr%C3%B3polis%2C_Rio_de_Janeiro%2C_Brazil_09.jpg', tier: 'C', tierLabel: 'Comum', pts: 35, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Margens de rios e lagoas', habitat: 'Brejo/Rio', wiki: 'https://pt.wikipedia.org/wiki/Capivara', danger: 'medio', habits: ['🌿 Herbívoro', '💧 Aquática', '👨‍👩‍👧‍👧 Grupos'], howToFind: 'Margens de rios e lagoas; não encurrale — pode morder' },
   { id: 'gamba', name: 'Gambá-de-orelha-branca', sci: 'Didelphis albiventris', emoji: '🦨', img: 'https://upload.wikimedia.org/wikipedia/commons/b/b7/Didelphis_albiventris%2C_Bahia%2C_Brazil.jpg', tier: 'C', tierLabel: 'Comum', pts: 25, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Áreas urbanas e matas', habitat: 'Floresta/Urbano', wiki: 'https://pt.wikipedia.org/wiki/Gamb%C3%A1-de-orelha-branca', danger: 'medio', habits: ['🥩 Onívoro', '🌙 Noturno', '🏘️ Urbano'], howToFind: 'Áreas urbanas e matas; noturno, evite contato' },
@@ -84,8 +90,54 @@ export const ANIMALS = [
 export const SIGHTING_TYPE_MULTIPLIERS = {
   foto: 1.0,
   pegada: 0.6,
-  atropelamento: 0.5,
-  comunicacao: 0.3,
+  atropelamento: 0.4,
+  comunicacao: 0.2,
+}
+
+export const QLTY_BONUS_DESC = 0.1
+export const QLTY_BONUS_GPS = 0.1
+export const QLTY_BONUS_DATE = 0.1
+
+export const FIRST_SIGHTING_MULTIPLIER = 2.0
+export const REPEAT_SIGHTING_MULTIPLIER = 0.5
+
+export const LEVEL_REWARD_PTS = 150
+
+export const STREAK_REWARDS = [
+  { days: 3, pts: 20, icon: '🔥', label: '3 dias seguidos' },
+  { days: 7, pts: 65, icon: '🔥', label: '7 dias seguidos' },
+  { days: 14, pts: 155, icon: '🔥', label: '14 dias seguidos' },
+  { days: 30, pts: 390, icon: '💎', label: '30 dias seguidos' },
+  { days: 60, pts: 650, icon: '👑', label: '60 dias seguidos' },
+]
+
+export const BADGE_REWARDS = {
+  quati: 15,
+  streak: 50,
+  fotos: 30,
+  amanhecer: 20,
+  onca: 80,
+  area: 40,
+  primatas: 25,
+  repteis: 30,
+  aves: 30,
+  mamiferos: 40,
+  rio: 35,
+  lendarios: 60,
+  cinquenta: 35,
+  cem: 60,
+  colecionador: 25,
+  'colecionador-plus': 50,
+  noturna: 25,
+  'fim-de-tarde': 20,
+  fds: 20,
+  quinhentos: 50,
+  mil: 80,
+  'tres-mil': 120,
+  pegadas: 25,
+  olheiro: 20,
+  habitats: 30,
+  perigo: 40,
 }
 
 export const DANGER_COLORS = {
@@ -98,14 +150,118 @@ export const DANGER_COLORS = {
 
 export const LEVELS = [
   { min: 0, name: 'Observador Iniciante', label: 'Nível 1' },
-  { min: 150, name: 'Explorador de Trilhas', label: 'Nível 2' },
-  { min: 400, name: 'Rastreador', label: 'Nível 3' },
-  { min: 800, name: 'Naturalista', label: 'Nível 4' },
-  { min: 1300, name: 'MataGo', label: 'Nível 5' },
-  { min: 1840, name: 'Explorador Experiente', label: 'Nível 6' },
-  { min: 2700, name: 'MataGo Sênior', label: 'Nível 7' },
-  { min: 4000, name: 'Mestre da Mantiqueira', label: 'Nível 8' },
+  { min: 50, name: 'Explorador de Trilhas', label: 'Nível 2' },
+  { min: 150, name: 'Rastreador', label: 'Nível 3' },
+  { min: 350, name: 'Naturalista', label: 'Nível 4' },
+  { min: 700, name: 'MataGo', label: 'Nível 5' },
+  { min: 1200, name: 'Explorador Experiente', label: 'Nível 6' },
+  { min: 2000, name: 'MataGo Sênior', label: 'Nível 7' },
+  { min: 3200, name: 'Mestre da Mantiqueira', label: 'Nível 8' },
+  { min: 5000, name: 'Lenda Viva', label: 'Nível 9' },
 ]
+
+const ANIMALS_PTS_REBALANCE = {
+  'sapo-flamenguinho': 160, 'onca-pintada': 150, 'lobo-guara': 140,
+  'onca-parda': 105, 'jaguatirica': 95, 'ariranha': 110, 'anta': 100, 'veado-campeiro': 85,
+  'cachorro-do-mato': 60, 'quati': 60, 'paca': 70, 'bugio': 65, 'jacu': 50, 'urutau': 55,
+  'jararaca': 75, 'cascavel': 80, 'jaratataca': 60, 'caninana': 55,
+  'mico': 40, 'esquilo': 35, 'seriema': 40, 'coruja': 35, 'beija-flor': 42,
+  'trinca-ferro': 35, 'tucano': 45, 'jatai': 35, 'teiu': 40, 'gaviao': 45, 'tie-sangue': 35,
+  'cobra-cipo': 22, 'lebre': 20, 'sabia': 22, 'capivara': 25, 'gamba': 20,
+  'joao-de-barro': 22, 'rolinha': 18, 'sapo-cururu': 20, 'camundongo': 18, 'abelha': 18, 'ra': 20,
+  'bem-te-vi': 12, 'pardal': 10, 'pombo': 8, 'lagartixa': 10, 'formiga-sauva': 10,
+  'mosquito': 8, 'mariposa': 8, 'borboleta': 12, 'taturana': 12,
+}
+ANIMALS.forEach(a => { if (ANIMALS_PTS_REBALANCE[a.id] !== undefined) a.pts = ANIMALS_PTS_REBALANCE[a.id] })
+
+const MONTHLY_MISSION_CHECKS = {
+  'noite-dos-anfibios-jan': (seenIds) => seenIds.has('sapo-cururu') || seenIds.has('ra'),
+  'guarda-rios-jan': (seenIds) => seenIds.has('capivara'),
+  'verao-em-foco-jan': (_, __, s) => s.filter(x => x.photo_url && x.lat).length >= 3,
+  'esquilo-matinal-fev': (seenIds) => seenIds.has('esquilo'),
+  'bico-verde-fev': (seenIds) => seenIds.has('tucano'),
+  'herpetologo-fev': (seenIds) => seenIds.has('teiu'),
+  'lenda-viva-mar': (seenIds) => seenIds.has('sapo-flamenguinho'),
+  'bando-esperto-mar': (seenIds) => seenIds.has('mico'),
+  'cacador-noturno-mar': (_, __, s) => s.filter(x => { const h = new Date(x.created_at).getHours(); return h >= 18 || h < 6 }).length >= 2,
+  'bando-de-quatis-abr': (seenIds) => seenIds.has('quati'),
+  'voo-de-caca-abr': (seenIds) => seenIds.has('gaviao'),
+  'cartografo-abr': (seenIds) => { const h = new Set(); for (const id of seenIds) { const a = ANIMALS_BY_ID[id]; if (a?.habitat) h.add(a.habitat) }; return h.size >= 2 },
+  'rugido-na-mata-mai': (seenIds) => seenIds.has('bugio'),
+  'sentinela-campo-mai': (seenIds) => seenIds.has('seriema'),
+  'crepusculo-mai': (_, __, s) => s.filter(x => { const h = new Date(x.created_at).getHours(); return h >= 5 && h <= 7 }).length >= 2,
+  'arquiteto-alado-jun': (seenIds) => seenIds.has('joao-de-barro'),
+  'guardiao-cerrado-jun': (seenIds) => seenIds.has('lobo-guara'),
+  'explorador-altitude-jun': (seenIds) => seenIds.has('veado-campeiro'),
+  'uivo-inverno-jul': (seenIds) => seenIds.has('lobo-guara'),
+  'frugivoro-dossel-jul': (seenIds) => seenIds.has('tucano'),
+  'colecionador-inverno-jul': (sids) => sids.size >= 15,
+  'olhos-na-noite-ago': (seenIds) => seenIds.has('coruja'),
+  'raposa-do-mato-ago': (seenIds) => seenIds.has('cachorro-do-mato'),
+  'cinco-no-mes-ago': (_, __, s, ms) => { const ids = new Set((ms || s).map(x => x.animal_id)); return ids.size >= 5 },
+  'lagarto-do-sol-set': (seenIds) => seenIds.has('teiu'),
+  'canto-primavera-set': (seenIds) => seenIds.has('sabia'),
+  'observador-aves-set': (seenIds) => { const aves = ['seriema','beija-flor','trinca-ferro','tucano','tie-sangue','sabia','bem-te-vi','pardal','pombo','joao-de-barro','rolinha','gaviao']; return aves.filter(id => seenIds.has(id)).length >= 3 },
+  'coracao-aco-out': (seenIds) => seenIds.has('jararaca'),
+  'asas-migratorias-out': (seenIds) => seenIds.has('borboleta'),
+  'noite-de-chuva-out': (seenIds) => seenIds.has('sapo-cururu'),
+  'familia-micos-nov': (seenIds) => seenIds.has('mico'),
+  'rei-do-sol-nov': (seenIds) => seenIds.has('teiu'),
+  'olho-vivo-nov': (seenIds) => seenIds.has('taturana'),
+  'coro-verao-dez': (seenIds) => seenIds.has('ra'),
+  'herdeiros-mata-dez': (seenIds) => seenIds.has('bugio'),
+  'mestre-mantiqueira-dez': () => false,
+}
+
+export const MONTHLY_MISSIONS = [
+  { id: 'noite-dos-anfibios-jan', month: 0, icon: '🐸', title: 'Noite dos Anfíbios', desc: 'Registre um sapo-cururu ou rã-manteiga — pico de reprodução nas chuvas de verão', reward: 55, animalIds: ['sapo-cururu', 'ra'] },
+  { id: 'guarda-rios-jan', month: 0, icon: '🫏', title: 'Guarda-Rios', desc: 'Registre uma capivara — grupos com filhotes perto d\'água em janeiro', reward: 40, animalIds: ['capivara'] },
+  { id: 'verao-em-foco-jan', month: 0, icon: '📸', title: 'Verão em Foco', desc: 'Faça 3 registros completos com foto e localização GPS', reward: 35, animalIds: [] },
+  { id: 'esquilo-matinal-fev', month: 1, icon: '🐿️', title: 'O Esquilo Matinal', desc: 'Registre um serelepe — muito ativo ao amanhecer em fevereiro', reward: 35, animalIds: ['esquilo'] },
+  { id: 'bico-verde-fev', month: 1, icon: '🦅', title: 'Bico Verde', desc: 'Registre um tucano-de-bico-verde — casais construindo ninho', reward: 50, animalIds: ['tucano'] },
+  { id: 'herpetologo-fev', month: 1, icon: '🦎', title: 'Herpetólogo', desc: 'Registre um teiú — saindo da hibernação e tomando sol', reward: 35, animalIds: ['teiu'] },
+  { id: 'lenda-viva-mar', month: 2, icon: '🐸', title: '⭐ Lenda Viva', desc: 'Registre o Sapo-Flamenguinho — o mascote! Só aparece em noites chuvosas', reward: 105, animalIds: ['sapo-flamenguinho'] },
+  { id: 'bando-esperto-mar', month: 2, icon: '🐒', title: 'Bando Esperto', desc: 'Registre um mico-estrela — grupos com filhotes em março', reward: 35, animalIds: ['mico'] },
+  { id: 'cacador-noturno-mar', month: 2, icon: '🌙', title: 'Caçador Noturno', desc: 'Faça 2 registros entre 18h e 6h', reward: 40, animalIds: [] },
+  { id: 'bando-de-quatis-abr', month: 3, icon: '🦝', title: 'Bando de Quatis', desc: 'Registre um quati — forrageando em grupos antes do inverno', reward: 35, animalIds: ['quati'] },
+  { id: 'voo-de-caca-abr', month: 3, icon: '🦅', title: 'Voo de Caça', desc: 'Registre um gavião-carijó — defendendo território na reprodução', reward: 40, animalIds: ['gaviao'] },
+  { id: 'cartografo-abr', month: 3, icon: '🗺️', title: 'Cartógrafo', desc: 'Registre espécies em 2 habitats diferentes', reward: 25, animalIds: [] },
+  { id: 'rugido-na-mata-mai', month: 4, icon: '🦍', title: 'Rugido na Mata', desc: 'Registre um bugio — vocalizações ecoam no ar seco de maio', reward: 40, animalIds: ['bugio'] },
+  { id: 'sentinela-campo-mai', month: 4, icon: '🦩', title: 'Sentinela do Campo', desc: 'Registre uma seriema — territórios ativos em maio', reward: 35, animalIds: ['seriema'] },
+  { id: 'crepusculo-mai', month: 4, icon: '🌅', title: 'Crepúsculo', desc: 'Faça 2 registros entre 5h e 7h da manhã', reward: 35, animalIds: [] },
+  { id: 'arquiteto-alado-jun', month: 5, icon: '🐦', title: 'Arquiteto Alado', desc: 'Registre um joão-de-barro — pico de construção de ninhos de barro', reward: 25, animalIds: ['joao-de-barro'] },
+  { id: 'guardiao-cerrado-jun', month: 5, icon: '🐺', title: '⭐ O Guardião do Cerrado', desc: 'Registre um lobo-guará — mais ativo durante o dia no frio de junho', reward: 80, animalIds: ['lobo-guara'] },
+  { id: 'explorador-altitude-jun', month: 5, icon: '🦌', title: 'Explorador de Altitude', desc: 'Registre um veado-campeiro — início do cio em junho', reward: 50, animalIds: ['veado-campeiro'] },
+  { id: 'uivo-inverno-jul', month: 6, icon: '🐺', title: 'Uivo de Inverno', desc: 'Registre um lobo-guará — pico de acasalamento em julho', reward: 55, animalIds: ['lobo-guara'] },
+  { id: 'frugivoro-dossel-jul', month: 6, icon: '🦅', title: 'Frugívoro do Dossel', desc: 'Registre um tucano — bandos percorrendo a copa no inverno', reward: 40, animalIds: ['tucano'] },
+  { id: 'colecionador-inverno-jul', month: 6, icon: '🧭', title: 'Colecionador de Inverno', desc: 'Complete 15 espécies diferentes na sua coleção', reward: 65, animalIds: [] },
+  { id: 'olhos-na-noite-ago', month: 7, icon: '🦉', title: 'Olhos na Noite', desc: 'Registre uma coruja-buraqueira — filhotes saindo do ninho em agosto', reward: 35, animalIds: ['coruja'] },
+  { id: 'raposa-do-mato-ago', month: 7, icon: '🦊', title: 'Raposa do Mato', desc: 'Registre um cachorro-do-mato — época de acasalamento', reward: 35, animalIds: ['cachorro-do-mato'] },
+  { id: 'cinco-no-mes-ago', month: 7, icon: '📋', title: 'Cinco no Mês', desc: 'Registre 5 animais diferentes neste mês', reward: 50, animalIds: [] },
+  { id: 'lagarto-do-sol-set', month: 8, icon: '🦎', title: 'Lagarto do Sol', desc: 'Registre um teiú — saindo da hibernação na primavera', reward: 25, animalIds: ['teiu'] },
+  { id: 'canto-primavera-set', month: 8, icon: '🐦', title: 'Canto de Primavera', desc: 'Registre um sabiá-laranjeira — pico de canto territorial', reward: 20, animalIds: ['sabia'] },
+  { id: 'observador-aves-set', month: 8, icon: '🌸', title: 'Observador de Aves', desc: 'Registre 3 espécies de aves diferentes', reward: 40, animalIds: [] },
+  { id: 'coracao-aco-out', month: 9, icon: '🐍', title: 'Coração de Aço', desc: '⚠️ Registre uma jararaca — pico de atividade com as chuvas de outubro. Cuidado!', reward: 65, animalIds: ['jararaca'] },
+  { id: 'asas-migratorias-out', month: 9, icon: '🦋', title: 'Asas Migratórias', desc: 'Registre uma borboleta-monarca — passagem pela Mantiqueira em outubro', reward: 20, animalIds: ['borboleta'] },
+  { id: 'noite-de-chuva-out', month: 9, icon: '💧', title: 'Noite de Chuva', desc: 'Registre um sapo-cururu — reprodução explosiva pós-chuva', reward: 25, animalIds: ['sapo-cururu'] },
+  { id: 'familia-micos-nov', month: 10, icon: '🐒', title: 'Família de Micos', desc: 'Registre um mico-estrela — pico de nascimentos em novembro', reward: 25, animalIds: ['mico'] },
+  { id: 'rei-do-sol-nov', month: 10, icon: '🦎', title: 'Rei do Sol', desc: 'Registre um teiú NOVAMENTE — pico de atividade do ano', reward: 35, animalIds: ['teiu'] },
+  { id: 'olho-vivo-nov', month: 10, icon: '🐛', title: 'Olho Vivo', desc: '⚠️ Registre uma taturana — pico da Lonomia. NÃO TOQUE, só registre!', reward: 60, animalIds: ['taturana'] },
+  { id: 'coro-verao-dez', month: 11, icon: '🐸', title: 'Coro do Verão', desc: 'Registre uma rã-manteiga — pico de reprodução no verão', reward: 25, animalIds: ['ra'] },
+  { id: 'herdeiros-mata-dez', month: 11, icon: '🦍', title: 'Herdeiros da Mata', desc: 'Registre um bugio — filhotes visíveis nos grupos em dezembro', reward: 35, animalIds: ['bugio'] },
+  { id: 'mestre-mantiqueira-dez', month: 11, icon: '🏆', title: 'Mestre da Mantiqueira', desc: 'Complete 6 missões mensais neste ano', reward: 130, animalIds: [] },
+]
+
+export function getMonthlyMissions(month) {
+  return MONTHLY_MISSIONS.filter(m => m.month === month)
+}
+
+export function checkMonthlyMission(mission, seenIds, profile, sightings, monthSightings) {
+  const fn = MONTHLY_MISSION_CHECKS[mission.id]
+  if (!fn) return false
+  if (!seenIds || !sightings) return false
+  return fn(seenIds, profile, sightings, monthSightings || sightings)
+}
 
 const ANIMALS_BY_ID = Object.fromEntries(ANIMALS.map(a => [a.id, a]))
 

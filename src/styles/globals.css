@@ -1,11 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
-:root {
-  --bg-void: #060D07;
-  --bg-deep: #091209;
-  --bg-surface: #0F1E10;
-  --bg-card: #152116;
-  --bg-card2: #1B2B1C;
+:root,
+[data-theme="dark"] {
+  --bg-void: #0D1F10;
+  --bg-deep: #122714;
+  --bg-surface: #1A341C;
+  --bg-card: #213E24;
+  --bg-card2: #2A4A2D;
 
   --accent: #3CE87A;
   --accent-dim: rgba(60, 232, 122, 0.15);
@@ -32,20 +33,20 @@
   --r-xl: 28px;
   --r-2xl: 36px;
 
-  --glass: rgba(6, 13, 7, 0.72);
-  --glass-border: rgba(255, 255, 255, 0.06);
-  --glass-border-light: rgba(255, 255, 255, 0.10);
-  --glass-blur: blur(18px) saturate(1.4);
-  --glass-blur-heavy: blur(30px) saturate(1.6);
-  --glass-blur-ultra: blur(50px) saturate(1.8);
+  --glass: rgba(15, 30, 18, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-light: rgba(255, 255, 255, 0.12);
+  --glass-blur: blur(18px) saturate(1.6);
+  --glass-blur-heavy: blur(30px) saturate(1.8);
+  --glass-blur-ultra: blur(50px) saturate(2.0);
 
-  --glass-strong: rgba(6, 13, 7, 0.82);
+  --glass-strong: rgba(15, 30, 18, 0.85);
   --glass-light: rgba(255, 255, 255, 0.04);
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.55);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.65);
   --shadow-glass: 0 2px 20px rgba(0, 0, 0, 0.3);
 
   --ease-apple: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -53,10 +54,49 @@
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
-  --tab-bar-height: 72px;
+  --tab-bar-height: 100px;
 
   --skeleton-from: rgba(255, 255, 255, 0.04);
   --skeleton-to: rgba(255, 255, 255, 0.10);
+}
+
+[data-theme="light"] {
+  --bg-void: #F8F3E9;
+  --bg-deep: #EFE6D6;
+  --bg-surface: #E6D9C3;
+  --bg-card: #DDCCB0;
+  --bg-card2: #D4BF9D;
+
+  --accent: #8B5E3C;
+  --accent-dim: rgba(139, 94, 60, 0.10);
+  --accent-glow: rgba(139, 94, 60, 0.20);
+
+  --amber: #C68642;
+  --amber-dim: rgba(198, 134, 66, 0.12);
+  --coral: #C84C3C;
+  --coral-dim: rgba(200, 76, 60, 0.10);
+
+  --text-1: #2C1810;
+  --text-2: #6B4C3B;
+  --text-3: #9C8A7A;
+
+  --border: rgba(139, 94, 60, 0.10);
+  --border-strong: rgba(139, 94, 60, 0.20);
+
+  --glass: rgba(248, 243, 233, 0.72);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-border-light: rgba(0, 0, 0, 0.10);
+  --glass-strong: rgba(248, 243, 233, 0.82);
+  --glass-light: rgba(0, 0, 0, 0.03);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.10);
+  --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.15);
+  --shadow-glass: 0 2px 20px rgba(0, 0, 0, 0.06);
+
+  --skeleton-from: rgba(0, 0, 0, 0.04);
+  --skeleton-to: rgba(0, 0, 0, 0.08);
 }
 
 *,
