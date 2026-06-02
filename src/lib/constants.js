@@ -107,6 +107,42 @@ export const LEVELS = [
   { min: 4000, name: 'Mestre da Mantiqueira', label: 'Nível 8' },
 ]
 
+const ANIMALS_BY_ID = Object.fromEntries(ANIMALS.map(a => [a.id, a]))
+
+export function mergeAnimalData(dbAnimal) {
+  const local = ANIMALS_BY_ID[dbAnimal.id]
+  if (!local) {
+    return {
+      ...dbAnimal,
+      sci: dbAnimal.sci_name || '',
+      tierLabel: dbAnimal.tier_label || '',
+      statusLabel: dbAnimal.status_label || '',
+      where: dbAnimal.where_find || '',
+      wiki: dbAnimal.wiki_url || '',
+      img: '',
+      danger: 'inofensivo',
+      habits: [],
+      howToFind: '',
+    }
+  }
+  return {
+    ...local,
+    ...dbAnimal,
+    sci: dbAnimal.sci_name || local.sci,
+    tierLabel: dbAnimal.tier_label || local.tierLabel,
+    statusLabel: dbAnimal.status_label || local.statusLabel,
+    where: dbAnimal.where_find || local.where,
+    wiki: dbAnimal.wiki_url || local.wiki,
+    name: dbAnimal.name || local.name,
+    emoji: dbAnimal.emoji || local.emoji,
+    tier: dbAnimal.tier || local.tier,
+    pts: dbAnimal.pts ?? local.pts,
+    status: dbAnimal.status || local.status,
+    habitat: dbAnimal.habitat || local.habitat,
+    id: dbAnimal.id,
+  }
+}
+
 export function calcLevel(pts) {
   let level = 0
   for (let i = LEVELS.length - 1; i >= 0; i--) {

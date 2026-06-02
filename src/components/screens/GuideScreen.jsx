@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { TIER_LABELS, TIER_COLORS, DANGER_CONFIG, LEVELS, ANIMALS as FALLBACK_ANIMALS } from '../../lib/constants'
+import { TIER_LABELS, TIER_COLORS, DANGER_CONFIG, LEVELS, ANIMALS as FALLBACK_ANIMALS, mergeAnimalData } from '../../lib/constants'
 import FlipCard from '../guide/FlipCard'
 
 export default function GuideScreen() {
@@ -22,7 +22,10 @@ export default function GuideScreen() {
           .order('id', { ascending: true })
         if (!cancelled) {
           if (error) throw error
-          setAnimals(data?.length ? data : FALLBACK_ANIMALS)
+          const merged = data?.length
+            ? data.map(mergeAnimalData)
+            : FALLBACK_ANIMALS
+          setAnimals(merged)
         }
       } catch (err) {
         if (!cancelled) {

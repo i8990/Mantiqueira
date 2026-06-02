@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { DANGER_CONFIG } from '../../lib/constants'
 
+const FALLBACK_DANGER = { label: 'Desconhecido', color: 'var(--text-3)', emoji: '⚪' }
+
 export default function FlipCard({ animal }) {
   const [flipped, setFlipped] = useState(false)
-  const danger = DANGER_CONFIG[animal.danger]
+  const danger = DANGER_CONFIG[animal.danger] || FALLBACK_DANGER
 
   return (
     <div

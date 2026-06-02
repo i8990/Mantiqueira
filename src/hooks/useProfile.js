@@ -13,7 +13,7 @@ export default function useProfile(userId) {
       .from('profiles')
       .select('*')
       .eq('id', userId)
-      .single()
+      .maybeSingle()
     if (error) {
       setError(error.message)
     } else {

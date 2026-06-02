@@ -24,7 +24,7 @@ function jitterPosition(lat, lng, seed) {
 }
 
 function createIcon(animal, isSeen) {
-  const tierColor = animal ? TIER_COLORS[animal.tier] : 'var(--text-3)'
+  const tierColor = (animal && TIER_COLORS[animal.tier]) || 'var(--text-3)'
   const size = animal?.tier === 'L' ? 44 : 36
   const html = `
     <div style="
@@ -81,7 +81,7 @@ export default function AnimalMarker({ sighting, isSeen }) {
                 {creator.avatar_emoji || '🧭'} @{creator.username || 'matago'}
               </div>
             )}
-            <div style={{ fontSize: 14, marginTop: 6, fontWeight: 600, color: TIER_COLORS[animal?.tier] || '#888' }}>
+            <div style={{ fontSize: 14, marginTop: 6, fontWeight: 600, color: (animal && TIER_COLORS[animal.tier]) || '#888' }}>
               +{sighting.pts_earned} pts
             </div>
           </div>
