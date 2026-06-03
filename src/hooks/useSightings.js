@@ -74,7 +74,6 @@ export default function useSightings(userId) {
     const { count } = await supabase
       .from('sightings')
       .select('*', { count: 'exact', head: true })
-      .eq('user_id', userId)
       .eq('animal_id', animalId)
 
     const isRepeat = (count || 0) > 0

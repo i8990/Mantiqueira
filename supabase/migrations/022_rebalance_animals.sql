@@ -78,8 +78,7 @@ SET pts_earned = ROUND(
   ) *
   CASE WHEN (
     SELECT COUNT(*) FROM sightings s2
-    WHERE s2.user_id = s.user_id
-      AND s2.animal_id = s.animal_id
+    WHERE s2.animal_id = s.animal_id
       AND (s2.created_at < s.created_at OR (s2.created_at = s.created_at AND s2.id < s.id))
   ) = 0 THEN 2.0 ELSE 0.5 END
 );
