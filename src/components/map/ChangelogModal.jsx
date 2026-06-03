@@ -5,63 +5,86 @@ const content = [
     tier: 'L',
     label: 'Lendário',
     changes: [
-      { name: 'Veado-campeiro', old: 'S 280', new: 'L 2800' },
-      { name: 'Onça-parda', old: 'S 450', new: 'L 1450' },
-      { name: 'Onça-pintada', old: 'L 800', new: 'L 1800' },
-      { name: 'Sapo-Flamenguinho', old: 'L 1000', new: 'L 1000' },
-      { name: 'Lobo-guará', old: 'L 600', new: 'L 600' },
+      { name: 'Veado-campeiro', old: 'L 2800', new: 'L 1100' },
+      { name: 'Onça-pintada', old: 'L 1800', new: 'L 1200' },
+      { name: 'Onça-parda', old: 'L 1450', new: 'L 1000' },
+      { name: 'Sapo-Flamenguinho', old: 'L 1000', new: 'L 900' },
+      { name: 'Lobo-guará', old: 'L 600', new: 'L 800' },
     ],
   },
   {
     tier: 'S',
     label: 'Mítico',
     changes: [
-      { name: 'Ariranha', old: 'S 500', new: 'S 600' },
-      { name: 'Anta', old: 'S 400', new: 'S 700' },
-      { name: 'Jaguatirica', old: 'S 350', new: 'S 550' },
+      { name: 'Esquilo', old: 'B 600', new: 'S 600 ↑' },
+      { name: 'Anta', old: 'S 700', new: 'S 700' },
+      { name: 'Ariranha', old: 'S 600', new: 'S 600' },
+      { name: 'Jaguatirica', old: 'S 550', new: 'S 550' },
     ],
   },
   {
     tier: 'A',
     label: 'Épico',
     changes: [
-      { name: 'Urutau', old: 'A 150', new: 'A 650' },
-      { name: 'Bugio', old: 'A 200', new: 'A 600' },
-      { name: 'Jaratataca', old: 'A 200', new: 'A 400' },
-      { name: 'Jararaca', old: 'A 250', new: 'A 350' },
-      { name: 'Cachorro-do-mato', old: 'A 200', new: 'A 300' },
-      { name: 'Caninana', old: 'A 160', new: 'A 260' },
-      { name: 'Jacu', old: 'A 140', new: 'A 150' },
+      { name: 'Urutau', old: 'A 650', new: 'A 380' },
+      { name: 'Bugio', old: 'A 600', new: 'A 350' },
+      { name: 'Jaratataca', old: 'A 400', new: 'A 350' },
+      { name: 'Jararaca', old: 'A 350', new: 'A 350' },
+      { name: 'Cachorro-do-mato', old: 'A 300', new: 'A 300' },
+      { name: 'Caninana', old: 'A 260', new: 'A 280' },
+      { name: 'Paca', old: 'A 220', new: 'A 250' },
+      { name: 'Quati', old: 'A 180', new: 'A 220' },
+      { name: 'Jacu', old: 'A 150', new: 'A 200' },
     ],
   },
   {
     tier: 'B',
     label: 'Raro',
     changes: [
-      { name: 'Esquilo', old: 'B 70', new: 'B 600' },
-      { name: 'Cascavel', old: 'A 280', new: 'B 110' },
-      { name: 'Beija-flor', old: 'B 90', new: 'B 60' },
+      { name: 'Cascavel', old: 'B 110', new: 'B 140' },
+      { name: 'Tucano', old: 'B 100', new: 'B 140' },
+      { name: 'Gavião', old: 'B 90', new: 'B 120' },
+      { name: 'Mico', old: 'B 90', new: 'B 110' },
+      { name: 'Seriema', old: 'B 80', new: 'B 100' },
+      { name: 'Teiú', old: 'B 80', new: 'B 100' },
+      { name: 'Coruja', old: 'B 70', new: 'B 100' },
+      { name: 'Tiê-sangue', old: 'B 70', new: 'B 100' },
+      { name: 'Beija-flor', old: 'B 60', new: 'B 90' },
+      { name: 'Trinca-ferro', old: 'B 60', new: 'B 90' },
+      { name: 'Jataí', old: 'B 50', new: 'B 80' },
     ],
   },
   {
     tier: 'C',
     label: 'Comum',
     changes: [
-      { name: 'Capivara', old: 'C 35', new: 'C 95' },
-      { name: 'Lebre', old: 'C 25', new: 'C 75' },
-      { name: 'Gambá', old: 'C 25', new: 'C 70' },
-      { name: 'Sabiá', old: 'C 30', new: 'C 50' },
-      { name: 'Cobra-cipó', old: 'C 30', new: 'C 40' },
-      { name: 'Canarinho-da-terra', old: '—', new: 'C 15 🐦' },
+      { name: 'Capivara', old: 'C 95', new: 'C 70' },
+      { name: 'Lebre', old: 'C 75', new: 'C 60' },
+      { name: 'Gambá', old: 'C 70', new: 'C 55' },
+      { name: 'Sabiá', old: 'C 50', new: 'C 50' },
+      { name: 'Cobra-cipó', old: 'C 40', new: 'C 45' },
+      { name: 'João-de-barro', old: 'C 38', new: 'C 40' },
+      { name: 'Sapo-cururu', old: 'C 20', new: 'C 35' },
+      { name: 'Rã', old: 'C 22', new: 'C 35' },
+      { name: 'Rolinha', old: 'C 20', new: 'C 30' },
+      { name: 'Abelha', old: 'C 18', new: 'C 30' },
+      { name: 'Camundongo', old: 'C 15', new: 'C 25' },
+      { name: 'Canarinho-da-terra', old: 'C 15', new: 'C 20' },
     ],
   },
   {
     tier: 'D',
     label: 'Muito Comum',
     changes: [
-      { name: 'Bem-te-vi', old: 'D 12', new: 'D 20' },
-      { name: 'Mosquito', old: 'D 5', new: 'D 10' },
-      { name: 'Pombo', old: 'D 6', new: 'D 1' },
+      { name: 'Bem-te-vi', old: 'D 20', new: 'D 20' },
+      { name: 'Taturana', old: 'D 15', new: 'D 15' },
+      { name: 'Lagartixa', old: 'D 10', new: 'D 12' },
+      { name: 'Borboleta', old: 'D 10', new: 'D 12' },
+      { name: 'Pardal', old: 'D 8', new: 'D 10' },
+      { name: 'Formiga Sauva', old: 'D 8', new: 'D 8' },
+      { name: 'Mosquito', old: 'D 10', new: 'D 8' },
+      { name: 'Mariposa', old: 'D 6', new: 'D 8' },
+      { name: 'Pombo', old: 'D 1', new: 'D 6' },
     ],
   },
 ]
@@ -134,7 +157,7 @@ export default function ChangelogModal({ onClose }) {
                 lineHeight: 1.55,
                 color: 'var(--text-2)',
               }}>
-                Mudamos o sistema para balancear o jogo e valorizar quem registra primeiro cada espécie. Recalculamos todos os pontos com novos valores e regras. Confira as mudanças abaixo.
+                Rebalanceamos os pontos para um sistema mais equilibrado, sem discrepâncias entre tiers. Espécies do mesmo tier agora têm valores aproximados, e repetições não são mais punidas. Confira as mudanças abaixo.
               </p>
             </div>
             <button
@@ -181,7 +204,7 @@ export default function ChangelogModal({ onClose }) {
             <div style={{ marginTop: 5, display: 'flex', flexDirection: 'column', gap: 3 }}>
               <span>📷 tipo: foto ×1.0 · pegada ×0.6 · atropelamento ×0.4 · comunicação ×0.2</span>
               <span>✨ bônus: descrição +10% · GPS +10% · data +10%</span>
-              <span>🏆 fator: <strong style={{ color: 'var(--accent)' }}>1ª vez no app ×2.0</strong> · repetição ×0.5</span>
+              <span>🏆 fator: <strong style={{ color: 'var(--accent)' }}>1ª vez no app ×1.5</strong> · repetição ×1.0</span>
             </div>
           </div>
         </div>
