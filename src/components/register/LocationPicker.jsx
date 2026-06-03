@@ -299,7 +299,7 @@ export default function LocationPicker({ initialCoords, onConfirm, onClose }) {
 
       <div style={{
         padding: '12px 16px',
-        paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 12px)',
+        paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 32px)',
         borderTop: '0.5px solid var(--glass-border)',
         display: 'flex',
         flexDirection: 'column',

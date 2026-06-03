@@ -55,11 +55,13 @@ export default function ProfileHeader({ profile, rankData, onOpenRanking }) {
           fontFamily: 'var(--font-d)', fontWeight: 700, fontSize: 20,
           color: 'var(--text-1)', marginTop: 6, textAlign: 'center',
         }}>
-          {profile?.name || profile?.username || 'Matago'}
+          {profile?.name || profile?.username || ''}
         </h2>
-        <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
-          @{profile?.username || 'matago'}
-        </span>
+        {profile?.username && (
+          <span style={{ fontSize: 12, color: 'var(--text-3)' }}>
+            @{profile.username}
+          </span>
+        )}
 
         {memberSince && (
           <span style={{ fontSize: 11, color: 'var(--text-3)' }}>

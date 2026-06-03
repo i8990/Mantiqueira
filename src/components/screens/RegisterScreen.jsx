@@ -100,7 +100,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
 
   return (
     <div style={{
-      padding: '20px 16px 120px',
+      padding: '20px 16px 140px',
       display: 'flex',
       flexDirection: 'column',
       gap: 24,
