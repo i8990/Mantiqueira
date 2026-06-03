@@ -237,3 +237,8 @@ a {
 .skeleton-pulse {
   animation: skeleton 1.5s ease-in-out infinite;
 }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(255,215,0,0.06), 0 4px 16px rgba(0,0,0,0.4); }
+  50% { box-shadow: 0 0 24px rgba(255,215,0,0.15), 0 4px 16px rgba(0,0,0,0.4); }
+}

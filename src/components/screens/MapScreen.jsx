@@ -29,24 +29,43 @@ export default function MapScreen({ sightings, userId }) {
           top: 12,
           right: 122,
           zIndex: 1000,
-          width: 36,
-          height: 36,
+          width: 40,
+          height: 40,
           borderRadius: 999,
-          background: showChangelog ? 'rgba(196, 68, 57, 0.25)' : 'rgba(6, 13, 7, 0.82)',
+          background: showChangelog
+            ? 'linear-gradient(135deg, rgba(196,68,57,0.35), rgba(255,215,0,0.12))'
+            : 'rgba(6, 13, 7, 0.75)',
           backdropFilter: 'blur(50px) saturate(1.8)',
           WebkitBackdropFilter: 'blur(50px) saturate(1.8)',
-          border: showChangelog ? '0.5px solid rgba(196, 68, 57, 0.3)' : '0.5px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-          color: showChangelog ? 'var(--coral)' : 'var(--text-2)',
-          fontSize: 16,
+          border: showChangelog
+            ? '0.5px solid rgba(255,215,0,0.25)'
+            : '0.5px solid rgba(255,215,0,0.1)',
+          boxShadow: showChangelog
+            ? '0 0 24px rgba(255,215,0,0.15), 0 4px 16px rgba(0,0,0,0.4)'
+            : '0 4px 16px rgba(0,0,0,0.4)',
+          color: showChangelog ? 'var(--coral)' : 'rgba(255,215,0,0.7)',
+          fontSize: 17,
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'all .2s',
+          transition: 'all .3s',
+          animation: showChangelog ? 'none' : 'pulse-glow 2.5s ease-in-out infinite',
         }}
       >
         🔔
+        {!showChangelog && (
+          <span style={{
+            position: 'absolute',
+            top: 6,
+            right: 6,
+            width: 8,
+            height: 8,
+            borderRadius: 999,
+            background: 'var(--coral)',
+            boxShadow: '0 0 8px var(--coral)',
+          }} />
+        )}
       </button>
 
       {showChangelog && <ChangelogModal onClose={() => setShowChangelog(false)} />}
