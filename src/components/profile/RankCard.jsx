@@ -63,9 +63,6 @@ export default function RankCard({ profile, rankData, userId, onOpenRanking }) {
           <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--text-1)', lineHeight: 1.2 }}>
             {profile?.name || profile?.username || 'Matago'}
           </div>
-          <div style={{ fontSize: 13, color: 'var(--text-3)', marginTop: 2 }}>
-            @{profile?.username || 'matago'}
-          </div>
           <div style={{ fontSize: 13, color: 'var(--amber)', fontWeight: 600, marginTop: 4 }}>
             {levelData.name} · Nível {levelData.level}
           </div>

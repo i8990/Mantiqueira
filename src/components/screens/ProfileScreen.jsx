@@ -602,9 +602,6 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
                         color: isMe ? 'var(--accent)' : 'var(--text-1)',
                       }}>
                         {p.name || p.username}
-                        <span style={{ fontSize: 11, color: 'var(--text-3)', marginLeft: 6 }}>
-                          @{p.username}
-                        </span>
                         {isMe && <span style={{ fontSize: 11, color: 'var(--accent)', marginLeft: 6 }}>(você)</span>}
                       </span>
                       <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--amber)' }}>{p.total_pts} pts</span>
