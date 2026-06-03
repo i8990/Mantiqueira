@@ -428,7 +428,7 @@ export default function StepDetails({ animalId, sightingType, onSave, saving, er
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           <Badge label={`+${ptsBase} pts`} type="accent" />
           {qBonus > 0 && <span style={{ fontSize: 10, color: 'var(--accent)', fontWeight: 500 }}>+{Math.round(qBonus * 100)}% qualidade</span>}
-          <span style={{ fontSize: 9, color: 'var(--text-3)' }}>1ª vez: até +{ptsMax} pts</span>
+          <span style={{ fontSize: 9, color: 'var(--text-3)' }}>1ª vez (1,5×): até +{ptsMax} pts</span>
         </div>
       </div>
 

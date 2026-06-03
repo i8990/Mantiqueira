@@ -99,8 +99,8 @@ export const QLTY_BONUS_DESC = 0.1
 export const QLTY_BONUS_GPS = 0.1
 export const QLTY_BONUS_DATE = 0.1
 
-export const FIRST_SIGHTING_MULTIPLIER = 2.0
-export const REPEAT_SIGHTING_MULTIPLIER = 0.5
+export const FIRST_SIGHTING_MULTIPLIER = 1.5
+export const REPEAT_SIGHTING_MULTIPLIER = 1.0
 
 export const LEVEL_REWARD_PTS = 150
 
