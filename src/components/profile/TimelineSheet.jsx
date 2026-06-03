@@ -1,5 +1,6 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { supabase } from '../../lib/supabase'
+import useLikes from '../../hooks/useLikes'
 
 const TYPE_LABELS = {
   foto: '📸',
@@ -8,9 +9,10 @@ const TYPE_LABELS = {
   comunicacao: '📞',
 }
 
-export default function TimelineSheet({ onClose, onViewProfile }) {
+export default function TimelineSheet({ onClose, onViewProfile, userId }) {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
+  const { likesData, loadLikes, toggleLike } = useLikes(userId)
 
   const fetch = useCallback(async () => {
     setLoading(true)
@@ -25,6 +27,12 @@ export default function TimelineSheet({ onClose, onViewProfile }) {
   }, [])
 
   useEffect(() => { fetch() }, [fetch])
+
+  const entryIds = useMemo(() => entries.map(e => e.id), [entries])
+
+  useEffect(() => {
+    if (entryIds.length) loadLikes(entryIds)
+  }, [entryIds, loadLikes])
 
   return (
     <div onClick={onClose} style={{
@@ -142,8 +150,28 @@ export default function TimelineSheet({ onClose, onViewProfile }) {
                         </div>
                       )}
                     </div>
-                    <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--amber)', whiteSpace: 'nowrap', alignSelf: 'center' }}>
-                      +{s.pts_earned}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, alignSelf: 'center' }}>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--amber)', whiteSpace: 'nowrap' }}>
+                        +{s.pts_earned}
+                      </div>
+                      <button
+                        onClick={async (e) => {
+                          e.stopPropagation()
+                          const res = await toggleLike(s.id)
+                          if (res?.error) return
+                        }}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 2,
+                          background: 'none', border: 'none',
+                          color: likesData[s.id]?.liked ? '#e74c3c' : 'var(--text-3)',
+                          fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                          padding: '2px 6px', borderRadius: 999,
+                          transition: 'all .2s',
+                        }}
+                      >
+                        <span style={{ fontSize: 14 }}>{likesData[s.id]?.liked ? '❤️' : '🤍'}</span>
+                        {likesData[s.id]?.count || 0}
+                      </button>
                     </div>
                   </div>
                 </div>

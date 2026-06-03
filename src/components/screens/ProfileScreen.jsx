@@ -1,9 +1,10 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { ANIMALS, TIER_LABELS, BADGE_REWARDS, STREAK_REWARDS, LEVEL_REWARD_PTS } from '../../lib/constants'
 import { supabase } from '../../lib/supabase'
 import useAppStore from '../../stores/useAppStore'
 import useAuth from '../../hooks/useAuth'
 import useProfile from '../../hooks/useProfile'
+import useLikes from '../../hooks/useLikes'
 import useGamification from '../../hooks/useGamification'
 import BadgeGrid from '../profile/BadgeGrid'
 import ProfileHeader from '../profile/ProfileHeader'
@@ -20,7 +21,7 @@ const RARITY_FILTERS = [
   ...Object.entries(TIER_LABELS).map(([key, label]) => ({ key, label })),
 ]
 
-export default function ProfileScreen({ profile, sightings, seenIds = new Set(), deleteSighting }) {
+export default function ProfileScreen({ profile, sightings, seenIds = new Set(), deleteSighting, userId }) {
   const { signOut, user } = useAuth()
   const myProfile = useProfile(user?.id)
   const theme = useAppStore(s => s.theme)
@@ -40,6 +41,11 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
     seenIds,
     userId: user?.id,
   })
+
+  const { likesData, loadLikes, toggleLike, loadLikers } = useLikes(userId || user?.id)
+  const [showLikers, setShowLikers] = useState(null)
+  const [likersList, setLikersList] = useState([])
+  const [likersLoading, setLikersLoading] = useState(false)
 
   const [viewProfileId, setViewProfileId] = useState(null)
   const [pubProfile, setPubProfile] = useState(null)
@@ -102,6 +108,12 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
   const showPhotos = viewProfileId
     ? pubPhotos
     : (sightings || []).filter(s => s.photo_url)
+
+  const photoSightingIds = useMemo(() => showPhotos.map(s => s.id), [showPhotos])
+
+  useEffect(() => {
+    if (photoSightingIds.length > 0) loadLikes(photoSightingIds)
+  }, [photoSightingIds, loadLikes])
 
   const seenAnimals = ANIMALS.filter(a => seenIds.has(a.id))
   const filteredSeen = rarityFilter === 'all'
@@ -238,6 +250,65 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
               </div>
             ))}
           </div>
+
+          {showPhotos.length > 0 && (
+            <div style={{ animation: 'fadeUp .45s var(--ease-spring)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-1)' }}>
+                  📸 {viewProfileId ? 'Fotos' : 'Minhas fotos'}
+                </h3>
+                {showPhotos.length > 4 && (
+                  <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{showPhotos.length} fotos</span>
+                )}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4, borderRadius: 'var(--r-lg)', overflow: 'hidden' }}>
+                {showPhotos.slice(0, 9).map((s, i) => {
+                  const likeInfo = likesData[s.id]
+                  return (
+                    <div key={s.id} onClick={() => setExpandedPhoto(s)}
+                      style={{
+                        aspectRatio: '1', overflow: 'hidden', cursor: 'pointer',
+                        background: 'var(--glass)', position: 'relative',
+                        gridColumn: i === 0 ? '1 / 3' : undefined,
+                        gridRow: i === 0 ? '1 / 3' : undefined,
+                      }}
+                    >
+                      <img src={s.photo_url} alt={s.animals?.name || 'Foto'}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                        loading="lazy"
+                      />
+                      {likeInfo && likeInfo.count > 0 && (
+                        <div style={{
+                          position: 'absolute', bottom: 4, right: 4,
+                          background: 'rgba(0,0,0,.65)',
+                          borderRadius: 999, padding: '2px 6px',
+                          fontSize: 11, color: '#fff', fontWeight: 600,
+                          display: 'flex', alignItems: 'center', gap: 3,
+                        }}>
+                          ❤️ {likeInfo.count}
+                        </div>
+                      )}
+                      {i === 0 && s.animals && (
+                        <div style={{
+                          position: 'absolute', top: 4, left: 4,
+                          background: 'rgba(0,0,0,.55)',
+                          borderRadius: 6, padding: '2px 6px',
+                          fontSize: 10, color: '#fff', fontWeight: 500,
+                        }}>
+                          {s.animals.emoji} {s.animals.name}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+              {showPhotos.length > 9 && (
+                <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-3)', marginTop: 6 }}>
+                  +{showPhotos.length - 9} fotos
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Level-up Reward */}
           {!viewProfileId && gamification.canLevelUp && (
@@ -385,34 +456,6 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
                 badgeRewards={BADGE_REWARDS}
                 onClaimBadge={gamification.claimBadgeReward}
               />
-            </div>
-          )}
-
-          {showPhotos.length > 0 && (
-            <div style={{ animation: 'fadeUp .55s var(--ease-spring)' }}>
-              <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-1)', marginBottom: 10 }}>
-                📸 {viewProfileId ? 'Fotos' : 'Minhas fotos'}
-              </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 4, borderRadius: 'var(--r-lg)', overflow: 'hidden' }}>
-                {showPhotos.slice(0, 9).map(s => (
-                  <div key={s.id} onClick={() => setExpandedPhoto(s)}
-                    style={{
-                      aspectRatio: '1', overflow: 'hidden', cursor: 'pointer',
-                      background: 'var(--glass)', position: 'relative',
-                    }}
-                  >
-                    <img src={s.photo_url} alt={s.animals?.name || 'Foto'}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                      loading="lazy"
-                    />
-                  </div>
-                ))}
-              </div>
-              {showPhotos.length > 9 && (
-                <div style={{ textAlign: 'center', fontSize: 12, color: 'var(--text-3)', marginTop: 6 }}>
-                  +{showPhotos.length - 9} fotos
-                </div>
-              )}
             </div>
           )}
 
@@ -775,7 +818,112 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
                   📍 {expandedPhoto.lat.toFixed(4)}, {expandedPhoto.lng.toFixed(4)}
                 </div>
               )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 10, paddingTop: 10, borderTop: '0.5px solid var(--glass-border)' }}>
+                <button
+                  onClick={async () => {
+                    const res = await toggleLike(expandedPhoto.id)
+                    if (res?.error) return
+                  }}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 4,
+                    background: 'none', border: 'none',
+                    color: likesData[expandedPhoto.id]?.liked ? '#e74c3c' : 'var(--text-3)',
+                    fontSize: 14, fontWeight: 600, cursor: 'pointer',
+                    padding: '4px 8px', borderRadius: 999,
+                    transition: 'all .2s',
+                  }}
+                >
+                  <span style={{ fontSize: 18 }}>{likesData[expandedPhoto.id]?.liked ? '❤️' : '🤍'}</span>
+                  {likesData[expandedPhoto.id]?.count || 0}
+                </button>
+                {likesData[expandedPhoto.id]?.count > 0 && (
+                  <button
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      setLikersLoading(true)
+                      const list = await loadLikers(expandedPhoto.id)
+                      setLikersList(list)
+                      setLikersLoading(false)
+                      setShowLikers(expandedPhoto.id)
+                    }}
+                    style={{
+                      background: 'none', border: 'none',
+                      color: 'var(--text-3)', fontSize: 12, cursor: 'pointer',
+                      padding: '4px 8px', borderRadius: 999,
+                      transition: 'all .2s',
+                    }}
+                  >
+                    Ver quem curtiu
+                  </button>
+                )}
+              </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Likers Modal */}
+      {showLikers && (
+        <div onClick={() => setShowLikers(null)} style={{
+          position: 'fixed', inset: 0, zIndex: 21000,
+          background: 'rgba(0,0,0,.75)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 20, animation: 'fadeIn .2s ease-out',
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: 'var(--glass-strong)',
+            backdropFilter: 'var(--glass-blur-ultra)',
+            WebkitBackdropFilter: 'var(--glass-blur-ultra)',
+            borderRadius: 'var(--r-2xl)', width: '100%', maxWidth: 360, maxHeight: '70%',
+            overflowY: 'auto', padding: 28,
+            border: '0.5px solid var(--glass-border-light)',
+            boxShadow: 'var(--shadow-xl)', animation: 'scaleIn .35s var(--ease-spring)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3 style={{ fontFamily: 'var(--font-d)', fontWeight: 700, fontSize: 20, color: 'var(--text-1)' }}>
+                ❤️ Curtidas
+              </h3>
+              <button onClick={() => setShowLikers(null)}
+                style={{ width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--glass)', border: '0.5px solid var(--glass-border)', color: 'var(--text-3)', fontSize: 16, cursor: 'pointer' }}
+              >✕</button>
+            </div>
+            {likersLoading ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="skeleton" style={{ height: 44, borderRadius: 'var(--r-sm)' }} />
+                ))}
+              </div>
+            ) : likersList.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: 24, color: 'var(--text-3)', fontSize: 14 }}>
+                Nenhuma curtida ainda
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {likersList.map(l => (
+                  <div key={l.user_id} style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '8px 12px', borderRadius: 'var(--r-md)',
+                    background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
+                  }}>
+                    {l.avatar_url ? (
+                      <img src={l.avatar_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
+                    ) : (
+                      <span style={{ fontSize: 20 }}>{l.avatar_emoji || '🧭'}</span>
+                    )}
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-1)' }}>
+                        {l.name || l.username}
+                      </div>
+                      <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
+                        @{l.username}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -784,6 +932,7 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
         <TimelineSheet
           onClose={() => setShowTimeline(false)}
           onViewProfile={(id) => setViewProfileId(id)}
+          userId={userId || user?.id}
         />
       )}
 
@@ -792,6 +941,7 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
           sightings={sightings || []}
           deleteSighting={deleteSighting}
           onClose={() => setShowMySightings(false)}
+          userId={userId || user?.id}
         />
       )}
 

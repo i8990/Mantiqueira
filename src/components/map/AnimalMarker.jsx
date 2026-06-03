@@ -43,7 +43,7 @@ function createIcon(animal) {
   return L.divIcon({ html, className: '', iconSize: [size, size], iconAnchor: [size / 2, size / 2] })
 }
 
-export default function AnimalMarker({ sighting }) {
+export default function AnimalMarker({ sighting, likeCount = 0, userLiked = false, onToggleLike, onLoadLikers }) {
   const [showRadius, setShowRadius] = useState(false)
   const animal = ANIMALS.find(a => a.id === sighting.animal_id)
   const creator = sighting.profiles
@@ -65,25 +65,42 @@ export default function AnimalMarker({ sighting }) {
             minWidth: 140,
             fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
           }}>
-            <div style={{ fontSize: 32, marginBottom: 4 }}>{animal?.emoji || '❓'}</div>
+            {sighting.photo_url ? (
+              <img src={sighting.photo_url} alt=""
+                style={{
+                  width: '100%', maxHeight: 140, objectFit: 'cover',
+                  borderRadius: 8, marginBottom: 8,
+                }}
+              />
+            ) : (
+              <div style={{ fontSize: 32, marginBottom: 4 }}>{animal?.emoji || '❓'}</div>
+            )}
             <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a1a' }}>{animal?.name || 'Desconhecido'}</div>
             <div style={{ fontSize: 12, color: '#888', fontStyle: 'italic' }}>{animal?.sci || ''}</div>
             {creator && (
               <div style={{
-                fontSize: 11,
-                color: '#888',
-                marginTop: 8,
-                padding: '4px 12px',
-                borderRadius: 999,
-                background: 'rgba(0,0,0,.04)',
-                display: 'inline-block',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+                fontSize: 11, color: '#888', marginTop: 8,
               }}>
-                {creator.avatar_emoji || '🧭'} {creator.name || creator.username || 'Matago'}
+                {creator.avatar_url ? (
+                  <img src={creator.avatar_url} alt="" style={{ width: 16, height: 16, borderRadius: '50%', objectFit: 'cover' }} />
+                ) : (
+                  <span>{creator.avatar_emoji || '🧭'}</span>
+                )}
+                <span style={{ fontWeight: 600, color: '#555' }}>
+                  {creator.name || creator.username || 'Matago'}
+                </span>
+                <span style={{ color: '#aaa' }}>@{creator.username || ''}</span>
               </div>
             )}
             <div style={{ fontSize: 14, marginTop: 6, fontWeight: 600, color: (animal && TIER_COLORS[animal.tier]) || '#888' }}>
               +{sighting.pts_earned} pts
             </div>
+            {likeCount > 0 && (
+              <div style={{ fontSize: 12, color: '#e74c3c', marginTop: 4 }}>
+                ❤️ {likeCount}
+              </div>
+            )}
           </div>
         </Popup>
       </Marker>

@@ -43,7 +43,7 @@ export default function MainApp({ session }) {
       const p = latestRef.current
       return (
         <Suspense fallback={<ScreenFallback />}>
-          <MapScreen sightings={p.allSightings} />
+          <MapScreen sightings={p.allSightings} userId={userId} />
         </Suspense>
       )
     },
@@ -64,7 +64,7 @@ export default function MainApp({ session }) {
       const p = latestRef.current
       return (
         <Suspense fallback={<ScreenFallback />}>
-          <ProfileScreen profile={p.profile} sightings={p.mySightings} seenIds={p.seenIds} deleteSighting={p.deleteSighting} />
+          <ProfileScreen profile={p.profile} sightings={p.mySightings} seenIds={p.seenIds} deleteSighting={p.deleteSighting} userId={userId} />
         </Suspense>
       )
     },

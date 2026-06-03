@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
+import useLikes from '../../hooks/useLikes'
 
 const TYPE_LABELS = {
   foto: '📸',
@@ -7,7 +8,13 @@ const TYPE_LABELS = {
   comunicacao: '📞',
 }
 
-export default function MySightingsSheet({ sightings, deleteSighting, onClose }) {
+export default function MySightingsSheet({ sightings, deleteSighting, onClose, userId }) {
+  const { likesData, loadLikes } = useLikes(userId)
+  const sightingIds = useMemo(() => sightings.map(s => s.id), [sightings])
+
+  useEffect(() => {
+    if (sightingIds.length) loadLikes(sightingIds)
+  }, [sightingIds, loadLikes])
   const [confirmDelete, setConfirmDelete] = useState(null)
   const [deleting, setDeleting] = useState(false)
 
@@ -85,8 +92,15 @@ export default function MySightingsSheet({ sightings, deleteSighting, onClose })
                     {s.description && ` · "${s.description.slice(0, 40)}${s.description.length > 40 ? '…' : ''}"`}
                   </div>
                 </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--amber)', whiteSpace: 'nowrap' }}>
-                  +{s.pts_earned}
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--amber)', whiteSpace: 'nowrap' }}>
+                    +{s.pts_earned}
+                  </div>
+                  {likesData[s.id]?.count > 0 && (
+                    <div style={{ fontSize: 10, color: '#e74c3c', fontWeight: 600 }}>
+                      ❤️ {likesData[s.id].count}
+                    </div>
+                  )}
                 </div>
                 {confirmDelete === s.id ? (
                   <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>

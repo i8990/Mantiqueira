@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import useAuth from '../hooks/useAuth'
+import { TIER_LABELS, TIER_COLORS, DANGER_CONFIG, LEVELS } from '../lib/constants'
 import Button from '../components/ui/Button'
 
 export default function AuthPage() {
@@ -13,9 +14,21 @@ export default function AuthPage() {
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [userCount, setUserCount] = useState(0)
+  const [showManual, setShowManual] = useState(false)
 
   const { signIn, signUp, signInWithGoogle } = useAuth()
   const [googleLoading, setGoogleLoading] = useState(false)
+
+  useEffect(() => {
+    supabase
+      .from('profiles')
+      .select('id', { count: 'exact', head: true })
+      .then(({ count }) => {
+        if (count !== null) setUserCount(count)
+      })
+      .catch(() => {})
+  }, [])
 
   const generateUsernamePreview = (val) => {
     if (!val || val.length < 2) { setAutoUsername(''); return }
@@ -138,6 +151,20 @@ export default function AuthPage() {
           }}>
             Registre, descubra e proteja a fauna da Serra
           </p>
+          {userCount > 0 && (
+            <p style={{
+              fontSize: 13,
+              color: 'var(--accent)',
+              fontWeight: 600,
+              marginTop: 12,
+              background: 'var(--accent-dim)',
+              padding: '6px 14px',
+              borderRadius: 999,
+              display: 'inline-block',
+            }}>
+              🌿 Já somos <strong>{userCount}</strong> {userCount === 1 ? 'explorador' : 'exploradores'} compartilhando dados
+            </p>
+          )}
         </div>
 
         <div style={{
@@ -146,6 +173,36 @@ export default function AuthPage() {
           zIndex: 1,
           animation: 'fadeUp .6s var(--ease-spring)',
         }}>
+          <button
+            onClick={() => setShowManual(true)}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              borderRadius: 'var(--r-md)',
+              background: 'var(--glass)',
+              backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
+              border: '0.5px solid var(--glass-border)',
+              color: 'var(--accent)',
+              fontSize: 14,
+              fontWeight: 600,
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: 20,
+              transition: 'all .25s var(--ease-spring)',
+            }}
+          >
+            <span style={{ fontSize: 22 }}>📖</span>
+            <div style={{ textAlign: 'left' }}>
+              <div>Conheça o MataGo</div>
+              <div style={{ fontSize: 11, fontWeight: 400, color: 'var(--text-3)', marginTop: 1 }}>
+                Como funciona, tipos de registro, dicas e regras
+              </div>
+            </div>
+          </button>
+
           <div style={{
             width: '100%',
             display: 'flex',
@@ -323,6 +380,114 @@ export default function AuthPage() {
           </Button>
         </div>
       </div>
+
+      {showManual && (
+        <div onClick={() => setShowManual(false)} style={{
+          position: 'fixed', inset: 0, zIndex: 10000,
+          background: 'rgba(0,0,0,.75)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: 20, animation: 'fadeIn .2s ease-out',
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: 'var(--glass-strong)',
+            backdropFilter: 'var(--glass-blur-ultra)',
+            WebkitBackdropFilter: 'var(--glass-blur-ultra)',
+            borderRadius: 'var(--r-2xl)',
+            maxHeight: '90%', width: '100%', maxWidth: 420,
+            overflowY: 'auto', padding: 28,
+            border: '0.5px solid var(--glass-border-light)',
+            boxShadow: 'var(--shadow-xl)', animation: 'scaleIn .35s var(--ease-spring)',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+              <h3 style={{ fontFamily: 'var(--font-d)', fontWeight: 700, fontSize: 20, color: 'var(--text-1)' }}>
+                📖 Manual do Explorador
+              </h3>
+              <button onClick={() => setShowManual(false)} style={{
+                width: 32, height: 32, borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
+                color: 'var(--text-3)', fontSize: 16, cursor: 'pointer',
+              }}>
+                ✕
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <Section title="🎯 Como funciona">
+                <P>O <strong>MataGo</strong> transforma suas saídas a campo em uma caça ao tesouro da vida real. Sempre que encontrar um animal silvestre, registre no app para ganhar pontos e subir de nível.</P>
+                <P>Cada registro vale pontos de acordo com a <strong>raridade (tier)</strong> do animal. Os pontos mudam conforme o tipo de avistamento, qualidade dos dados preenchidos e se é a primeira vez que você registra aquela espécie.</P>
+              </Section>
+
+              <Section title="📋 Tipos de avistamento">
+                <P>📸 <strong>Foto</strong> — 100% dos pts base</P>
+                <P>👣 <strong>Pegada</strong> — 60% dos pts base</P>
+                <P>🚗 <strong>Atropelamento</strong> — 40% dos pts base (dado importante para pesquisa)</P>
+                <P>💬 <strong>Comunicação</strong> — 20% dos pts base (relato sem foto)</P>
+              </Section>
+
+              <Section title="⭐ Níveis">
+                <P>Quanto mais pontos, mais sobe de nível e libera recompensas:</P>
+                {LEVELS.map((l, i) => (
+                  <div key={i} style={{
+                    display: 'flex', justifyContent: 'space-between',
+                    padding: '4px 8px', borderRadius: 6,
+                    background: 'var(--glass)', marginBottom: 3, fontSize: 12,
+                  }}>
+                    <span style={{ fontWeight: 600, color: 'var(--text-1)' }}>{l.name}</span>
+                    <span style={{ color: 'var(--text-3)' }}>{l.min}+ pts</span>
+                  </div>
+                ))}
+              </Section>
+
+              <Section title="⚠️ Segurança">
+                {Object.entries(DANGER_CONFIG).map(([key, d]) => (
+                  <div key={key} style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '6px 10px', borderRadius: 8,
+                    background: 'var(--glass)', marginBottom: 4,
+                  }}>
+                    <span>{d.emoji}</span>
+                    <span style={{ fontSize: 13, fontWeight: 600, color: d.color }}>{d.label}</span>
+                  </div>
+                ))}
+              </Section>
+
+              <Section title="🛡️ Regras">
+                <P>🔹 Não toque em animais silvestres</P>
+                <P>🔹 Mantenha distância segura ao fotografar</P>
+                <P>🔹 Não alimente os animais</P>
+                <P>🔹 Registre apenas fotos reais (nada de IA)</P>
+                <P>🔹 Só vale animal silvestre (doméstico não conta)</P>
+              </Section>
+
+              <Section title="💡 Dicas">
+                <P>🌅 Saia de manhã cedo e no fim da tarde</P>
+                <P>🌧️ Depois da chuva muitos animais ficam mais ativos</P>
+                <P>🤫 Fique em silêncio andando devagar</P>
+                <P>📱 Tire a foto antes de o animal fugir</P>
+                <P>🗺️ Explore áreas diferentes (mata, campo, rio)</P>
+              </Section>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+  )
+}
+
+function Section({ title, children }) {
+  return (
+    <div>
+      <h4 style={{ fontSize: 15, fontWeight: 600, color: 'var(--accent)', marginBottom: 8 }}>{title}</h4>
+      {children}
+    </div>
+  )
+}
+
+function P({ children }) {
+  return (
+    <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.5, marginBottom: 6 }}>{children}</p>
   )
 }

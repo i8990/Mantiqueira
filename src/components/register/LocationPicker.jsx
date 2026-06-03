@@ -254,8 +254,13 @@ export default function LocationPicker({ initialCoords, onConfirm, onClose }) {
           zoomControl={false}
         >
           <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            attribution="ESRI"
+          />
+          <TileLayer
+            url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+            attribution="ESRI"
+            transparent
           />
           <MapClickHandler onMapClick={handleMapClick} />
           <FlyTo center={flyTo} />
