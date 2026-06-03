@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { ANIMALS, TIER_LABELS, BADGE_REWARDS, STREAK_REWARDS, LEVEL_REWARD_PTS } from '../../lib/constants'
 import { supabase } from '../../lib/supabase'
 import useAppStore from '../../stores/useAppStore'
@@ -52,6 +52,41 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
   const [pubPhotos, setPubPhotos] = useState([])
   const [pubLoading, setPubLoading] = useState(false)
   const [expandedPhoto, setExpandedPhoto] = useState(null)
+  const [dragOffset, setDragOffset] = useState(0)
+  const dragStartY = useRef(null)
+  const dragStartTime = useRef(null)
+  const lastTap = useRef({ time: 0, x: 0, y: 0 })
+
+  const handleTouchStart = useCallback((e) => {
+    dragStartY.current = e.touches[0].clientY
+    dragStartTime.current = Date.now()
+  }, [])
+
+  const handleTouchMove = useCallback((e) => {
+    if (dragStartY.current === null) return
+    const delta = e.touches[0].clientY - dragStartY.current
+    if (delta > 0) setDragOffset(delta)
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    if (dragOffset > 80 || (dragOffset > 20 && Date.now() - (dragStartTime.current || 0) < 200)) {
+      setExpandedPhoto(null)
+    }
+    setDragOffset(0)
+    dragStartY.current = null
+    dragStartTime.current = null
+  }, [dragOffset])
+
+  const handleDoubleTapLike = useCallback(async () => {
+    const now = Date.now()
+    const tap = lastTap.current
+    const dt = now - tap.time
+    if (dt < 300) {
+      const res = await toggleLike(expandedPhoto?.id)
+      if (res?.error) return
+    }
+    lastTap.current = { time: now, x: 0, y: 0 }
+  }, [toggleLike, expandedPhoto?.id])
 
   const [showSettings, setShowSettings] = useState(false)
   const [showEditProfile, setShowEditProfile] = useState(false)
@@ -781,19 +816,48 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
 
       {/* Expanded Photo Modal */}
       {expandedPhoto && (
-        <div onClick={() => setExpandedPhoto(null)} style={{
-          position: 'fixed', inset: 0, zIndex: 20000,
-          background: 'rgba(0,0,0,.9)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          padding: 24, animation: 'fadeIn .2s ease-out',
-        }}>
-          <div onClick={e => e.stopPropagation()} style={{ width: '100%', maxWidth: 500, maxHeight: '90%', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            <button onClick={() => setExpandedPhoto(null)}
-              style={{ alignSelf: 'flex-end', width: 36, height: 36, borderRadius: '50%', background: 'var(--glass)', backdropFilter: 'var(--glass-blur)', WebkitBackdropFilter: 'var(--glass-blur)', border: '0.5px solid var(--glass-border)', color: '#fff', fontSize: 18, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
-            >✕</button>
-            <img src={expandedPhoto.photo_url} alt={expandedPhoto.animals?.name || 'Foto'}
-              style={{ width: '100%', maxHeight: '70vh', objectFit: 'contain', borderRadius: 'var(--r-xl)', background: 'var(--glass)' }}
+        <div
+          onClick={() => setExpandedPhoto(null)}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 20000,
+            background: dragOffset > 0 ? `linear-gradient(180deg, rgba(0,0,0,.9) ${100 - dragOffset / 4}%, rgba(0,0,0,0))` : 'rgba(0,0,0,.9)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: 24, animation: 'fadeIn .2s ease-out',
+            transition: dragOffset === 0 ? 'background .3s ease-out' : undefined,
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: '100%', maxWidth: 500, maxHeight: '90%',
+              display: 'flex', flexDirection: 'column', gap: 12,
+              transform: `translateY(${dragOffset}px)`,
+              transition: dragOffset === 0 ? 'transform .35s var(--ease-spring)' : undefined,
+              paddingBottom: 40,
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: -4 }}>
+              <div style={{
+                width: 36, height: 4, borderRadius: 2,
+                background: 'rgba(255,255,255,.3)',
+              }} />
+            </div>
+
+            <img
+              src={expandedPhoto.photo_url}
+              alt={expandedPhoto.animals?.name || 'Foto'}
+              onClick={handleDoubleTapLike}
+              style={{
+                width: '100%', maxHeight: '70vh', objectFit: 'contain',
+                borderRadius: 'var(--r-xl)', background: 'var(--glass)',
+                cursor: 'pointer',
+              }}
             />
+
             <div style={{
               padding: '12px 16px', background: 'var(--glass-strong)',
               backdropFilter: 'var(--glass-blur-ultra)', WebkitBackdropFilter: 'var(--glass-blur-ultra)',
@@ -816,6 +880,15 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
               {expandedPhoto.lat && expandedPhoto.lng && (
                 <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 2 }}>
                   📍 {expandedPhoto.lat.toFixed(4)}, {expandedPhoto.lng.toFixed(4)}
+                </div>
+              )}
+              {expandedPhoto.description && (
+                <div style={{
+                  fontSize: 12, color: 'var(--text-2)', marginTop: 6,
+                  fontStyle: 'italic', lineHeight: 1.5, paddingTop: 6,
+                  borderTop: '0.5px solid var(--glass-border)',
+                }}>
+                  “{expandedPhoto.description}”
                 </div>
               )}
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 10, paddingTop: 10, borderTop: '0.5px solid var(--glass-border)' }}>
