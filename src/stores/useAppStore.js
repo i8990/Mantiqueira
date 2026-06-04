@@ -17,12 +17,15 @@ const useAppStore = create((set) => ({
   registerPrefilledAnimalId: null,
   mapCenter: [-22.02, -44.73],
   theme: getInitialTheme(),
+  toast: null,
 
   setActiveTab: (tab) => set({ activeTab: tab }),
   setSelectedAnimal: (id) => set({ selectedAnimalId: id }),
   clearSelectedAnimal: () => set({ selectedAnimalId: null }),
   setRegisterAnimal: (id) => set({ registerPrefilledAnimalId: id, activeTab: 'registrar' }),
   setMapCenter: (center) => set({ mapCenter: center }),
+  showToast: (message) => set({ toast: { message, key: Date.now() } }),
+  clearToast: () => set({ toast: null }),
   setTheme: (theme) => {
     try { localStorage.setItem('matago-theme', theme) } catch {}
     document.documentElement.setAttribute('data-theme', theme)

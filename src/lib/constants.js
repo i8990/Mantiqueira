@@ -240,6 +240,40 @@ export const MONTHLY_MISSIONS = [
   { id: 'mestre-mantiqueira-dez', month: 11, icon: '🏆', title: 'Mestre da Mantiqueira', desc: 'Complete 6 missões mensais neste ano', reward: 130, animalIds: [] },
 ]
 
+export const ANIMAL_GROUPS = {
+  mamifero: [
+    'onca-pintada', 'lobo-guara', 'onca-parda', 'veado-campeiro',
+    'jaguatirica', 'ariranha', 'anta', 'cachorro-do-mato', 'quati',
+    'paca', 'bugio', 'mico', 'esquilo', 'capivara', 'lebre', 'gamba',
+    'camundongo-do-mato', 'jaratataca',
+  ],
+  ave: [
+    'jacu', 'urutau', 'tucano', 'gaviao', 'seriema', 'coruja',
+    'tie-sangue', 'beija-flor', 'trinca-ferro', 'sabia',
+    'joao-de-barro', 'rolinha', 'bem-te-vi', 'pardal', 'pombo',
+    'canario-da-terra',
+  ],
+  reptil: ['jararaca', 'caninana', 'teiu', 'cascavel', 'cobra-cipo', 'lagartixa'],
+  anfibio: ['sapo-flamenguinho', 'sapo-cururu', 'ra'],
+  inseto: ['jatai', 'abelha', 'formiga-sauva', 'mariposa', 'borboleta', 'taturana', 'mosquito'],
+}
+
+export const ANIMAL_GROUP_LABELS = {
+  mamifero: 'Mamífero',
+  ave: 'Ave',
+  reptil: 'Réptil',
+  anfibio: 'Anfíbio',
+  inseto: 'Inseto',
+}
+
+export const ANIMAL_GROUP_ICONS = {
+  mamifero: '🐾',
+  ave: '🐦',
+  reptil: '🦎',
+  anfibio: '🐸',
+  inseto: '🐛',
+}
+
 export function getMonthlyMissions(month) {
   return MONTHLY_MISSIONS.filter(m => m.month === month)
 }

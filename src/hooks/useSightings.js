@@ -46,67 +46,90 @@ export default function useSightings(userId) {
   }, [refresh])
 
   const createSighting = async ({ animalId, sightingType, photoFile, description, lat, lng, observedAt }) => {
+    if (!animalId) return { error: 'Nenhum animal selecionado' }
+    if (!sightingType) return { error: 'Tipo de avistamento não selecionado' }
+
     const animal = ANIMALS.find(a => a.id === animalId)
-    if (!animal) return { error: 'Animal não encontrado' }
+    if (!animal) return { error: 'Animal não encontrado na base local' }
 
-    let photoUrl = null
+    try {
+      let photoUrl = null
 
-    if (photoFile) {
-      const ext = photoFile.name.split('.').pop()
-      const filePath = `${userId}/${uuidv4()}.${ext}`
-      const { error: uploadError } = await supabase.storage
-        .from('sightings-photos')
-        .upload(filePath, photoFile)
-      if (uploadError) return { error: uploadError.message }
-      const { data: { publicUrl } } = supabase.storage
-        .from('sightings-photos')
-        .getPublicUrl(filePath)
-      photoUrl = publicUrl
-    }
-
-    const typeMult = SIGHTING_TYPE_MULTIPLIERS[sightingType] || 1
-
-    let qualityBonus = 0
-    if (description && description.length > 10) qualityBonus += QLTY_BONUS_DESC
-    if (lat && lng) qualityBonus += QLTY_BONUS_GPS
-    if (observedAt) qualityBonus += QLTY_BONUS_DATE
-
-    const { count } = await supabase
-      .from('sightings')
-      .select('*', { count: 'exact', head: true })
-      .eq('animal_id', animalId)
-
-    const isRepeat = (count || 0) > 0
-    const sightingFactor = isRepeat ? REPEAT_SIGHTING_MULTIPLIER : FIRST_SIGHTING_MULTIPLIER
-
-    const ptsEarned = Math.round(animal.pts * typeMult * (1 + qualityBonus) * sightingFactor)
-
-    const { data, error } = await supabase
-      .from('sightings')
-      .insert({
-        user_id: userId,
-        animal_id: animalId,
-        photo_url: photoUrl,
-        description: description || null,
-        lat: lat || null,
-        lng: lng || null,
-        sighting_type: sightingType || 'foto',
-        pts_earned: ptsEarned,
-        observed_at: observedAt || null,
-        is_public: true,
-      })
-      .select()
-      .single()
-
-    if (error) {
-      let msg = error.message
-      if (msg?.includes('schema cache') || msg?.includes('does not exist')) {
-        msg = 'Erro de configuração do banco de dados. Execute as migrations pendentes no Supabase Dashboard.'
+      if (photoFile) {
+        const ext = photoFile.name.split('.').pop()
+        const filePath = `${userId}/${uuidv4()}.${ext}`
+        const { error: uploadError } = await supabase.storage
+          .from('sightings-photos')
+          .upload(filePath, photoFile)
+        if (uploadError) {
+          return { error: `Erro ao enviar foto: ${uploadError.message}` }
+        }
+        const { data: { publicUrl } } = supabase.storage
+          .from('sightings-photos')
+          .getPublicUrl(filePath)
+        photoUrl = publicUrl
       }
-      return { data, error: msg }
-    }
 
-    return { data, error: null }
+      const typeMult = SIGHTING_TYPE_MULTIPLIERS[sightingType] || 1
+
+      let qualityBonus = 0
+      if (description && description.length > 10) qualityBonus += QLTY_BONUS_DESC
+      if (lat && lng) qualityBonus += QLTY_BONUS_GPS
+      if (observedAt) qualityBonus += QLTY_BONUS_DATE
+
+      let isRepeat = false
+      try {
+        const { count, error: countError } = await supabase
+          .from('sightings')
+          .select('*', { count: 'exact', head: true })
+          .eq('animal_id', animalId)
+          .eq('user_id', userId)
+        if (!countError) {
+          isRepeat = (count || 0) > 0
+        }
+      } catch (_) {
+        // se a consulta falhar, assume primeiro registro (bônus cheio)
+      }
+
+      const sightingFactor = isRepeat ? REPEAT_SIGHTING_MULTIPLIER : FIRST_SIGHTING_MULTIPLIER
+      const ptsEarned = Math.round(animal.pts * typeMult * (1 + qualityBonus) * sightingFactor)
+
+      const { data, error } = await supabase
+        .from('sightings')
+        .insert({
+          user_id: userId,
+          animal_id: animalId,
+          photo_url: photoUrl,
+          description: description || null,
+          lat: lat || null,
+          lng: lng || null,
+          sighting_type: sightingType,
+          pts_earned: ptsEarned,
+          observed_at: observedAt || null,
+          is_public: true,
+        })
+        .select()
+        .single()
+
+      if (error) {
+        let msg = error.message
+        if (msg?.includes('schema cache') || msg?.includes('does not exist') || msg?.includes('relation')) {
+          msg = 'Erro de configuração do banco de dados. Execute as migrations pendentes no Supabase Dashboard.'
+        } else if (msg?.includes('violates row-level security') || msg?.includes('permission denied') || msg?.includes('JWT')) {
+          msg = 'Erro de autenticação. Faça login novamente.'
+        } else if (msg?.includes('violates not-null') || msg?.includes('null value')) {
+          msg = 'Campos obrigatórios não preenchidos. Preencha todos os campos e tente novamente.'
+        } else if (msg?.includes('duplicate key') || msg?.includes('already exists')) {
+          msg = 'Este registro já existe.'
+        }
+        return { data, error: msg }
+      }
+
+      return { data, error: null }
+
+    } catch (err) {
+      return { error: err?.message || 'Erro inesperado ao salvar o avistamento. Tente novamente.' }
+    }
   }
 
   const deleteSighting = async (sightingId) => {
