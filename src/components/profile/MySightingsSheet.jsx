@@ -27,7 +27,7 @@ export default function MySightingsSheet({ sightings, deleteSighting, updateSigh
     if (!error) setConfirmDelete(null)
   }
 
-  return (
+  return (<>
     <div onClick={onClose} style={{
       position: 'fixed', inset: 0, zIndex: 15000,
       background: 'rgba(0,0,0,.75)',
@@ -165,5 +165,5 @@ export default function MySightingsSheet({ sightings, deleteSighting, updateSigh
         onClose={() => setEditingSighting(null)}
       />
     )}
-  )
+  </>)
 }

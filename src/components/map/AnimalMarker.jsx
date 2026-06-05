@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Marker, Popup, Circle } from 'react-leaflet'
 import L from 'leaflet'
 import { ANIMALS, TIER_COLORS } from '../../lib/constants'
+import useAppStore from '../../stores/useAppStore'
 
 const JITTER_RADIUS = 100
 
@@ -45,6 +46,7 @@ function createIcon(animal) {
 
 export default function AnimalMarker({ sighting, likeCount = 0, userLiked = false, onToggleLike, onLoadLikers }) {
   const [showRadius, setShowRadius] = useState(false)
+  const setViewProfile = useAppStore(s => s.setViewProfile)
   const animal = ANIMALS.find(a => a.id === sighting.animal_id)
   const creator = sighting.profiles
   if (!sighting.lat || !sighting.lng) return null
@@ -78,20 +80,30 @@ export default function AnimalMarker({ sighting, likeCount = 0, userLiked = fals
             <div style={{ fontWeight: 700, fontSize: 16, color: '#1a1a1a' }}>{animal?.name || 'Desconhecido'}</div>
             <div style={{ fontSize: 12, color: '#888', fontStyle: 'italic' }}>{animal?.sci || ''}</div>
             {creator && (
-              <div style={{
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
-                fontSize: 11, color: '#888', marginTop: 8,
-              }}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setViewProfile(creator.id || sighting.user_id)
+                }}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
+                  fontSize: 11, color: '#888', marginTop: 8,
+                  background: 'none', border: 'none', cursor: 'pointer', padding: '4px 8px',
+                  borderRadius: 8, width: '100%',
+                  fontFamily: 'inherit',
+                  transition: 'background .2s',
+                }}
+              >
                 {creator.avatar_url ? (
                   <img src={creator.avatar_url} alt="" style={{ width: 16, height: 16, borderRadius: '50%', objectFit: 'cover' }} />
                 ) : (
                   <span>{creator.avatar_emoji || '🧭'}</span>
                 )}
-                <span style={{ fontWeight: 600, color: '#555' }}>
+                <span style={{ fontWeight: 600, color: '#2a7a4a' }}>
                   {creator.name || creator.username || 'Matago'}
                 </span>
                 <span style={{ color: '#aaa' }}>@{creator.username || ''}</span>
-              </div>
+              </button>
             )}
             <div style={{ fontSize: 14, marginTop: 6, fontWeight: 600, color: (animal && TIER_COLORS[animal.tier]) || '#888' }}>
               +{sighting.pts_earned} pts

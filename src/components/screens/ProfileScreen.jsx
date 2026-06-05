@@ -26,6 +26,9 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
   const myProfile = useProfile(user?.id)
   const theme = useAppStore(s => s.theme)
   const setTheme = useAppStore(s => s.setTheme)
+  const storeViewProfileId = useAppStore(s => s.viewProfileId)
+  const setViewProfile = useAppStore(s => s.setViewProfile)
+  const clearViewProfile = useAppStore(s => s.clearViewProfile)
 
   const [rarityFilter, setRarityFilter] = useState('all')
   const [selectedId, setSelectedId] = useState(null)
@@ -47,9 +50,10 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
   const [likersList, setLikersList] = useState([])
   const [likersLoading, setLikersLoading] = useState(false)
 
-  const [viewProfileId, setViewProfileId] = useState(null)
+  const [viewProfileId, setViewProfileId] = useState(storeViewProfileId || null)
   const [pubProfile, setPubProfile] = useState(null)
   const [pubPhotos, setPubPhotos] = useState([])
+  const [pubSightings, setPubSightings] = useState([])
   const [pubLoading, setPubLoading] = useState(false)
   const [expandedPhoto, setExpandedPhoto] = useState(null)
   const [dragOffset, setDragOffset] = useState(0)
@@ -111,7 +115,13 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
   useEffect(() => { fetchLeaderboard() }, [])
 
   useEffect(() => {
-    if (!viewProfileId) { setPubProfile(null); setPubPhotos([]); return }
+    if (storeViewProfileId && storeViewProfileId !== viewProfileId) {
+      setViewProfileId(storeViewProfileId)
+    }
+  }, [storeViewProfileId])
+
+  useEffect(() => {
+    if (!viewProfileId) { setPubProfile(null); setPubPhotos([]); setPubSightings([]); return }
     setPubLoading(true)
     Promise.all([
       supabase.from('profiles').select('*').eq('id', viewProfileId).single(),
@@ -121,9 +131,16 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
         .eq('user_id', viewProfileId)
         .not('photo_url', 'is', null)
         .order('created_at', { ascending: false }),
-    ]).then(([profRes, photosRes]) => {
+      supabase
+        .from('sightings')
+        .select('*, animals(name, emoji, tier, pts)')
+        .eq('user_id', viewProfileId)
+        .order('created_at', { ascending: false })
+        .limit(20),
+    ]).then(([profRes, photosRes, sightRes]) => {
       if (profRes.data) setPubProfile(profRes.data)
       if (photosRes.data) setPubPhotos(photosRes.data)
+      if (sightRes.data) setPubSightings(sightRes.data)
       setPubLoading(false)
     })
   }, [viewProfileId])
@@ -240,7 +257,7 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
     }}>
       {viewProfileId && (
         <button
-          onClick={() => setViewProfileId(null)}
+          onClick={() => { setViewProfileId(null); clearViewProfile() }}
           style={{
             display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0',
             background: 'none', border: 'none', color: 'var(--accent)',
@@ -342,6 +359,94 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
                   +{showPhotos.length - 9} fotos
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Public Profile: Badges */}
+          {viewProfileId && pubProfile?.claimed_badges?.length > 0 && (
+            <div style={{ animation: 'fadeUp .45s var(--ease-spring)' }}>
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-1)', marginBottom: 10 }}>
+                🏅 Conquistas
+              </h3>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                {pubProfile.claimed_badges.map(badgeId => {
+                  const badgePts = BADGE_REWARDS[badgeId]
+                  return (
+                    <div key={badgeId} style={{
+                      padding: '6px 12px', borderRadius: 'var(--r-md)',
+                      background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
+                      fontSize: 12, fontWeight: 500, color: 'var(--text-1)',
+                      display: 'flex', alignItems: 'center', gap: 4,
+                    }}>
+                      {badgeId === 'onca' ? '🐆' : badgeId === 'lobo' ? '🐺' : badgeId === 'ariranha' ? '🦦' : '🏅'}
+                      {badgeId}
+                      {badgePts && <span style={{ color: 'var(--amber)', marginLeft: 4, fontWeight: 700 }}>+{badgePts}</span>}
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Public Profile: Collection */}
+          {viewProfileId && pubSightings.length > 0 && (
+            <div style={{ animation: 'fadeUp .5s var(--ease-spring)' }}>
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-1)', marginBottom: 10 }}>
+                🦎 Coleção ({new Set(pubSightings.map(s => s.animal_id)).size} espécies)
+              </h3>
+              <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 4, scrollbarWidth: 'none' }}>
+                {Array.from(new Set(pubSightings.map(s => s.animal_id))).slice(0, 20).map(aid => {
+                  const a = ANIMALS.find(x => x.id === aid)
+                  if (!a) return null
+                  return (
+                    <div key={aid} style={{
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                      padding: '8px 6px', borderRadius: 'var(--r-lg)',
+                      background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
+                      minWidth: 56, flexShrink: 0,
+                    }}>
+                      <span style={{ fontSize: 20 }}>{a.emoji}</span>
+                      <span style={{ fontSize: 8, color: 'var(--text-3)', textAlign: 'center', lineHeight: 1.1 }}>
+                        {a.name.split(' ')[0]}
+                      </span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Public Profile: Recent Sightings */}
+          {viewProfileId && pubSightings.length > 0 && (
+            <div style={{ animation: 'fadeUp .55s var(--ease-spring)' }}>
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-1)', marginBottom: 10 }}>
+                📋 Registros Recentes
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                {pubSightings.slice(0, 10).map(s => (
+                  <div key={s.id} style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    padding: '8px 10px', borderRadius: 'var(--r-md)',
+                    background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
+                  }}>
+                    {s.photo_url ? (
+                      <img src={s.photo_url} alt="" style={{ width: 32, height: 32, borderRadius: 'var(--r-sm)', objectFit: 'cover', flexShrink: 0 }} />
+                    ) : (
+                      <span style={{ fontSize: 20, flexShrink: 0 }}>{s.animals?.emoji || '🐾'}</span>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-1)' }}>
+                        {s.animals?.emoji} {s.animals?.name}
+                      </div>
+                      <div style={{ fontSize: 10, color: 'var(--text-3)' }}>
+                        {new Date(s.created_at).toLocaleDateString('pt-BR')}
+                        {s.lat && s.lng && ` · 📍${s.lat.toFixed(2)}, ${s.lng.toFixed(2)}`}
+                      </div>
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--amber)' }}>+{s.pts_earned}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 
@@ -584,7 +689,7 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
                   const isMe = p.id === profile?.id
                   const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i + 1}`
                   return (
-                    <div key={p.id} onClick={() => { setShowRanking(false); setViewProfileId(p.id) }}
+                    <div key={p.id} onClick={() => { setShowRanking(false); setViewProfile(p.id) }}
                       style={{
                         display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px',
                         borderRadius: 'var(--r-md)',
@@ -866,12 +971,31 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
                 {expandedPhoto.animals?.emoji} {expandedPhoto.animals?.name}
               </div>
               {expandedPhoto.profiles && (
-                <div style={{ fontSize: 13, color: 'var(--text-2)', marginTop: 4 }}>
-                  {expandedPhoto.profiles.name || expandedPhoto.profiles.username}
-                  <span style={{ color: 'var(--text-3)', marginLeft: 6 }}>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setExpandedPhoto(null)
+                    setViewProfile(expandedPhoto.profiles.id || expandedPhoto.user_id)
+                  }}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                    display: 'flex', alignItems: 'center', gap: 6, marginTop: 4,
+                  }}
+                >
+                  {expandedPhoto.profiles.avatar_url ? (
+                    <img src={expandedPhoto.profiles.avatar_url} alt=""
+                      style={{ width: 20, height: 20, borderRadius: '50%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <span style={{ fontSize: 16 }}>{expandedPhoto.profiles.avatar_emoji || '🧭'}</span>
+                  )}
+                  <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--accent)' }}>
+                    {expandedPhoto.profiles.name || expandedPhoto.profiles.username}
+                  </span>
+                  <span style={{ fontSize: 11, color: 'var(--text-3)' }}>
                     @{expandedPhoto.profiles.username}
                   </span>
-                </div>
+                </button>
               )}
               <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 2 }}>
                 {new Date(expandedPhoto.created_at).toLocaleDateString('pt-BR')}
@@ -974,25 +1098,31 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {likersList.map(l => (
-                  <div key={l.user_id} style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '8px 12px', borderRadius: 'var(--r-md)',
-                    background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
-                  }}>
+                  <button key={l.user_id} onClick={() => { setShowLikers(null); setViewProfile(l.user_id) }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '8px 12px', borderRadius: 'var(--r-md)',
+                      background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
+                      cursor: 'pointer', width: '100%', textAlign: 'left',
+                      fontFamily: 'inherit', fontSize: 'inherit',
+                      color: 'inherit', transition: 'all .2s',
+                    }}
+                  >
                     {l.avatar_url ? (
                       <img src={l.avatar_url} alt="" style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} />
                     ) : (
                       <span style={{ fontSize: 20 }}>{l.avatar_emoji || '🧭'}</span>
                     )}
                     <div>
-                      <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--text-1)' }}>
+                      <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--accent)' }}>
                         {l.name || l.username}
                       </div>
                       <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
                         @{l.username}
                       </div>
                     </div>
-                  </div>
+                    <span style={{ marginLeft: 'auto', color: 'var(--text-3)', fontSize: 18 }}>›</span>
+                  </button>
                 ))}
               </div>
             )}
@@ -1003,7 +1133,7 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
       {showTimeline && (
         <TimelineSheet
           onClose={() => setShowTimeline(false)}
-          onViewProfile={(id) => setViewProfileId(id)}
+          onViewProfile={(id) => setViewProfile(id)}
           userId={userId || user?.id}
         />
       )}
