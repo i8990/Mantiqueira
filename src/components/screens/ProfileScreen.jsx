@@ -21,7 +21,7 @@ const RARITY_FILTERS = [
   ...Object.entries(TIER_LABELS).map(([key, label]) => ({ key, label })),
 ]
 
-export default function ProfileScreen({ profile, sightings, seenIds = new Set(), deleteSighting, userId }) {
+export default function ProfileScreen({ profile, sightings, seenIds = new Set(), deleteSighting, updateSighting, userId }) {
   const { signOut, user } = useAuth()
   const myProfile = useProfile(user?.id)
   const theme = useAppStore(s => s.theme)
@@ -1012,6 +1012,7 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
         <MySightingsSheet
           sightings={sightings || []}
           deleteSighting={deleteSighting}
+          updateSighting={updateSighting}
           onClose={() => setShowMySightings(false)}
           userId={userId || user?.id}
         />

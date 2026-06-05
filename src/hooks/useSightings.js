@@ -167,7 +167,120 @@ export default function useSightings(userId) {
     return { error: null }
   }
 
-  return { sightings, loading, error, refresh, createSighting, deleteSighting }
+  const updateSighting = async (sightingId, { photoFile, description, lat, lng, observedAt, sightingType, keepExistingPhoto }) => {
+    try {
+      const { data: existing, error: fetchError } = await supabase
+        .from('sightings')
+        .select('*')
+        .eq('id', sightingId)
+        .single()
+
+      if (fetchError) return { error: fetchError.message }
+      if (!existing) return { error: 'Registro não encontrado' }
+
+      const animal = ANIMALS.find(a => a.id === existing.animal_id)
+      if (!animal) return { error: 'Animal não encontrado na base local' }
+
+      let photoUrl = existing.photo_url
+
+      if (keepExistingPhoto) {
+        // keep the existing photo
+      } else if (photoFile) {
+        if (existing.photo_url) {
+          try {
+            const url = new URL(existing.photo_url)
+            const pathParts = url.pathname.split('/')
+            const bucketIndex = pathParts.indexOf('sightings-photos')
+            if (bucketIndex !== -1) {
+              const filePath = pathParts.slice(bucketIndex + 1).join('/')
+              await supabase.storage.from('sightings-photos').remove([filePath])
+            }
+          } catch (_) {}
+        }
+
+        const ext = photoFile.name.split('.').pop()
+        const filePath = `${existing.user_id}/${uuidv4()}.${ext}`
+        const { error: uploadError } = await supabase.storage
+          .from('sightings-photos')
+          .upload(filePath, photoFile)
+        if (uploadError) return { error: `Erro ao enviar foto: ${uploadError.message}` }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('sightings-photos')
+          .getPublicUrl(filePath)
+        photoUrl = publicUrl
+      } else if (photoFile === null) {
+        if (existing.photo_url) {
+          try {
+            const url = new URL(existing.photo_url)
+            const pathParts = url.pathname.split('/')
+            const bucketIndex = pathParts.indexOf('sightings-photos')
+            if (bucketIndex !== -1) {
+              const filePath = pathParts.slice(bucketIndex + 1).join('/')
+              await supabase.storage.from('sightings-photos').remove([filePath])
+            }
+          } catch (_) {}
+        }
+        photoUrl = null
+      }
+
+      const finalType = sightingType || existing.sighting_type
+      const finalDesc = description !== undefined ? description : existing.description
+      const finalLat = lat !== undefined ? lat : existing.lat
+      const finalLng = lng !== undefined ? lng : existing.lng
+      const finalObservedAt = observedAt !== undefined ? observedAt : existing.observed_at
+
+      const typeMult = SIGHTING_TYPE_MULTIPLIERS[finalType] || 1
+
+      let qualityBonus = 0
+      if (finalDesc && finalDesc.length > 10) qualityBonus += QLTY_BONUS_DESC
+      if (finalLat && finalLng) qualityBonus += QLTY_BONUS_GPS
+      if (finalObservedAt) qualityBonus += QLTY_BONUS_DATE
+
+      let isRepeat = false
+      try {
+        const { count, error: countError } = await supabase
+          .from('sightings')
+          .select('*', { count: 'exact', head: true })
+          .eq('animal_id', existing.animal_id)
+          .eq('user_id', existing.user_id)
+          .neq('id', sightingId)
+        if (!countError) {
+          isRepeat = (count || 0) > 0
+        }
+      } catch (_) {}
+
+      const sightingFactor = isRepeat ? REPEAT_SIGHTING_MULTIPLIER : FIRST_SIGHTING_MULTIPLIER
+      const ptsEarned = Math.round(animal.pts * typeMult * (1 + qualityBonus) * sightingFactor)
+
+      const updateData = {}
+      if (photoUrl !== existing.photo_url) updateData.photo_url = photoUrl
+      if (finalDesc !== existing.description) updateData.description = finalDesc
+      if (finalLat !== existing.lat) updateData.lat = finalLat
+      if (finalLng !== existing.lng) updateData.lng = finalLng
+      if (finalObservedAt !== existing.observed_at) updateData.observed_at = finalObservedAt
+      if (finalType !== existing.sighting_type) updateData.sighting_type = finalType
+      updateData.pts_earned = ptsEarned
+
+      if (Object.keys(updateData).length === 0) return { error: null, data: existing }
+
+      const { data, error } = await supabase
+        .from('sightings')
+        .update(updateData)
+        .eq('id', sightingId)
+        .select()
+        .single()
+
+      if (error) return { error: error.message }
+
+      await refresh()
+      return { data, error: null }
+    } catch (err) {
+      return { error: err?.message || 'Erro inesperado ao atualizar o avistamento' }
+    }
+  }
+
+  return { sightings, loading, error, refresh, createSighting, deleteSighting, updateSighting }
 }
 
 export function usePublicPhotos(userId) {

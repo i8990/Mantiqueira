@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import useLikes from '../../hooks/useLikes'
+import EditSightingSheet from './EditSightingSheet'
 
 const TYPE_LABELS = {
   foto: '📸',
@@ -8,7 +9,7 @@ const TYPE_LABELS = {
   comunicacao: '📞',
 }
 
-export default function MySightingsSheet({ sightings, deleteSighting, onClose, userId }) {
+export default function MySightingsSheet({ sightings, deleteSighting, updateSighting, onClose, userId }) {
   const { likesData, loadLikes } = useLikes(userId)
   const sightingIds = useMemo(() => sightings.map(s => s.id), [sightings])
 
@@ -17,6 +18,7 @@ export default function MySightingsSheet({ sightings, deleteSighting, onClose, u
   }, [sightingIds, loadLikes])
   const [confirmDelete, setConfirmDelete] = useState(null)
   const [deleting, setDeleting] = useState(false)
+  const [editingSighting, setEditingSighting] = useState(null)
 
   const handleDelete = async (id) => {
     setDeleting(true)
@@ -120,15 +122,26 @@ export default function MySightingsSheet({ sightings, deleteSighting, onClose, u
                     >Não</button>
                   </div>
                 ) : (
-                  <button onClick={() => setConfirmDelete(s.id)}
-                    style={{
-                      width: 32, height: 32, borderRadius: 'var(--r-sm)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      background: 'none', border: 'none', color: 'var(--text-3)', fontSize: 15,
-                      cursor: 'pointer', opacity: 0.5, transition: 'opacity .2s', flexShrink: 0,
-                    }}
-                    title="Deletar"
-                  >🗑️</button>
+                  <div style={{ display: 'flex', gap: 2, flexShrink: 0 }}>
+                    <button onClick={() => setEditingSighting(s)}
+                      style={{
+                        width: 32, height: 32, borderRadius: 'var(--r-sm)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: 'none', border: 'none', color: 'var(--text-3)', fontSize: 14,
+                        cursor: 'pointer', opacity: 0.5, transition: 'opacity .2s',
+                      }}
+                      title="Editar"
+                    >✏️</button>
+                    <button onClick={() => setConfirmDelete(s.id)}
+                      style={{
+                        width: 32, height: 32, borderRadius: 'var(--r-sm)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: 'none', border: 'none', color: 'var(--text-3)', fontSize: 15,
+                        cursor: 'pointer', opacity: 0.5, transition: 'opacity .2s',
+                      }}
+                      title="Deletar"
+                    >🗑️</button>
+                  </div>
                 )}
               </div>
             ))}
@@ -144,5 +157,13 @@ export default function MySightingsSheet({ sightings, deleteSighting, onClose, u
         )}
       </div>
     </div>
+
+    {editingSighting && (
+      <EditSightingSheet
+        sighting={editingSighting}
+        updateSighting={updateSighting}
+        onClose={() => setEditingSighting(null)}
+      />
+    )}
   )
 }
