@@ -56,8 +56,7 @@ export default function useGamification({ profile, sightings, seenIds = new Set(
   const claimLevelReward = useCallback(async () => {
     if (!canLevelUp || !userId) return { error: 'Nada a reivindicar' }
     const { data, error } = await supabase.rpc('claim_level_reward', {
-      p_user_id: userId,
-      p_target_level: levelData.level,
+      p_level: levelData.level,
     })
     if (error) return { error }
     setClaimedLevels(levelData.level)
@@ -67,9 +66,8 @@ export default function useGamification({ profile, sightings, seenIds = new Set(
   const claimStreakReward = useCallback(async (milestone, reward) => {
     if (!userId) return { error: 'Usuário não encontrado' }
     const { data, error } = await supabase.rpc('claim_streak_reward', {
-      p_user_id: userId,
-      p_milestone: milestone,
-      p_reward: reward,
+      p_days: milestone,
+      p_pts: reward,
     })
     if (error) return { error }
     setClaimedStreaks(prev => [...prev, milestone])
@@ -79,9 +77,8 @@ export default function useGamification({ profile, sightings, seenIds = new Set(
   const claimBadgeReward = useCallback(async (badgeId, reward) => {
     if (!userId) return { error: 'Usuário não encontrado' }
     const { data, error } = await supabase.rpc('claim_badge_reward', {
-      p_user_id: userId,
       p_badge_id: badgeId,
-      p_reward: reward,
+      p_pts: reward,
     })
     if (error) return { error }
     setClaimedBadges(prev => [...prev, badgeId])
@@ -91,9 +88,8 @@ export default function useGamification({ profile, sightings, seenIds = new Set(
   const claimMonthlyMission = useCallback(async (missionId, reward) => {
     if (!userId) return { error: 'Usuário não encontrado' }
     const { data, error } = await supabase.rpc('claim_monthly_mission', {
-      p_user_id: userId,
-      p_key: `${getMonthKey()}_${missionId}`,
-      p_reward: reward,
+      p_mission_id: missionId,
+      p_pts: reward,
     })
     if (error) return { error }
     const monthKey = getMonthKey()

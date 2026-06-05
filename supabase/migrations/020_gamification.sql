@@ -88,10 +88,23 @@ BEGIN
   END IF;
 
   -- Checa se o usuário realmente atingiu o nível
+  -- Thresholds: Nv0=0, Nv1=50, Nv2=150, Nv3=350, Nv4=700, Nv5=1200, Nv6=2000, Nv7=3200, Nv8=5000
   IF NOT EXISTS (
     SELECT 1 FROM profiles
     WHERE id = v_user_id
-      AND total_pts >= (SELECT COALESCE(SUM(pts_needed), 0) FROM (SELECT unnest(LEVELS[:p_level]) AS pts_needed) sub)
+      AND total_pts >= (
+        CASE p_level
+          WHEN 1 THEN 50
+          WHEN 2 THEN 150
+          WHEN 3 THEN 350
+          WHEN 4 THEN 700
+          WHEN 5 THEN 1200
+          WHEN 6 THEN 2000
+          WHEN 7 THEN 3200
+          WHEN 8 THEN 5000
+          ELSE 0
+        END
+      )
   ) THEN
     RETURN jsonb_build_object('success', false, 'error', 'Nível não atingido');
   END IF;
