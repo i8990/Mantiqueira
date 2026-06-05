@@ -368,7 +368,8 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
               </div>
               <button
                 onClick={async () => {
-                  await gamification.claimLevelReward()
+                  const res = await gamification.claimLevelReward()
+                  if (res?.error) { console.error(res.error); return }
                   window.location.reload()
                 }}
                 style={{
@@ -407,7 +408,8 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
                   </span>
                     <button
                       onClick={async () => {
-                        await gamification.claimStreakReward(sr.days, sr.pts)
+                        const res = await gamification.claimStreakReward(sr.days, sr.pts)
+                        if (res?.error) { console.error(res.error); return }
                         window.location.reload()
                       }}
                       style={{

@@ -405,11 +405,12 @@ export default function BadgeGrid({ seenIds = new Set(), profile, sightings, cla
                   </div>
                 )}
 
-                {selectedBadge.earned && !badgeClaims.has(selectedBadge.id) && onClaimBadge && (
+                  {selectedBadge.earned && !badgeClaims.has(selectedBadge.id) && onClaimBadge && (
                   <button
                     onClick={async (e) => {
                       e.stopPropagation()
-                      await onClaimBadge(selectedBadge.id, badgeRewards[selectedBadge.id] || 0)
+                      const res = await onClaimBadge(selectedBadge.id, badgeRewards[selectedBadge.id] || 0)
+                      if (res?.error) { console.error(res.error); return }
                       window.location.reload()
                     }}
                     style={{

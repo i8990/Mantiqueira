@@ -51,7 +51,8 @@ export default function MonthlyMissions({ missions, onClaim }) {
           ) : m.completed ? (
             <button
               onClick={async () => {
-                await onClaim(m.id, m.reward)
+                const res = await onClaim(m.id, m.reward)
+                if (res?.error) { console.error(res.error); return }
                 window.location.reload()
               }}
               style={{

@@ -23,14 +23,14 @@ function parseClaimedMonthly(raw) {
 }
 
 export default function useGamification({ profile, sightings, seenIds = new Set(), userId }) {
-  const [claimedLevels, setClaimedLevels] = useState(getMaxClaimed(profile?.claimed_levels))
+  const [claimedLevels, setClaimedLevels] = useState(getMaxClaimed(profile?.claimed_levels) || 1)
   const [claimedStreaks, setClaimedStreaks] = useState(profile?.claimed_streaks || [])
   const [claimedBadges, setClaimedBadges] = useState(profile?.claimed_badges || [])
   const [claimedMonthly, setClaimedMonthly] = useState(parseClaimedMonthly(profile?.claimed_monthly_missions))
 
   useEffect(() => {
     if (profile) {
-      setClaimedLevels(getMaxClaimed(profile.claimed_levels))
+      setClaimedLevels(getMaxClaimed(profile.claimed_levels) || 1)
       setClaimedStreaks(profile.claimed_streaks || [])
       setClaimedBadges(profile.claimed_badges || [])
       setClaimedMonthly(parseClaimedMonthly(profile.claimed_monthly_missions))

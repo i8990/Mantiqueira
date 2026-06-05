@@ -91,21 +91,26 @@ BEGIN
     RETURN jsonb_build_object('success', false, 'error', 'Nível já reivindicado');
   END IF;
 
+  -- Lock preventivo contra race condition
+  PERFORM id FROM profiles WHERE id = v_user_id FOR UPDATE;
+
   -- Checa se o usuário realmente atingiu o nível alvo
-  -- Thresholds: Nv0=0, Nv1=50, Nv2=150, Nv3=350, Nv4=700, Nv5=1200, Nv6=2000, Nv7=3200, Nv8=5000
+  -- Thresholds correspondem ao array LEVELS em constants.js (1-indexado):
+  --   Nv1=0, Nv2=50, Nv3=150, Nv4=350, Nv5=700, Nv6=1200, Nv7=2000, Nv8=3200, Nv9=5000
   IF NOT EXISTS (
     SELECT 1 FROM profiles
     WHERE id = v_user_id
       AND total_pts >= (
         CASE p_level
-          WHEN 1 THEN 50
-          WHEN 2 THEN 150
-          WHEN 3 THEN 350
-          WHEN 4 THEN 700
-          WHEN 5 THEN 1200
-          WHEN 6 THEN 2000
-          WHEN 7 THEN 3200
-          WHEN 8 THEN 5000
+          WHEN 1 THEN 0
+          WHEN 2 THEN 50
+          WHEN 3 THEN 150
+          WHEN 4 THEN 350
+          WHEN 5 THEN 700
+          WHEN 6 THEN 1200
+          WHEN 7 THEN 2000
+          WHEN 8 THEN 3200
+          WHEN 9 THEN 5000
           ELSE 0
         END
       )
