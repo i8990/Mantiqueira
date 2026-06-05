@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
-import { TIER_LABELS, TIER_COLORS, DANGER_CONFIG, LEVELS, ANIMALS as FALLBACK_ANIMALS, mergeAnimalData, STREAK_REWARDS, BADGE_REWARDS, MONTHLY_MISSIONS, LEVEL_REWARD_PTS, SIGHTING_TYPE_MULTIPLIERS, FIRST_SIGHTING_MULTIPLIER, REPEAT_SIGHTING_MULTIPLIER, QLTY_BONUS_DESC, QLTY_BONUS_GPS, QLTY_BONUS_DATE } from '../../lib/constants'
+import { TIER_LABELS, TIER_COLORS, DANGER_CONFIG, LEVELS, ANIMALS as FALLBACK_ANIMALS, mergeAnimalData, STREAK_REWARDS, BADGE_REWARDS, MONTHLY_MISSIONS, LEVEL_REWARD_PTS, SIGHTING_TYPE_MULTIPLIERS, FIRST_SIGHTING_MULTIPLIER, REPEAT_SIGHTING_MULTIPLIER, QLTY_BONUS_DESC, QLTY_BONUS_GPS, QLTY_BONUS_DATE, ANIMAL_GROUPS, ANIMAL_GROUP_LABELS, ANIMAL_GROUP_ICONS } from '../../lib/constants'
 import FlipCard from '../guide/FlipCard'
-
-const TIERS = ['L', 'S', 'A', 'B', 'C', 'D']
 
 export default function GuideScreen() {
   const [showManual, setShowManual] = useState(false)
   const [animals, setAnimals] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [tierFilter, setTierFilter] = useState(null)
+  const [groupFilter, setGroupFilter] = useState(null)
+
+  const groups = Object.keys(ANIMAL_GROUPS)
 
   useEffect(() => {
     let cancelled = false
@@ -105,12 +105,12 @@ export default function GuideScreen() {
           marginBottom: 4,
           animation: 'fadeUp .4s var(--ease-spring)',
         }}>
-          <button onClick={() => setTierFilter(null)} style={{
+          <button onClick={() => setGroupFilter(null)} style={{
             padding: '5px 12px',
             borderRadius: 999,
-            border: `0.5px solid ${tierFilter === null ? 'var(--accent)' : 'var(--glass-border)'}`,
-            background: tierFilter === null ? 'var(--accent-dim)' : 'var(--glass)',
-            color: tierFilter === null ? 'var(--accent)' : 'var(--text-2)',
+            border: `0.5px solid ${groupFilter === null ? 'var(--accent)' : 'var(--glass-border)'}`,
+            background: groupFilter === null ? 'var(--accent-dim)' : 'var(--glass)',
+            color: groupFilter === null ? 'var(--accent)' : 'var(--text-2)',
             fontSize: 11,
             fontWeight: 600,
             cursor: 'pointer',
@@ -118,19 +118,19 @@ export default function GuideScreen() {
           }}>
             Todos
           </button>
-          {TIERS.map(tier => (
-            <button key={tier} onClick={() => setTierFilter(tier)} style={{
+          {groups.map(g => (
+            <button key={g} onClick={() => setGroupFilter(g === groupFilter ? null : g)} style={{
               padding: '5px 12px',
               borderRadius: 999,
-              border: `0.5px solid ${tierFilter === tier ? TIER_COLORS[tier] : 'var(--glass-border)'}`,
-              background: tierFilter === tier ? `${TIER_COLORS[tier]}20` : 'var(--glass)',
-              color: tierFilter === tier ? TIER_COLORS[tier] : 'var(--text-2)',
+              border: `0.5px solid ${groupFilter === g ? 'var(--accent)' : 'var(--glass-border)'}`,
+              background: groupFilter === g ? 'var(--accent-dim)' : 'var(--glass)',
+              color: groupFilter === g ? 'var(--accent)' : 'var(--text-2)',
               fontSize: 11,
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'all .2s',
             }}>
-              {tier} · {TIER_LABELS[tier]}
+              {ANIMAL_GROUP_ICONS[g]} {ANIMAL_GROUP_LABELS[g]}
             </button>
           ))}
         </div>
@@ -171,7 +171,7 @@ export default function GuideScreen() {
             gap: 10,
             paddingBottom: 20,
           }}>
-            {(tierFilter ? animals.filter(a => a.tier === tierFilter) : animals).map((animal, index) => (
+            {(groupFilter ? animals.filter(a => ANIMAL_GROUPS[groupFilter]?.includes(a.id)) : animals).map((animal, index) => (
               <div key={animal.id} style={{ animation: `fadeUp .4s var(--ease-spring)`, animationDelay: `${index * 0.03}s` }}>
                 <FlipCard animal={animal} />
               </div>
