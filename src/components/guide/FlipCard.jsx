@@ -1,11 +1,22 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { DANGER_CONFIG, TIER_COLORS } from '../../lib/constants'
+import { fetchWikipediaImage } from '../../lib/wikipedia'
 
 const FALLBACK_DANGER = { label: 'Desconhecido', color: 'var(--text-3)', emoji: '⚪' }
 
 export default function FlipCard({ animal }) {
   const [flipped, setFlipped] = useState(false)
+  const [wikiImg, setWikiImg] = useState(null)
   const danger = DANGER_CONFIG[animal.danger] || FALLBACK_DANGER
+  const imgUrl = wikiImg || animal.img
+
+  useEffect(() => {
+    let cancelled = false
+    fetchWikipediaImage(animal.wiki).then(url => {
+      if (!cancelled && url) setWikiImg(url)
+    })
+    return () => { cancelled = true }
+  }, [animal.wiki])
 
   return (
     <div
@@ -61,7 +72,7 @@ export default function FlipCard({ animal }) {
           }}>
             +{animal.pts}
           </div>
-          {animal.img ? (
+          {imgUrl ? (
             <div style={{
               width: 72,
               height: 72,
@@ -75,7 +86,7 @@ export default function FlipCard({ animal }) {
               border: '0.5px solid var(--glass-border)',
             }}>
               <img
-                src={animal.img}
+                src={imgUrl}
                 alt={animal.name}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 onError={e => { e.target.style.display = 'none'; e.target.parentNode.textContent = animal.emoji }}
@@ -135,7 +146,7 @@ export default function FlipCard({ animal }) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            {animal.img ? (
+            {imgUrl ? (
               <div style={{
                 width: 40,
                 height: 40,
@@ -148,7 +159,7 @@ export default function FlipCard({ animal }) {
                 justifyContent: 'center',
               }}>
                 <img
-                  src={animal.img}
+                  src={imgUrl}
                   alt={animal.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   onError={e => { e.target.style.display = 'none'; e.target.parentNode.textContent = animal.emoji }}

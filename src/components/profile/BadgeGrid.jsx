@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ANIMALS } from '../../lib/constants'
 
-const BIRD_IDS = ['seriema', 'beija-flor', 'trinca-ferro', 'tucano', 'tie-sangue', 'sabia', 'bem-te-vi', 'pardal', 'pombo', 'joao-de-barro', 'rolinha', 'gaviao']
+const BIRD_IDS = ['seriema', 'beija-flor', 'trinca-ferro', 'tucano', 'tie-sangue', 'sabia', 'bem-te-vi', 'pardal', 'pombo', 'joao-de-barro', 'rolinha', 'gaviao', 'saira', 'sanhaco']
 const REPTILE_IDS = ['teiu', 'jararaca', 'caninana', 'cobra-cipo', 'cascavel', 'lagartixa']
 const MAMMAL_IDS = ['mico', 'esquilo', 'quati', 'cachorro-do-mato', 'gamba', 'camundongo', 'capivara', 'paca', 'bugio', 'anta', 'veado-campeiro', 'onca-parda', 'jaguatirica', 'lobo-guara', 'onca-pintada', 'ariranha', 'lebre', 'jaratataca']
 const ANIMALS_BY_ID = Object.fromEntries(ANIMALS.map(a => [a.id, a]))
