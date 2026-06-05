@@ -2,18 +2,38 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { supabase } from '../lib/supabase'
 import { LEVEL_REWARD_PTS, STREAK_REWARDS, BADGE_REWARDS, calcLevel, getMonthlyMissions, checkMonthlyMission } from '../lib/constants'
 
+function getMaxClaimed(arr) {
+  if (!arr || arr.length === 0) return 0
+  return Math.max(...arr)
+}
+
+function parseClaimedMonthly(raw) {
+  if (!raw) return {}
+  if (Array.isArray(raw)) {
+    const grouped = {}
+    for (const entry of raw) {
+      if (entry.month) {
+        if (!grouped[entry.month]) grouped[entry.month] = []
+        grouped[entry.month].push(entry.mission_id)
+      }
+    }
+    return grouped
+  }
+  return raw
+}
+
 export default function useGamification({ profile, sightings, seenIds = new Set(), userId }) {
-  const [claimedLevels, setClaimedLevels] = useState(profile?.claimed_levels || 1)
+  const [claimedLevels, setClaimedLevels] = useState(getMaxClaimed(profile?.claimed_levels))
   const [claimedStreaks, setClaimedStreaks] = useState(profile?.claimed_streaks || [])
   const [claimedBadges, setClaimedBadges] = useState(profile?.claimed_badges || [])
-  const [claimedMonthly, setClaimedMonthly] = useState(profile?.claimed_monthly_missions || {})
+  const [claimedMonthly, setClaimedMonthly] = useState(parseClaimedMonthly(profile?.claimed_monthly_missions))
 
   useEffect(() => {
     if (profile) {
-      setClaimedLevels(profile.claimed_levels || 1)
+      setClaimedLevels(getMaxClaimed(profile.claimed_levels))
       setClaimedStreaks(profile.claimed_streaks || [])
       setClaimedBadges(profile.claimed_badges || [])
-      setClaimedMonthly(profile.claimed_monthly_missions || {})
+      setClaimedMonthly(parseClaimedMonthly(profile.claimed_monthly_missions))
     }
   }, [profile])
 
