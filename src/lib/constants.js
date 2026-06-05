@@ -76,7 +76,8 @@ export const ANIMALS = [
   { id: 'camundongo', name: 'Camundongo-do-mato', sci: 'Oligoryzomys nigripes', emoji: '🐀', img: 'https://upload.wikimedia.org/wikipedia/commons/8/82/Ejemplar_de_colilargo_grande_%28Oligoryzomys_nigripes%29%2C_Uruguay%2C_2022.jpg', tier: 'C', tierLabel: 'Comum', pts: 25, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Chão da mata e roças', habitat: 'Floresta/Campo', wiki: 'https://pt.wikipedia.org/wiki/Rato-do-mato', danger: 'inofensivo', habits: ['🌿 Herbívoro', '🌙 Noturno', '🌳 Solo'], howToFind: 'Chão da mata; pequeno e rápido' },
   { id: 'canario-da-terra', name: 'Canarinho-da-terra', sci: 'Sicalis flaveola', emoji: '🐦', tier: 'C', tierLabel: 'Comum', pts: 20, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Campos abertos e áreas rurais', habitat: 'Campo/Urbano', wiki: 'https://pt.wikipedia.org/wiki/Can%C3%A1rio-da-terra', danger: 'inofensivo', habits: ['🌿 Granívoro', '🎵 Canto melodioso', '☀️ Diurno'], howToFind: 'Campos abertos e áreas rurais; siga o canto' },
 
-  // ─── TIER B (Raros) — Saíra ───
+  // ─── TIER B (Raros) — Japu e Saíra ───
+  { id: 'japu', name: 'Japu', sci: 'Psarocolius decumanus', emoji: '🐦', img: 'https://upload.wikimedia.org/wikipedia/commons/0/04/Psarocolius_decumanus_-_Crested_Oropendola.jpg', tier: 'B', tierLabel: 'Raro', pts: 100, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Matas altas, bordas de floresta e árvores isoladas com copa', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Japu', danger: 'inofensivo', habits: ['🍉 Frugívoro', '🌳 Copa', '🏗️ Ninho colonial', '🎵 Vocalização única'], howToFind: 'Procure árvores altas com ninhos longos e pendentes em colônias — são inconfundíveis. A vocalização é um espetáculo: a ave se inclina para frente enquanto emite o som. Comum em matas da Mantiqueira.' },
   { id: 'saira', name: 'Saíra', sci: 'Tangara seledon', emoji: '🐦', img: 'https://upload.wikimedia.org/wikipedia/commons/f/fe/Tangara_seledon_-Parque_Nacional_do_Itatiaia%2C_Rio_de_Janeiro%2C_Brazil-8.jpg', tier: 'B', tierLabel: 'Raro', pts: 90, status: 'LC', statusLabel: 'Pouco preocupante', where: 'Dossel da Floresta Atlântica, bordas de mata com frutíferas', habitat: 'Floresta Atlântica', wiki: 'https://pt.wikipedia.org/wiki/Sa%C3%ADra-sete-cores', danger: 'inofensivo', habits: ['🍉 Frugívora', '🌳 Dossel', '🌈 Cores vibrantes', '👨‍👩‍👧‍👧 Grupos mistos'], howToFind: 'Observe o dossel da mata em busca de frutíferas nativas (Miconia, palmito). Andam em grupos mistos com outras aves — o azul, verde e laranja são inconfundíveis.' },
 
   // ─── TIER C (Comuns) — Sanhaço ───
@@ -195,7 +196,7 @@ const MONTHLY_MISSION_CHECKS = {
   'cinco-no-mes-ago': (_, __, s, ms) => { const ids = new Set((ms || s).map(x => x.animal_id)); return ids.size >= 5 },
   'lagarto-do-sol-set': (seenIds) => seenIds.has('teiu'),
   'canto-primavera-set': (seenIds) => seenIds.has('sabia'),
-  'observador-aves-set': (seenIds) => { const aves = ['seriema','beija-flor','trinca-ferro','tucano','tie-sangue','sabia','bem-te-vi','pardal','pombo','joao-de-barro','rolinha','gaviao','saira','sanhaco']; return aves.filter(id => seenIds.has(id)).length >= 3 },
+  'observador-aves-set': (seenIds) => { const aves = ['seriema','beija-flor','trinca-ferro','tucano','tie-sangue','sabia','bem-te-vi','pardal','pombo','joao-de-barro','rolinha','gaviao','saira','sanhaco','japu']; return aves.filter(id => seenIds.has(id)).length >= 3 },
   'coracao-aco-out': (seenIds) => seenIds.has('jararaca'),
   'asas-migratorias-out': (seenIds) => seenIds.has('borboleta'),
   'noite-de-chuva-out': (seenIds) => seenIds.has('sapo-cururu'),
@@ -257,7 +258,7 @@ export const ANIMAL_GROUPS = {
     'jacu', 'urutau', 'tucano', 'gaviao', 'seriema', 'coruja',
     'tie-sangue', 'beija-flor', 'trinca-ferro', 'sabia',
     'joao-de-barro', 'rolinha', 'bem-te-vi', 'pardal', 'pombo',
-    'canario-da-terra', 'saira', 'sanhaco',
+    'canario-da-terra', 'saira', 'sanhaco', 'japu',
   ],
   reptil: ['jararaca', 'caninana', 'teiu', 'cascavel', 'cobra-cipo', 'lagartixa'],
   anfibio: ['sapo-flamenguinho', 'sapo-cururu', 'ra'],
