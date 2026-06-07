@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import UserLocation from '../map/UserLocation'
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -264,6 +265,7 @@ export default function LocationPicker({ initialCoords, onConfirm, onClose }) {
           />
           <MapClickHandler onMapClick={handleMapClick} />
           <FlyTo center={flyTo} />
+          <UserLocation />
           {markerPos && (
             <DraggableMarker position={markerPos} onDragEnd={handleMarkerDragEnd} />
           )}
