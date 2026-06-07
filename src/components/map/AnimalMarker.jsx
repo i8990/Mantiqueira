@@ -67,7 +67,14 @@ export default function AnimalMarker({ sighting, likeCount = 0, userLiked = fals
             minWidth: 140,
             fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
           }}>
-            {sighting.photo_url ? (
+            {sighting.video_url ? (
+              <video src={sighting.video_url} controls muted
+                style={{
+                  width: '100%', maxHeight: 160, objectFit: 'cover',
+                  borderRadius: 8, marginBottom: 8,
+                }}
+              />
+            ) : sighting.photo_url ? (
               <img src={sighting.photo_url} alt=""
                 style={{
                   width: '100%', maxHeight: 140, objectFit: 'cover',

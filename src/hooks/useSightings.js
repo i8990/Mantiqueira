@@ -45,7 +45,14 @@ export default function useSightings(userId) {
     refresh()
   }, [refresh])
 
-  const createSighting = async ({ animalId, sightingType, photoFile, description, lat, lng, observedAt }) => {
+  const VIDEO_EXTS = ['mp4', 'webm', 'mov', 'avi', 'mkv', '3gp']
+
+  function isVideoFile(file) {
+    const ext = file?.name?.split('.').pop()?.toLowerCase()
+    return file?.type?.startsWith('video/') || VIDEO_EXTS.includes(ext)
+  }
+
+  const createSighting = async ({ animalId, sightingType, photoFile, videoFile, description, lat, lng, observedAt }) => {
     if (!animalId) return { error: 'Nenhum animal selecionado' }
     if (!sightingType) return { error: 'Tipo de avistamento não selecionado' }
 
@@ -68,6 +75,22 @@ export default function useSightings(userId) {
           .from('sightings-photos')
           .getPublicUrl(filePath)
         photoUrl = publicUrl
+      }
+
+      let videoUrl = null
+      if (videoFile) {
+        const ext = videoFile.name.split('.').pop()
+        const filePath = `${userId}/${uuidv4()}.${ext}`
+        const { error: uploadError } = await supabase.storage
+          .from('sightings-videos')
+          .upload(filePath, videoFile)
+        if (uploadError) {
+          return { error: `Erro ao enviar vídeo: ${uploadError.message}` }
+        }
+        const { data: { publicUrl } } = supabase.storage
+          .from('sightings-videos')
+          .getPublicUrl(filePath)
+        videoUrl = publicUrl
       }
 
       const typeMult = SIGHTING_TYPE_MULTIPLIERS[sightingType] || 1
@@ -100,6 +123,7 @@ export default function useSightings(userId) {
           user_id: userId,
           animal_id: animalId,
           photo_url: photoUrl,
+          video_url: videoUrl,
           description: description || null,
           lat: lat || null,
           lng: lng || null,
@@ -156,6 +180,20 @@ export default function useSightings(userId) {
       }
     }
 
+    if (sighting.video_url) {
+      try {
+        const url = new URL(sighting.video_url)
+        const pathParts = url.pathname.split('/')
+        const bucketIndex = pathParts.indexOf('sightings-videos')
+        if (bucketIndex !== -1) {
+          const filePath = pathParts.slice(bucketIndex + 1).join('/')
+          await supabase.storage.from('sightings-videos').remove([filePath])
+        }
+      } catch (e) {
+        // silently ignore storage delete errors
+      }
+    }
+
     const { error: deleteError } = await supabase
       .from('sightings')
       .delete()
@@ -167,7 +205,7 @@ export default function useSightings(userId) {
     return { error: null }
   }
 
-  const updateSighting = async (sightingId, { photoFile, description, lat, lng, observedAt, sightingType, keepExistingPhoto }) => {
+  const updateSighting = async (sightingId, { photoFile, videoFile, description, lat, lng, observedAt, sightingType, keepExistingPhoto, keepExistingVideo }) => {
     try {
       const { data: existing, error: fetchError } = await supabase
         .from('sightings')
@@ -182,6 +220,7 @@ export default function useSightings(userId) {
       if (!animal) return { error: 'Animal não encontrado na base local' }
 
       let photoUrl = existing.photo_url
+      let videoUrl = existing.video_url
 
       if (keepExistingPhoto) {
         // keep the existing photo
@@ -224,6 +263,47 @@ export default function useSightings(userId) {
         photoUrl = null
       }
 
+      if (keepExistingVideo) {
+        // keep the existing video
+      } else if (videoFile) {
+        if (existing.video_url) {
+          try {
+            const url = new URL(existing.video_url)
+            const pathParts = url.pathname.split('/')
+            const bucketIndex = pathParts.indexOf('sightings-videos')
+            if (bucketIndex !== -1) {
+              const filePath = pathParts.slice(bucketIndex + 1).join('/')
+              await supabase.storage.from('sightings-videos').remove([filePath])
+            }
+          } catch (_) {}
+        }
+
+        const ext = videoFile.name.split('.').pop()
+        const filePath = `${existing.user_id}/${uuidv4()}.${ext}`
+        const { error: uploadError } = await supabase.storage
+          .from('sightings-videos')
+          .upload(filePath, videoFile)
+        if (uploadError) return { error: `Erro ao enviar vídeo: ${uploadError.message}` }
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('sightings-videos')
+          .getPublicUrl(filePath)
+        videoUrl = publicUrl
+      } else if (videoFile === null) {
+        if (existing.video_url) {
+          try {
+            const url = new URL(existing.video_url)
+            const pathParts = url.pathname.split('/')
+            const bucketIndex = pathParts.indexOf('sightings-videos')
+            if (bucketIndex !== -1) {
+              const filePath = pathParts.slice(bucketIndex + 1).join('/')
+              await supabase.storage.from('sightings-videos').remove([filePath])
+            }
+          } catch (_) {}
+        }
+        videoUrl = null
+      }
+
       const finalType = sightingType || existing.sighting_type
       const finalDesc = description !== undefined ? description : existing.description
       const finalLat = lat !== undefined ? lat : existing.lat
@@ -255,6 +335,7 @@ export default function useSightings(userId) {
 
       const updateData = {}
       if (photoUrl !== existing.photo_url) updateData.photo_url = photoUrl
+      if (videoUrl !== existing.video_url) updateData.video_url = videoUrl
       if (finalDesc !== existing.description) updateData.description = finalDesc
       if (finalLat !== existing.lat) updateData.lat = finalLat
       if (finalLng !== existing.lng) updateData.lng = finalLng
@@ -293,7 +374,7 @@ export function usePublicPhotos(userId) {
       .from('sightings')
       .select('*, animals(name, emoji), profiles!inner(name, username, avatar_emoji)')
       .eq('is_public', true)
-      .not('photo_url', 'is', null)
+      .or('photo_url.is.not,null,video_url.is.not,null')
 
     if (userId) query = query.eq('user_id', userId)
 

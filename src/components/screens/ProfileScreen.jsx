@@ -129,7 +129,7 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
         .from('sightings')
         .select('*, animals(name, emoji)')
         .eq('user_id', viewProfileId)
-        .not('photo_url', 'is', null)
+        .or('photo_url.is.not,null,video_url.is.not,null')
         .order('created_at', { ascending: false }),
       supabase
         .from('sightings')
@@ -159,7 +159,7 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
 
   const showPhotos = viewProfileId
     ? pubPhotos
-    : (sightings || []).filter(s => s.photo_url)
+    : (sightings || []).filter(s => s.photo_url || s.video_url)
 
   const photoSightingIds = useMemo(() => showPhotos.map(s => s.id), [showPhotos])
 
@@ -325,10 +325,43 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
                         gridRow: i === 0 ? '1 / 3' : undefined,
                       }}
                     >
-                      <img src={s.photo_url} alt={s.animals?.name || 'Foto'}
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                        loading="lazy"
-                      />
+                      {s.video_url ? (
+                        <>
+                          {s.photo_url ? (
+                            <img src={s.photo_url} alt={s.animals?.name || 'Vídeo'}
+                              style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div style={{
+                              width: '100%', height: '100%',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              background: 'var(--bg-deep)', fontSize: 32,
+                            }}>
+                              🎥
+                            </div>
+                          )}
+                          <div style={{
+                            position: 'absolute', inset: 0,
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            background: 'rgba(0,0,0,.25)',
+                          }}>
+                            <div style={{
+                              width: 48, height: 48, borderRadius: '50%',
+                              background: 'rgba(0,0,0,.6)',
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: 20, color: '#fff',
+                            }}>
+                              ▶️
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <img src={s.photo_url} alt={s.animals?.name || 'Foto'}
+                          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                          loading="lazy"
+                        />
+                      )}
                       {likeInfo && likeInfo.count > 0 && (
                         <div style={{
                           position: 'absolute', bottom: 4, right: 4,
@@ -951,16 +984,27 @@ export default function ProfileScreen({ profile, sightings, seenIds = new Set(),
               }} />
             </div>
 
-            <img
-              src={expandedPhoto.photo_url}
-              alt={expandedPhoto.animals?.name || 'Foto'}
-              onClick={handleDoubleTapLike}
-              style={{
-                width: '100%', maxHeight: '70vh', objectFit: 'contain',
-                borderRadius: 'var(--r-xl)', background: 'var(--glass)',
-                cursor: 'pointer',
-              }}
-            />
+            {expandedPhoto.video_url ? (
+              <video
+                src={expandedPhoto.video_url}
+                controls
+                style={{
+                  width: '100%', maxHeight: '70vh', objectFit: 'contain',
+                  borderRadius: 'var(--r-xl)', background: 'var(--glass)',
+                }}
+              />
+            ) : (
+              <img
+                src={expandedPhoto.photo_url}
+                alt={expandedPhoto.animals?.name || 'Foto'}
+                onClick={handleDoubleTapLike}
+                style={{
+                  width: '100%', maxHeight: '70vh', objectFit: 'contain',
+                  borderRadius: 'var(--r-xl)', background: 'var(--glass)',
+                  cursor: 'pointer',
+                }}
+              />
+            )}
 
             <div style={{
               padding: '12px 16px', background: 'var(--glass-strong)',

@@ -12,6 +12,9 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
   const [sightingType, setSightingType] = useState(null)
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
+  const [videoFile, setVideoFile] = useState(null)
+  const [videoPreview, setVideoPreview] = useState(null)
+  const [mediaType, setMediaType] = useState(null)
   const [animalId, setAnimalId] = useState(null)
   const [saving, setSaving] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
@@ -25,6 +28,9 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
     setSightingType(null)
     setPhotoFile(null)
     setPhotoPreview(null)
+    setVideoFile(null)
+    setVideoPreview(null)
+    setMediaType(null)
     setAnimalId(null)
     setSaving(false)
     setErrorMsg('')
@@ -44,13 +50,34 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
     const file = e.target.files?.[0]
     if (file) {
       setPhotoFile(file)
+      setVideoFile(null)
+      setVideoPreview(null)
+      setMediaType('photo')
       const reader = new FileReader()
       reader.onload = () => setPhotoPreview(reader.result)
       reader.readAsDataURL(file)
     } else {
       setPhotoFile(null)
       setPhotoPreview(null)
+      if (!videoFile) setMediaType(null)
     }
+  }
+
+  const handleVideoFileChange = (file) => {
+    setVideoFile(file)
+    setPhotoFile(null)
+    setPhotoPreview(null)
+    setMediaType('video')
+    setVideoPreview(URL.createObjectURL(file))
+  }
+
+  const handleRemoveMedia = () => {
+    if (videoPreview) URL.revokeObjectURL(videoPreview)
+    setPhotoFile(null)
+    setPhotoPreview(null)
+    setVideoFile(null)
+    setVideoPreview(null)
+    setMediaType(null)
   }
 
   const handleSave = async ({ description, lat, lng, observedAt }) => {
@@ -65,6 +92,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
         animalId,
         sightingType,
         photoFile: photoFile || undefined,
+        videoFile: videoFile || undefined,
         description,
         lat,
         lng,
@@ -73,10 +101,14 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
       if (error) {
         setErrorMsg(error)
       } else {
+        if (videoPreview) URL.revokeObjectURL(videoPreview)
         setStep(0)
         setSightingType(null)
         setPhotoFile(null)
         setPhotoPreview(null)
+        setVideoFile(null)
+        setVideoPreview(null)
+        setMediaType(null)
         setAnimalId(null)
         refreshSightings?.()
         useAppStore.getState().showToast('Salvo')
@@ -92,7 +124,7 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
   const canProceed = () => {
     if (step === 0) return !!sightingType
     if (step === 1) {
-      if (sightingType === 'foto' || sightingType === 'pegada') return !!photoFile
+      if (sightingType === 'foto' || sightingType === 'pegada') return !!(photoFile || videoFile)
       return true
     }
     if (step === 2) return !!animalId
@@ -206,7 +238,11 @@ export default function RegisterScreen({ createSighting, refreshSightings }) {
           {step === 1 && (
             <StepPhoto
               photoPreview={photoPreview}
+              videoPreview={videoPreview}
+              mediaType={mediaType}
               onFileChange={handleFileChange}
+              onVideoFileChange={handleVideoFileChange}
+              onRemove={handleRemoveMedia}
               onSkip={() => setStep(2)}
               sightingType={sightingType}
             />

@@ -66,7 +66,15 @@ export default function MySightingsSheet({ sightings, deleteSighting, updateSigh
                 padding: '10px 12px', borderRadius: 'var(--r-md)',
                 background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
               }}>
-                {s.photo_url ? (
+                {s.video_url ? (
+                  <div style={{
+                    width: 40, height: 40, borderRadius: 'var(--r-sm)',
+                    background: 'var(--glass-strong)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 18, flexShrink: 0,
+                  }}>
+                    🎥
+                  </div>
+                ) : s.photo_url ? (
                   <img src={s.photo_url} alt=""
                     style={{ width: 40, height: 40, borderRadius: 'var(--r-sm)', objectFit: 'cover', flexShrink: 0 }}
                   />

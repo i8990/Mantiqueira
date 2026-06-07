@@ -11,6 +11,8 @@ const TYPE_OPTIONS = [
 export default function EditSightingSheet({ sighting, updateSighting, onClose }) {
   const [photoFile, setPhotoFile] = useState(null)
   const [photoPreview, setPhotoPreview] = useState(null)
+  const [videoFile, setVideoFile] = useState(null)
+  const [videoPreview, setVideoPreview] = useState(null)
   const [description, setDescription] = useState(sighting.description || '')
   const [observedAt, setObservedAt] = useState(
     sighting.observed_at ? sighting.observed_at.slice(0, 16) : ''
@@ -21,7 +23,9 @@ export default function EditSightingSheet({ sighting, updateSighting, onClose })
   const [saving, setSaving] = useState(false)
   const [msg, setMsg] = useState('')
   const [removePhoto, setRemovePhoto] = useState(false)
+  const [removeVideo, setRemoveVideo] = useState(false)
   const fileInputRef = useRef(null)
+  const videoInputRef = useRef(null)
 
   useEffect(() => {
     if (photoFile) {
@@ -31,6 +35,15 @@ export default function EditSightingSheet({ sighting, updateSighting, onClose })
       return () => URL.revokeObjectURL(url)
     }
   }, [photoFile])
+
+  useEffect(() => {
+    if (videoFile) {
+      const url = URL.createObjectURL(videoFile)
+      setVideoPreview(url)
+      setRemoveVideo(false)
+      return () => URL.revokeObjectURL(url)
+    }
+  }, [videoFile])
 
   const handleSubmit = async () => {
     setSaving(true)
@@ -47,12 +60,14 @@ export default function EditSightingSheet({ sighting, updateSighting, onClose })
 
     const res = await updateSighting(sighting.id, {
       photoFile: removePhoto ? null : photoFile || undefined,
+      videoFile: removeVideo ? null : videoFile || undefined,
       description: description.trim() || null,
       lat: finalLat,
       lng: finalLng,
       observedAt: observedAt ? new Date(observedAt).toISOString() : null,
       sightingType,
       keepExistingPhoto: !photoFile && !removePhoto,
+      keepExistingVideo: !videoFile && !removeVideo,
     })
 
     if (res?.error) {
@@ -65,6 +80,7 @@ export default function EditSightingSheet({ sighting, updateSighting, onClose })
   }
 
   const currentPhoto = removePhoto ? null : (photoPreview || sighting.photo_url)
+  const currentVideo = removeVideo ? null : (videoPreview || sighting.video_url)
 
   return (
     <div onClick={onClose} style={{
@@ -105,9 +121,31 @@ export default function EditSightingSheet({ sighting, updateSighting, onClose })
 
           <div>
             <label style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 6, display: 'block', fontWeight: 500 }}>
-              Foto
+              Mídia
             </label>
-            {currentPhoto ? (
+            {currentVideo ? (
+              <div style={{ position: 'relative', display: 'inline-block', width: '100%' }}>
+                <video src={currentVideo} controls
+                  style={{ width: '100%', maxHeight: 200, objectFit: 'cover', borderRadius: 'var(--r-md)' }}
+                />
+                <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+                  <button onClick={() => videoInputRef.current?.click()}
+                    style={{
+                      padding: '6px 12px', borderRadius: 'var(--r-sm)',
+                      background: 'var(--glass)', border: '0.5px solid var(--glass-border)',
+                      color: 'var(--text-2)', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                    }}
+                  >🎥 Trocar vídeo</button>
+                  <button onClick={() => { setVideoFile(null); setVideoPreview(null); setRemoveVideo(true) }}
+                    style={{
+                      padding: '6px 12px', borderRadius: 'var(--r-sm)',
+                      background: 'var(--coral-dim)', border: '0.5px solid var(--coral)',
+                      color: 'var(--coral)', fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                    }}
+                  >🗑️ Remover vídeo</button>
+                </div>
+              </div>
+            ) : currentPhoto ? (
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 <img src={currentPhoto} alt=""
                   style={{ width: '100%', maxHeight: 200, objectFit: 'cover', borderRadius: 'var(--r-md)' }}
@@ -130,10 +168,10 @@ export default function EditSightingSheet({ sighting, updateSighting, onClose })
                 </div>
               </div>
             ) : (
-              <div>
+              <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={() => fileInputRef.current?.click()}
                   style={{
-                    width: '100%', padding: '24px 16px', borderRadius: 'var(--r-md)',
+                    flex: 1, padding: '24px 16px', borderRadius: 'var(--r-md)',
                     background: 'var(--glass)', border: '0.5px dashed var(--glass-border)',
                     color: 'var(--text-3)', fontSize: 14, cursor: 'pointer',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
@@ -142,10 +180,24 @@ export default function EditSightingSheet({ sighting, updateSighting, onClose })
                   <span style={{ fontSize: 24 }}>📷</span>
                   <span>Adicionar foto</span>
                 </button>
+                <button onClick={() => videoInputRef.current?.click()}
+                  style={{
+                    flex: 1, padding: '24px 16px', borderRadius: 'var(--r-md)',
+                    background: 'var(--glass)', border: '0.5px dashed var(--glass-border)',
+                    color: 'var(--text-3)', fontSize: 14, cursor: 'pointer',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                  }}
+                >
+                  <span style={{ fontSize: 24 }}>🎥</span>
+                  <span>Adicionar vídeo</span>
+                </button>
               </div>
             )}
             <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }}
-              onChange={e => { const f = e.target.files?.[0]; if (f) setPhotoFile(f) }}
+              onChange={e => { const f = e.target.files?.[0]; if (f) { setVideoFile(null); setVideoPreview(null); setRemoveVideo(false); setPhotoFile(f) } }}
+            />
+            <input ref={videoInputRef} type="file" accept="video/*" style={{ display: 'none' }}
+              onChange={e => { const f = e.target.files?.[0]; if (f) { setPhotoFile(null); setPhotoPreview(null); setRemovePhoto(false); setVideoFile(f) } }}
             />
           </div>
 

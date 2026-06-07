@@ -1,9 +1,11 @@
 import { useRef } from 'react'
 
-export default function StepPhoto({ photoPreview, onFileChange, onSkip, sightingType }) {
+export default function StepPhoto({ photoPreview, videoPreview, mediaType, onFileChange, onVideoFileChange, onRemove, onSkip, sightingType }) {
   const cameraRef = useRef(null)
   const galleryRef = useRef(null)
+  const videoRef = useRef(null)
   const photoRequired = sightingType === 'foto' || sightingType === 'pegada'
+  const hasMedia = photoPreview || videoPreview
 
   const handleCamera = () => {
     cameraRef.current?.click()
@@ -11,6 +13,20 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip, sighting
 
   const handleGallery = () => {
     galleryRef.current?.click()
+  }
+
+  const handleVideo = () => {
+    videoRef.current?.click()
+  }
+
+  const handleGalleryChange = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (file.type.startsWith('video/')) {
+      onVideoFileChange(file)
+    } else {
+      onFileChange(e)
+    }
   }
 
   return (
@@ -23,7 +39,7 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip, sighting
           background: 'var(--glass)',
           backdropFilter: 'var(--glass-blur)',
           WebkitBackdropFilter: 'var(--glass-blur)',
-          border: photoRequired && !photoPreview ? '0.5px solid var(--coral)' : '0.5px solid var(--glass-border)',
+          border: photoRequired && !hasMedia ? '0.5px solid var(--coral)' : '0.5px solid var(--glass-border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -33,12 +49,14 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip, sighting
           transition: 'all .25s var(--ease-spring)',
         }}
       >
-        {photoPreview ? (
+        {videoPreview ? (
+          <video src={videoPreview} controls style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 'var(--r-xl)' }} />
+        ) : photoPreview ? (
           <img src={photoPreview} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         ) : (
           <div style={{ textAlign: 'center', color: 'var(--text-3)', padding: 24 }}>
             <div style={{ fontSize: 36, marginBottom: 8 }}>{sightingType === 'pegada' ? '👣' : '📸'}</div>
-            <div style={{ fontSize: 14, color: 'var(--text-2)' }}>Adicione uma foto</div>
+            <div style={{ fontSize: 14, color: 'var(--text-2)' }}>Adicione uma foto ou vídeo</div>
             {photoRequired && (
               <div style={{ fontSize: 11, color: 'var(--coral)', marginTop: 4 }}>
                 Obrigatório para este tipo
@@ -59,102 +77,78 @@ export default function StepPhoto({ photoPreview, onFileChange, onSkip, sighting
       <input
         ref={galleryRef}
         type="file"
-        accept="image/*"
+        accept="image/*,video/*"
         style={{ display: 'none' }}
-        onChange={onFileChange}
+        onChange={handleGalleryChange}
+      />
+      <input
+        ref={videoRef}
+        type="file"
+        accept="video/*"
+        capture="environment"
+        style={{ display: 'none' }}
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) onVideoFileChange(file)
+        }}
       />
 
-      {!photoPreview ? (
+      {!hasMedia ? (
         <div style={{ display: 'flex', gap: 10, width: '100%' }}>
-          <button
-            onClick={handleCamera}
+          <button onClick={handleCamera}
             style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              padding: '12px 16px',
-              borderRadius: 'var(--r-md)',
-              background: 'var(--glass)',
-              backdropFilter: 'var(--glass-blur)',
+              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              padding: '12px 16px', borderRadius: 'var(--r-md)',
+              background: 'var(--glass)', backdropFilter: 'var(--glass-blur)',
               WebkitBackdropFilter: 'var(--glass-blur)',
-              border: '0.5px solid var(--glass-border)',
-              color: 'var(--text-1)',
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: 'pointer',
+              border: '0.5px solid var(--glass-border)', color: 'var(--text-1)',
+              fontSize: 14, fontWeight: 500, cursor: 'pointer',
               transition: 'all .2s var(--ease-spring)',
             }}
-          >
-            📸 Câmera
-          </button>
-          <button
-            onClick={handleGallery}
+          >📸 Câmera</button>
+          <button onClick={handleVideo}
             style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 8,
-              padding: '12px 16px',
-              borderRadius: 'var(--r-md)',
-              background: 'var(--glass)',
-              backdropFilter: 'var(--glass-blur)',
+              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              padding: '12px 16px', borderRadius: 'var(--r-md)',
+              background: 'var(--glass)', backdropFilter: 'var(--glass-blur)',
               WebkitBackdropFilter: 'var(--glass-blur)',
-              border: '0.5px solid var(--glass-border)',
-              color: 'var(--text-1)',
-              fontSize: 14,
-              fontWeight: 500,
-              cursor: 'pointer',
+              border: '0.5px solid var(--glass-border)', color: 'var(--text-1)',
+              fontSize: 14, fontWeight: 500, cursor: 'pointer',
               transition: 'all .2s var(--ease-spring)',
             }}
-          >
-            🖼️ Galeria
-          </button>
+          >🎥 Vídeo</button>
+          <button onClick={handleGallery}
+            style={{
+              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              padding: '12px 16px', borderRadius: 'var(--r-md)',
+              background: 'var(--glass)', backdropFilter: 'var(--glass-blur)',
+              WebkitBackdropFilter: 'var(--glass-blur)',
+              border: '0.5px solid var(--glass-border)', color: 'var(--text-1)',
+              fontSize: 14, fontWeight: 500, cursor: 'pointer',
+              transition: 'all .2s var(--ease-spring)',
+            }}
+          >🖼️ Galeria</button>
         </div>
       ) : (
-        <button
-          onClick={() => {
-            if (cameraRef.current) cameraRef.current.value = ''
-            if (galleryRef.current) galleryRef.current.value = ''
-            onFileChange({ target: { files: [] } })
-          }}
+        <button onClick={onRemove}
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 8,
-            padding: '10px 18px',
-            borderRadius: 'var(--r-md)',
-            background: 'var(--coral-dim)',
-            border: '0.5px solid var(--coral)',
-            color: 'var(--coral)',
-            fontSize: 13,
-            fontWeight: 500,
-            cursor: 'pointer',
-            transition: 'all .2s',
+            display: 'flex', alignItems: 'center', gap: 8,
+            padding: '10px 18px', borderRadius: 'var(--r-md)',
+            background: 'var(--coral-dim)', border: '0.5px solid var(--coral)',
+            color: 'var(--coral)', fontSize: 13, fontWeight: 500,
+            cursor: 'pointer', transition: 'all .2s',
           }}
-        >
-          🗑️ Remover foto
-        </button>
+        >🗑️ Remover {videoPreview ? 'vídeo' : 'foto'}</button>
       )}
 
-      {!photoPreview && !photoRequired && (
-        <button
-          onClick={onSkip}
+      {!hasMedia && !photoRequired && (
+        <button onClick={onSkip}
           style={{
-            color: 'var(--text-3)',
-            fontSize: 13,
-            textDecoration: 'underline',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            padding: '4px 8px',
-            transition: 'color .2s',
+            color: 'var(--text-3)', fontSize: 13, textDecoration: 'underline',
+            background: 'none', border: 'none', cursor: 'pointer',
+            padding: '4px 8px', transition: 'color .2s',
           }}
-        >
-          Sem foto (penalidade máx)
-        </button>
+        >Sem foto (penalidade máx)</button>
       )}
     </div>
   )
