@@ -6,13 +6,14 @@ import UserLocation from './UserLocation'
 
 function ChangeView({ center }) {
   const map = useMap()
-  const prev = useRef(center)
+  const mounted = useRef(false)
 
   useEffect(() => {
-    if (prev.current[0] !== center[0] || prev.current[1] !== center[1]) {
-      map.flyTo(center, map.getZoom(), { duration: 0.6 })
-      prev.current = center
+    if (!mounted.current) {
+      mounted.current = true
+      return
     }
+    map.flyTo(center, map.getZoom(), { duration: 0.6 })
   }, [center, map])
 
   return null

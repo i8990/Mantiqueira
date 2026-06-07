@@ -11,21 +11,26 @@ export default function UserLocation() {
   useEffect(() => {
     if (!navigator.geolocation) return
 
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const latlng = [pos.coords.latitude, pos.coords.longitude]
-        setPosition(latlng)
-        setAccuracy(pos.coords.accuracy)
-        setUserLocation(latlng)
-      },
-      () => {},
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
-    )
-
-    return () => {
-      navigator.geolocation.clearWatch(watchId)
-      setUserLocation(null)
+    function handlePosition(pos) {
+      const latlng = [pos.coords.latitude, pos.coords.longitude]
+      setPosition(latlng)
+      setAccuracy(pos.coords.accuracy)
+      setUserLocation(latlng)
     }
+
+    navigator.geolocation.getCurrentPosition(handlePosition, () => {}, {
+      enableHighAccuracy: true,
+      timeout: 5000,
+      maximumAge: 0,
+    })
+
+    const watchId = navigator.geolocation.watchPosition(handlePosition, () => {}, {
+      enableHighAccuracy: true,
+      timeout: 10000,
+      maximumAge: 30000,
+    })
+
+    return () => navigator.geolocation.clearWatch(watchId)
   }, [setUserLocation])
 
   if (!position) return null

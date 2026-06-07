@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-lea
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import UserLocation from '../map/UserLocation'
+import useAppStore from '../../stores/useAppStore'
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.mergeOptions({
@@ -48,6 +49,7 @@ function DraggableMarker({ position, onDragEnd }) {
 }
 
 export default function LocationPicker({ initialCoords, onConfirm, onClose }) {
+  const setUserLocation = useAppStore(s => s.setUserLocation)
   const [markerPos, setMarkerPos] = useState(initialCoords || null)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchResults, setSearchResults] = useState([])
@@ -117,6 +119,7 @@ export default function LocationPicker({ initialCoords, onConfirm, onClose }) {
         setFlyTo(p)
         setAddress('')
         doReverseGeocode(p.lat, p.lng)
+        setUserLocation([p.lat, p.lng])
       },
       () => {},
       { enableHighAccuracy: true, timeout: 10000 }
