@@ -16,6 +16,7 @@ const useAppStore = create((set) => ({
   selectedAnimalId: null,
   registerPrefilledAnimalId: null,
   mapCenter: [-22.02, -44.73],
+  userLocation: null,
   theme: getInitialTheme(),
   toast: null,
   viewProfileId: null,
@@ -27,6 +28,7 @@ const useAppStore = create((set) => ({
   setViewProfile: (id) => set({ viewProfileId: id, activeTab: 'perfil' }),
   clearViewProfile: () => set({ viewProfileId: null }),
   setMapCenter: (center) => set({ mapCenter: center }),
+  setUserLocation: (loc) => set({ userLocation: loc }),
   showToast: (message) => set({ toast: { message, key: Date.now() } }),
   clearToast: () => set({ toast: null }),
   setTheme: (theme) => {

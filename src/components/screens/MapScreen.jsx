@@ -8,6 +8,8 @@ import ChangelogModal from '../map/ChangelogModal'
 
 export default function MapScreen({ sightings, userId }) {
   const mapCenter = useAppStore(s => s.mapCenter)
+  const userLocation = useAppStore(s => s.userLocation)
+  const setMapCenter = useAppStore(s => s.setMapCenter)
   const [mapLayer, setMapLayer] = useState('satellite')
   const [showChangelog, setShowChangelog] = useState(false)
   const { likesData, loadLikes, toggleLike, loadLikers } = useLikes(userId)
@@ -69,6 +71,35 @@ export default function MapScreen({ sightings, userId }) {
       </button>
 
       {showChangelog && <ChangelogModal onClose={() => setShowChangelog(false)} />}
+
+      {userLocation && (
+        <button
+          onClick={() => setMapCenter(userLocation)}
+          style={{
+            position: 'absolute',
+            bottom: 20,
+            right: 12,
+            zIndex: 1000,
+            width: 44,
+            height: 44,
+            borderRadius: '50%',
+            background: 'var(--glass-strong)',
+            backdropFilter: 'var(--glass-blur-heavy)',
+            WebkitBackdropFilter: 'var(--glass-blur-heavy)',
+            border: '0.5px solid var(--glass-border-light)',
+            color: 'var(--accent)',
+            fontSize: 20,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: 'var(--shadow-lg)',
+          }}
+          title="Minha localização"
+        >
+          📍
+        </button>
+      )}
 
       <LeafletMap center={mapCenter} layer={mapLayer}>
         {sightings?.map(s => (
